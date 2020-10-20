@@ -1,0 +1,472 @@
+<template>
+  <div class="pro_box">
+    <!-- 头部搜索 -->
+    <div class="sear_head">
+      <div class="sear_box flexbox">
+        <input type="text" placeholder="请输入门店名称或地点回车进行搜索">
+        <img src="../assets/images/sear_icon.png" alt="" @click="openmapShow">
+      </div>
+      <div class="sear_list flexbox">
+        <div class="sr_item" :class="phoneShow==1?'active':''" data-num='1' @click="choosetype">全城 <img src="../assets/images/icon-expand.png" alt="" ></div>
+        <div class="sr_item" :class="phoneShow==2?'active':''" data-num='2' @click="choosetype">全部服务 <img src="../assets/images/icon-expand.png" alt="" ></div>
+        <div class="sr_item" :class="phoneShow==3?'active':''" data-num='3' @click="choosetype">距离优先 <img src="../assets/images/icon-expand.png" alt="" ></div>
+      </div>
+      <div class="draw_item" v-if="phoneShow==1">
+        <div class="dw_item on">宝安区</div>
+        <div class="dw_item">福田区</div>
+        <div class="dw_item">光明新区</div>
+        <div class="dw_item">罗湖区</div>
+        <div class="dw_item">龙岗区</div>
+        <div class="dw_item">龙华新区</div>
+        <div class="dw_item">南山区</div>
+      </div>
+      <div class="draw_item"  v-if="phoneShow==2">
+        <div class="dw_titme">洗车</div>
+        <div class="dw_box">
+          <div class="dw_list on">标准-五座轿车</div>
+          <div class="dw_list">标准-SUV</div>
+          <div class="dw_list">精致洗车</div>
+        </div>
+        <div class="dw_titme">美容</div>
+        <div class="dw_box">
+          <div class="dw_list">手工打蜡（小车型）</div>
+          <div class="dw_list">手工打蜡（小车型）</div>
+          <div class="dw_list">手工打蜡（小车型）</div>
+        </div>
+      </div>
+      <div class="draw_item"  v-if="phoneShow==3">
+        <div class="dw_item">距离优先</div>
+        <div class="dw_item">好评优先</div>
+        <div class="dw_item">销量优先</div>
+      </div>
+    </div>
+    <!-- 头部搜索 -->
+
+    <!-- 地址搜索 -->
+    <div class="sear_adress flexbox" :class="mapShow?'show':''">
+      <div class="adr_input flexbox">
+        <input type="text" placeholder="搜索地点">
+        <div class="close_box" @click="closemapShow"><i class="el-icon-close"></i></div>
+      </div>
+      <div class="adr_map">
+        <img src="../assets/images/map.png" alt="" style="width:100%">
+      </div>
+      <div class="adr_title">选择坐标图标所指位置</div>
+      <div class="adr_list">
+        <div class="scroll_box">
+          <div class="adr_item">
+            <div class="adr_name">上步工业区</div>
+            <div class="adr_text">红荔路3007号</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 地址搜索 -->
+
+    <!-- 列表 -->
+    <div class="list_box">
+      <div class="list_item" v-for="(item,key) in list">
+        <router-link to="xcdetails" class="ls_go"></router-link>
+        <div class="ls_top flexbox">
+          <div class="ls_l">
+            <img :src="item.img" alt="" class="ls_img">
+            <!-- 如果休息中显示 -->
+            <div class="if_stop">
+              <span>休息中</span>
+              <span>营业时间</span>
+              <span>{{item.time}}</span>
+            </div>
+          </div>
+          <div class="ls_m">
+            <div class="p_name">{{item.name}}</div>
+            <div class="p_cord flexbox">
+              <div class="rank">{{item.rank}}</div>
+              <div class="sale">已售 {{item.sale}}</div>
+            </div>
+          </div>
+          <div class="ls_r">
+            <div class="dz">{{item.dazhe}}</div>
+            <div class="pay_num">￥{{item.pay}}</div>
+          </div> 
+        </div>
+        <div class="ls_bot flexbox">
+          <img src="../assets/images/icon-address.png" alt="" class="d_img">
+          <div class="d_name">{{item.adress}}</div>
+          <button class="d_map flexbox">
+            <img src="../assets/images/icon-nav-white.png" alt="" class="map_img">
+            {{item.km}}
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- 列表 -->
+  </div>
+</template>
+<script>
+import { api } from "@/api/api"
+export default {
+  components: {
+  },
+  data() {
+    return {
+      // 打开搜索下拉
+      phoneShow:0,
+
+      // 打开搜索地址
+      mapShow:false,
+      list:[
+        {
+          img:require('../assets/images/details_baner.jpg'),
+          time:'8:00-12:00',
+          name:'新业汽车美容有限公司',
+          rank:'4.7分',
+          sale:'2',
+          dazhe:'7.6折',
+          pay:'38',
+          adress:'广东省深圳市龙岗区布沙路78号樟树布综合楼后侧',
+          km:'0.23km'
+        },
+        {
+          img:require('../assets/images/details_baner.jpg'),
+          time:'8:00-12:00',
+          name:'新业汽车美容有限公司',
+          rank:'4.7分',
+          sale:'2',
+          dazhe:'7.6折',
+          pay:'38',
+          adress:'广东省深圳市龙岗区布沙路78号樟树布综合楼后侧',
+          km:'0.23km'
+        },
+        {
+          img:require('../assets/images/details_baner.jpg'),
+          time:'8:00-12:00',
+          name:'新业汽车美容有限公司',
+          rank:'4.7分',
+          sale:'2',
+          dazhe:'7.6折',
+          pay:'38',
+          adress:'广东省深圳市龙岗区布沙路78号樟树布综合楼后侧',
+          km:'0.23km'
+        },
+      ]
+    };
+  },
+  created() {
+    
+  },
+  methods: {
+    // 下拉筛选
+    choosetype(e){
+      if(this.phoneShow == e.target.dataset.num){
+        this.phoneShow = 0
+      }else{
+        this.phoneShow = e.target.dataset.num
+      }
+    },
+
+    // 打开搜索地址
+    openmapShow(){
+      this.mapShow = true
+    },
+
+    // 关闭搜索地址
+    closemapShow(){
+      this.mapShow = false
+    }
+  },
+  mounted() {
+    
+  }
+};
+</script>
+<style scoped>
+.flexbox{
+  display: flex;
+}
+
+/* 搜索头部 */
+.sear_head{
+  position: fixed;
+  width: 100%;
+  background: #fff;
+  z-index: 9;
+  top: 0;
+  left: 0;
+}
+.sear_box{
+  padding: 3vw;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.sear_box input{
+  width: 100%;
+  -webkit-flex: 1;
+  flex: 1;
+  height: 10vw;
+  border: none;
+  background: #f2f2f2;
+  padding: 0 3%;
+  border-radius: 5px;
+  font-size: 1.8vh;
+}
+.sear_box img{
+  margin-left: 10px;
+  width: 7vw;
+  height: 7vw;
+}
+.sear_list{
+  height: 10vw;
+  border-bottom: 1px solid #ececec;
+}
+.sr_item{
+  -webkit-flex: 1;
+  flex: 1;
+  text-align: center;
+  font-size: 2vh;
+  line-height: 10vw;
+}
+.sr_item img{
+  height: 3vw;
+  margin-left: 5px;
+  transition: all .4s;
+}
+.sr_item.active img{
+  transform: rotate(180deg);;
+}
+.draw_item{
+  position:absolute;
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid #ececec;
+  top: 100%;
+  left: 0;
+  box-sizing: border-box;
+  padding: 4%;
+}
+.dw_item{
+  padding-left: 5%;
+  font-size: 2vh;
+  line-height: 10vw;
+
+}
+.dw_item.on{
+  color:#ff8d0a
+}
+.dw_titme{
+  font-size: 2.2vh;
+  color: #999;
+  margin-bottom: 3vw;
+}
+.dw_box{
+  overflow: hidden;
+}
+.dw_list{
+  float: left;
+  width: 48%;
+  margin-right: 2%;
+  margin-bottom: 3vw;
+  height: 8vw;
+  line-height: 8vw;
+  border-radius: 3px;
+  background: #f6f6f6;
+  text-align: center;
+}
+.dw_list.on{
+  background: #ff8d0a;
+  color: #fff;
+}
+/* 搜索头部 */
+
+/* 地址搜索 */
+.sear_adress{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  background: #fff;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-transition: all .4s;
+  transition: all .4s;
+}
+.sear_adress.show{
+  top: 0;
+}
+.adr_input{
+  height: 10vw;
+}
+.adr_input input{
+  width: 100%;
+  height: 10vw;
+  border: 0;
+  background: #f2f2f2;
+  text-align: center;
+}
+.adr_input .close_box{
+  height: 10vw;
+  width: 10vw;
+  background: #ffbc00;
+  color: #fff;
+  text-align: center;
+}
+.adr_input .close_box i{
+  font-size: 3vh;
+  margin-top: 2vw;
+}
+.adr_title{
+  font-size: 2.2vh;
+  color: #747474;
+  padding: 3% 0;
+  margin: 0 3%;
+  border-bottom: 1px solid #ececec;
+}
+.adr_list{
+  -webkit-flex: 1;
+  flex: 1;
+  position: relative;
+}
+.scroll_box{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+}
+.adr_item{
+  margin: 0 3%;
+  padding: 10px;
+  border-bottom: 1px solid #ececec;
+}
+.adr_name{
+  font-size: 2.2vh;
+  color: #747474;
+}
+.adr_text{
+  font-size: 1.6vh;
+  color: #aaa;
+  margin-top: 10px;
+}
+/* 地址搜索 */
+
+/* 产品列表 */
+.list_box{
+  padding-top: 26vw;
+}
+.list_item{
+  padding: 3%;
+  border-bottom:1px solid #ececec;
+  position: relative;
+}
+.ls_go{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+.ls_l{
+ width: 22vw;
+ height: 16vw;
+ position: relative;
+ border-radius: 5px;
+ overflow: hidden;
+}
+.ls_img{
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.if_stop{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-display: flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  justify-content: center;
+  line-height: 1.2;
+  align-items: center;
+}
+.if_stop span{
+  font-size: 12px;
+}
+.ls_m{
+  flex: 1;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.p_name{
+  font-size: 2.2vh;
+  color: #000;
+}
+.p_cord{
+  margin-top: 10px;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.rank{
+  font-size: 12px;
+  color: #fff;
+  padding: 3px 6px;
+  border-radius: 3px;
+  background: #ffbc00;
+}
+.sale{
+  font-size: 12px;
+  color: #747474;
+  margin-left: 5px;
+}
+.dz{
+  font-size: 12px;
+  color: #aaa;
+  padding: 3px 6px;
+  border-radius: 3px;
+  border: 1px solid #aaa;
+}
+.pay_num{
+  font-size: 2vh;
+  color: red;
+  margin-top: 10px;
+  text-align: right;
+}
+.ls_bot{
+  margin-top: 10px;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.d_img{
+  height: 3.5vw;
+}
+.d_name{
+  font-size: 12px;
+  color: #747474;
+  margin-left: 10px;
+  margin-right: 20px;
+}
+.d_map{
+  background-color: #ff8d0a;
+  color: #fff;
+  -webkit-align-items: center;
+  align-items: center;
+  border-radius: 3px;
+  padding: 5px;
+  position: relative;
+  z-index: 3;
+}
+.map_img{
+  height: 4.2vw;
+}
+/* 产品列表 */
+</style>
+
+<style lang="less">
+
+</style>
