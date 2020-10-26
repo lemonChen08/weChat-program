@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
-    "build": "node build/build.js"
+    "build": "node build/build.js",
+    "--allowed-hosts":"api.welaipay.com"
   },
   "dependencies": {
     "element-ui": "^2.11.0",
@@ -16,7 +17,8 @@
     "vue": "^2.5.2",
     "vue-country-code-selector": "^1.0.5",
     "vue-layer": "^1.2.1",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "weixin-js-sdk": "^1.6.0"
   },
   "devDependencies": {
     "axios": "^0.18.1",

@@ -3,8 +3,8 @@ import axios from 'axios'
 const qs = require('qs')
 let that = vm;
 const server = {
-  development: 'http://8.129.29.207:8808/',
-  production: 'http://8.129.29.207:8809/'
+  development: 'http://api.welaipay.com/station/web_route.php',
+  production: 'http://api.welaipay.com/station/web_route.php'
 }
 
 const jsonUrl = (json) => {
@@ -21,12 +21,11 @@ const jsonUrl = (json) => {
 
 export const fet = (url,data,method,postHeaders) => {
   var oneToken = localStorage.getItem("oneToken");
-  debugger
   if (oneToken) {
       //axios.defaults.headers.common['authorization'] = 'Bearer ' + user
       axios.defaults.headers.common['oneToken'] = oneToken
   }
-  let realUrl = server['development'] + url
+  let realUrl = server['development']
   let type = method.toLowerCase()
   let res = {}
   if(type === 'get'){

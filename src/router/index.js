@@ -2,15 +2,16 @@ import Vue from 'vue'
 import Router from 'vue-router'
 // import HelloWorld from '@/components/HelloWorld'
 
-import login from '@/components/login.vue'
 import register from '@/components/register.vue'
 import publish from '@/components/publish.vue'
-import center from '@/components/center.vue'
-import jyorder from '@/components/jyorder.vue'
-import xcorder from '@/components/xcorder.vue'
-import order_details from '@/components/order_details.vue'
-import xclist from '@/components/xclist.vue'
-import xcdetails from '@/components/xcdetails.vue'
+import center from '@/components/center.vue'  //个人中心
+import jyorder from '@/components/jyorder.vue' //加油订单
+import xcorder from '@/components/xcorder.vue' //洗车订单
+import order_details from '@/components/order_details.vue' //订单详情
+import xclist from '@/components/xclist.vue' //洗车列表
+import xcdetails from '@/components/xcdetails.vue' //洗车详情
+import home from '@/components/home.vue' //洗车详情
+import jylist from '@/components/jylist.vue' //加油列表
 
 Vue.use(Router)
 
@@ -18,8 +19,8 @@ export default new Router({
   routes: [
 		{
 		  path: '/',
-		  name: 'login',
-		  component: login
+		  name: 'home',
+		  component: home
 		},
 		{
 			path: '/register',
@@ -52,7 +53,7 @@ export default new Router({
 			component: order_details
 		},
 		{
-			path: '/',
+			path: '/xclist',
 			name: '洗车列表',
 			component: xclist
 		},
@@ -60,6 +61,11 @@ export default new Router({
 			path: '/xcdetails',
 			name: '洗车详情',
 			component: xcdetails
+		},
+		{
+			path: '/jylist',
+			name: 'jylist',
+			component: jylist
 		},
   ]
 })
