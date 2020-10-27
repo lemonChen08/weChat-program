@@ -19,6 +19,6 @@ var vm = new Vue({
   router,
   components: { App },
   template: '<App/>',
-	render:h => h(App)
+  render:h => h(App)
 })
 export default vm

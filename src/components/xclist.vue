@@ -103,6 +103,8 @@
   </div>
 </template>
 <script>
+let qs = require('qs')
+import axios from 'axios'
 import { api } from "@/api/api"
 export default {
   components: {
@@ -172,10 +174,23 @@ export default {
     // 关闭搜索地址
     closemapShow(){
       this.mapShow = false
-    }
+    },
+    async getLogin(){
+      
+      let data = {
+        action:'user_login',
+        phone:13631620136
+      }
+      let res = axios.post("http://api.welaipay.com/station/web_route.php",qs.stringify(data),'post')
+      if(res){
+        this.$layer.msg("注册成功")
+      }else{
+        this.$layer.msg(res.data.msg)
+      }
+    },
   },
   mounted() {
-    
+    this.getLogin()
   }
 };
 </script>

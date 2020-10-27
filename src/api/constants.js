@@ -3,8 +3,8 @@ import axios from 'axios'
 const qs = require('qs')
 let that = vm;
 const server = {
-  development: 'http://8.129.29.207:8808/',
-  production: 'http://8.129.29.207:8809/'
+  development: 'http://api.welaipay.com/station/web_route.php/',
+  production: 'http://api.welaipay.com/station/web_route.php/'
 }
 
 const jsonUrl = (json) => {
@@ -35,7 +35,7 @@ export const fet = (url,data,method,postHeaders) => {
       
     });
   } else if(type === 'post'){
-    res = axios.post(realUrl,qs.stringify(data),postHeaders)
+    res = axios.post(realUrl,data,postHeaders)
     .catch(function (error) {
      
     });

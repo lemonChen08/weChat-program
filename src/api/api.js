@@ -3,8 +3,8 @@ import  {fet} from './constants.js'
 const api = {}
 
 // 获取一次性token
-api.createOnceToken = params => {
-  return fet('/api/v1/token/get',params,'get')
+api.userLogin = params => {
+  return fet('',params,'post')
 }
 // 注册
 api.register = params => {
