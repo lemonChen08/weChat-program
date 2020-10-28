@@ -22,17 +22,17 @@
         </div>
         <div class="bar-search" v-if="(gasMode === 1 || gasMode === 2)">
             <button class="btn-item" @click="doToggleOilNumber">
-                {{ btnOilNumber }} <img :class="['icon', showOilNumber && 'revert']" src="../assets/images/icon-expand.png"/>
+                {{ btnOilNumber }}# <img :class="['icon', showOilNumber && 'revert']" src="../assets/images/icon-expand.png"/>
             </button>
             <button class="btn-item" @click="doToggleBrand">
                 全部品牌
                 <img :class="['icon', showBrand && 'revert']" src="../assets/images/icon-expand.png"/>
             </button>
-            <button class="btn-search-location" 
+            <!-- <button class="btn-search-location" 
                 style="width: 40px;"
                 @click="showAddressSelector = true">
                 <img class="icon-search" src="../assets/images/icon-search.png"/>
-            </button>
+            </button> -->
             <div :class="['pad-option', showOilNumber && 'show']"  style="padding-top: 3vw;">
                 <div class="section">
                 <header class="title">
@@ -90,7 +90,40 @@
                 </div>
             </div>
         </div>
+        
+      <div class="list_item" v-for="(item,key) in jyzlist" :key="key" @click="routerTo(item.platform_gasid)">
+        <!-- <router-link to="jylist" class="ls_go"></router-link> -->
+        <div class="ls_top flexbox">
+          <div class="ls_l">
+            <img :src="item.gas_logo_small" alt="" class="ls_img">
+            <!-- 如果休息中显示 -->
+            <div class="if_stop" style="display:none;">
+              <span>休息中</span>
+              <span>营业时间</span>
+              <span>{{item.time}}</span>
+            </div>
+          </div>
+          <div class="ls_m">
+            <div class="p_name">{{item.gas_name}}</div>
+            <p class="price">VIP特权价 ￥<span class="bold">{{item.discount_price}}</span><a class="oldprice">国标价 ￥ {{item.official_price}}</a></p>
+          </div>
+          <div class="ls_r" style="display:none;">
+            <div class="dz">{{item.dazhe}}</div>
+            <div class="pay_num">￥{{item.pay}}</div>
+          </div> 
+        </div>
+        <div>
 
+        </div>
+        <div class="ls_bot">
+          <img src="../assets/images/icon-address.png" alt="" class="d_img">
+          <div class="d_name">{{item.gas_address}}</div>
+          <button class="d_map">
+            <img src="../assets/images/icon-nav-white.png" alt="" class="map_img">
+            {{(item.juli/1000).toFixed(1)}}km
+          </button>
+        </div>
+      </div>
         <div class="pad-list">
             <div class="hx-emptyset transparent">附近暂无加油站</div>
         </div>
@@ -118,11 +151,17 @@ export default {
         page: 1,
         address: ''
       },
-      btnOilNumber:'',
-      gasolineNumbers:[],
-      dieselNumbers:[],
-      gasNumbers:[],
-      gasStationBrandArray:[]
+      btnOilNumber:'92',
+      gasolineNumbers:['90','92','95','98','101'],
+      dieselNumbers:['-40','-35','-30','-20','-10','国四','0'],
+      gasNumbers:['CNG','LNG'],
+      gasStationBrandArray:[
+        { value: 1, key: '中石油' },
+        { value: 2, key: '中石化' },
+        { value: 3, key: '壳牌' },
+        { value: 4, key: '其他' }
+      ],
+      jyzlist:[]
     };
   },
   created() {
@@ -132,6 +171,9 @@ export default {
     
   },
   methods: {
+    routerTo(id){
+        this.$router.push({ name: 'jydetail', params: { gasId: id }});
+    },  
     doToggleOilNumber () {
       this.showOilNumber = !this.showOilNumber
       if (this.showOilNumber) {
@@ -145,9 +187,11 @@ export default {
       }  
     },
     doSelectNumber(item){
-      this.oil_numbers = item
+      this.btnOilNumber = item
+      this.showOilNumber = false
+      this.getGaslist()
     },
-    doSelectBrand(){
+    doSelectBrand(item){
       for (let i = 0; i < this.searchInfo.types.length; i++) {
         if (this.searchInfo.types[i] === item) {
           this.searchInfo.types.splice(i, 1)
@@ -158,11 +202,29 @@ export default {
     },
     doConfirmBrand(){
        this.doToggleBrand() 
+       this.getGaslist()
     },
-   
+    async getGaslist(){
+      let res = await api.get_gaslist({
+        action:'get_gaslist',
+        latitude:'36.30556423523153',
+        longitude:'104.48060937499996',
+        oilName:this.btnOilNumber+'#',
+        cityName:'',
+        orderBy:'1',
+        gasType:'',
+        page:1,
+        pagesize:100
+      })
+      if(res.data.code==200){
+        this.jyzlist = res.data.result
+      }else{
+        this.$layer.msg(res.data.message)
+      }
+    },
   },
   mounted() {
-    
+    this.getGaslist()
   }
 };
 </script>
@@ -446,6 +508,8 @@ export default {
         margin: 0 1.5vw 1vw 0;
         border-radius: 1vw;
         background-color: #f6f6f6;
+        font-size:12px;
+        padding:0 6px;
 }
 .pad-gas-stations .bar-search .pad-option .btn-option.selected , .pad-stations .bar-search .pad-option .btn-option.selected  {
           background-color: #FFBC00;
@@ -519,4 +583,138 @@ export default {
     font-weight: 300;
 }
 .hx-emptyset.transparent{background-color: transparent;}
+/* 产品列表 */
+.list_box{
+  margin-top: 3vw;
+  background:#fff;
+}
+.list_item{
+  padding: 3%;
+  border-bottom:1px solid #ececec;
+  position: relative;
+}
+.list_item .listtitle{
+  overflow:hidden;
+  line-height:24px;
+  padding-bottom:10px;
+}
+.list_item .listtitle .title{float:left;font-weight: bold;}
+.list_item .listtitle .more{float:right;}
+.ls_go{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+.ls_l{
+ width: 22vw;
+ height: 16vw;
+ position: relative;
+ border-radius: 5px;
+ overflow: hidden;
+}
+.ls_img{
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.if_stop{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-display: flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  justify-content: center;
+  line-height: 1.2;
+  align-items: center;
+}
+.if_stop span{
+  font-size: 12px;
+}
+.ls_m{
+  flex: 1;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.price{padding-top:10px;font-size:12px;}
+.price .bold{font-weight:bold;}
+.price .oldprice{font-size:12px;padding-left:10px;text-decoration: line-through;}
+.p_name{
+  font-size: 2.2vh;
+  color: #000;
+}
+.p_cord{
+  margin-top: 10px;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.rank{
+  font-size: 12px;
+  color: #fff;
+  padding: 3px 6px;
+  border-radius: 3px;
+  background: #ffbc00;
+}
+.sale{
+  font-size: 12px;
+  color: #747474;
+  margin-left: 5px;
+}
+.dz{
+  font-size: 12px;
+  color: #aaa;
+  padding: 3px 6px;
+  border-radius: 3px;
+  border: 1px solid #aaa;
+}
+.pay_num{
+  font-size: 2vh;
+  color: red;
+  margin-top: 10px;
+  text-align: right;
+}
+.ls_bot{
+    overflow:hidden;
+  margin-top: 10px;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.d_img{
+    float:left;
+  height: 3.5vw;
+  margin-top:8px;
+}
+.d_name{
+    float:left;
+  font-size: 12px;
+  color: #747474;
+  margin-left: 10px;
+  margin-right: 20px;
+  padding-top:8px;
+  width:65%;
+}
+.d_map{
+    float:right;
+  background-color: #ff8d0a;
+  color: #fff;
+  -webkit-align-items: center;
+  align-items: center;
+  border-radius: 3px;
+  padding: 5px;
+  position: relative;
+  z-index: 3;
+}
+.map_img{
+  height: 4.2vw;
+}
+.flexbox{
+  display: flex;
+}
 </style>

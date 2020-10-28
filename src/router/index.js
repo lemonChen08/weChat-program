@@ -12,6 +12,7 @@ import xclist from '@/components/xclist.vue' //洗车列表
 import xcdetails from '@/components/xcdetails.vue' //洗车详情
 import home from '@/components/home.vue' //洗车详情
 import jylist from '@/components/jylist.vue' //加油列表
+import jydetail from '@/components/jydetail.vue' //加油详情
 
 Vue.use(Router)
 
@@ -66,6 +67,11 @@ export default new Router({
 			path: '/jylist',
 			name: 'jylist',
 			component: jylist
+		},
+		{
+			path: '/jydetail',
+			name: 'jydetail',
+			component: jydetail
 		},
   ]
 })

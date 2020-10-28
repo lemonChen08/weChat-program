@@ -28,10 +28,10 @@
     <!-- 列表 -->
     <div class="list_box">
       <div class="list_item" v-for="(item,key) in list">
-        <router-link to="xcdetails" class="ls_go"></router-link>
+        <router-link to="jylist" class="ls_go"></router-link>
         <div class="listtitle">
           <h2 class="title">附近加油站</h2>
-          <router-link to="xcdetails" class="more">更多></router-link>
+          <router-link to="jylist" class="more">更多></router-link>
         </div>
         <div class="ls_top flexbox">
           <div class="ls_l">
