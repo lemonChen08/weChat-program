@@ -323,9 +323,7 @@ export default {
     },
     async getGasDetail(){
       let res = await api.get_station({
-        action:'get_station',
-        phone:'13631620136',
-        gasId:this.$route.params.gasId
+        gasStationId:this.$route.params.gasId
       })
       if(res.data.code==200){
         this.item = res.data.result

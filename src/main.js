@@ -47,7 +47,7 @@ var vm = new Vue({
         }
       },
       mounted() {
-    //      this.getCode()
+         this.getCode()
       }  
     
 })

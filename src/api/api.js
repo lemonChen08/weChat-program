@@ -2,11 +2,15 @@ import  {fet} from './constants.js'
 
 const api = {}
 
+api.userLogin = params => {
+  return fet('user/login',params,'post')
+}
+
 api.get_gaslist = params => {
-  return fet('',params,'post')
+  return fet('user/gasStations',params,'post')
 }
 
 api.get_station = params => {
-  return fet('',params,'post')
+  return fet('user/gasStationDetail',params,'get')
 }
 export {api}
