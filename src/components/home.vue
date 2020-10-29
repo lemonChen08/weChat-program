@@ -132,9 +132,35 @@ export default {
     };
   },
   created() {
+    this.getToken()
+
     this.getGaslist()
   },
   methods: {
+    //获取access_token
+    getToken(){
+      let appid = 'wx2b58cb8bd7d7ceb1'
+      let secret = ''
+      let grant_type = 'authorization_code'
+      let code = localStorage.getItem('code')
+      if(!code){
+        code = this.getUrlCode()
+      }
+      // window.location.href = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid='+appid+'&secret='+secret+'&code='+code+'&grant_type='+grant_type
+    },
+    getUrlCode() { // 截取url中的code方法
+      var url = location.search
+      this.winUrl = url
+      var theRequest = new Object()
+      if (url.indexOf("?") != -1) {
+          var str = url.substr(1)
+          var strs = str.split("&")
+          for(var i = 0; i < strs.length; i ++) {
+              theRequest[strs[i].split("=")[0]]=(strs[i].split("=")[1])
+          }
+      }
+      return theRequest
+    },
     // 下拉筛选
     choosetype(e){
       if(this.phoneShow == e.target.dataset.num){
