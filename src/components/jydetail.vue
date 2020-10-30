@@ -3,13 +3,13 @@
       <div class="banner-station" v-if="!isLoading">
         <div class="pad-bg">
           <div class="image hx-image centerVertical block">
-            <img class="image" :src="item.gas_logo_big || item.gas_logo_small"/>
+            <img class="image" :src="item.logo_big || item.logo_small"/>
           </div>
         </div>
-        <div class="card-station shadow" v-if="item.gas_name">
+        <div class="card-station shadow" v-if="item.name">
           <div class="mask"></div>
           <span class="text-name">
-            <strong v-text="item.gas_name"></strong>
+            <strong v-text="item.name"></strong>
             <span v-if="stationPrice" class="tag">
               {{ (stationPrice.priceSX * 10 / stationPrice.priceOfficial).toFixed(1) }} 折
             </span>
@@ -25,10 +25,10 @@
           <div class="row-cutLine"></div>
           <span class="row-location">
             <span class="text-location">
-              <img class="icon" :src="`${oss}icon-address.png`" alt="">
+              <img class="icon" src="../assets/images/icon-address.png" alt="">
               <span class="text word-break">{{item.gas_address}}</span>
             </span>
-            <button class="btn-distance toLocation" v-if="isBrowser() || isWxReady" @click="toLocation(item)">
+            <button class="btn-distance toLocation" v-if="isWxReady" @click="toLocation(item)">
               <img class="icon" src="../assets/images/icon-nav-white.png" alt="">
               <span>{{ item.distance ? `${item.distance}km` : '导航' }}</span>
             </button>
@@ -229,7 +229,7 @@ export default {
       price: null, // 准备支付的价格
       oilNumber: null, // 选中的油号
       gunNumber: null, // 选中的枪号
-      isLoading: true,
+      isLoading: false,
       isMiniProgram: window.isMiniProgram,
       myPoint: 0,
       pointPrice: 0,
@@ -243,10 +243,10 @@ export default {
       },
       isBindCard:  false,
       isPay: true,
-      Clipboard,
       authentication: false,
       alertObject: {},
-      gunNumbers:''
+      gunNumbers:'',
+      stationPrice:null
     };
   },
   created() {
@@ -323,12 +323,11 @@ export default {
     },
     async getGasDetail(){
       let res = await api.get_station({
-        action:'get_station',
-        phone:'13631620136',
-        gasId:this.$route.params.gasId
+        gasStationId:this.$route.params.gasId
       })
-      if(res.data.code==200){
-        this.item = res.data.result
+      if(res.data.code==0){
+        let data = JSON.parse(res.data.data)
+        this.item = data.data
       }else{
         this.$layer.msg(res.data.message)
       }
@@ -365,7 +364,8 @@ export default {
       overflow: hidden;
       background-color:  #f6f6f6;
       .image{
-         height: 35vw
+         height: 35vw;
+         width:100%;
       }
       .bg-gas-station {
         width: 100%;
@@ -375,7 +375,7 @@ export default {
       }
     }
     .card-station {
-      width: calc(100% - 6vw);
+      // width: calc(100% - 6vw);
       border-radius: 3vw;
       box-shadow: 1px 5px 20px 0px rgba(19, 18, 18, 0.1);
       margin: -10vw 0 0 3vw;

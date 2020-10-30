@@ -29,7 +29,7 @@ var vm = new Vue({
           if (this.code == null || this.code === '') { // 如果没有code，则去请求
               window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&redirect_uri=${encodeURIComponent(local)}&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect`
           } else {
-              // 你自己的业务逻辑
+              localStorage.setItem('code',this.code)
           }
         },
         getUrlCode() { // 截取url中的code方法
@@ -47,7 +47,7 @@ var vm = new Vue({
         }
       },
       mounted() {
-    //      this.getCode()
+         this.getCode()
       }  
     
 })

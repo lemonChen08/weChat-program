@@ -102,15 +102,20 @@
         </div>
       </div>
     </div>
+    <Bindphone @closepop='closePhone' v-show="popShow"></Bindphone>
   </div>
 </template>
 <script>
+import axios from 'axios'
+import Bindphone from "./bindPhone"
 import { api } from "@/api/api"
 export default {
   components: {
+    Bindphone
   },
   data() {
     return {
+      popShow:true,
       // 打开搜索下拉
       phoneShow:0,
       bannerList:[require('../assets/images/banner1.png'),require('../assets/images/banner2.png')],
@@ -132,9 +137,39 @@ export default {
     };
   },
   created() {
+    // this.getToken()
+
     this.getGaslist()
   },
   methods: {
+    //获取access_token
+    async getToken(){
+      let appid = 'wx2b58cb8bd7d7ceb1'
+      let secret = 'ab9b55ee595347953d732c5fe28467ff'
+      let grant_type = 'authorization_code'
+      let code = this.getUrlCode().code
+      if(!code){
+        code = this.getUrlCode().code
+      }
+      debugger
+      let res = await axios.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid='+appid+'&secret='+secret+'&code='+code+'&grant_type='+grant_type)
+      if(res){
+
+      }
+    },
+    getUrlCode() { // 截取url中的code方法
+      var url = location.search
+      this.winUrl = url
+      var theRequest = new Object()
+      if (url.indexOf("?") != -1) {
+          var str = url.substr(1)
+          var strs = str.split("&")
+          for(var i = 0; i < strs.length; i ++) {
+              theRequest[strs[i].split("=")[0]]=(strs[i].split("=")[1])
+          }
+      }
+      return theRequest
+    },
     // 下拉筛选
     choosetype(e){
       if(this.phoneShow == e.target.dataset.num){
@@ -167,12 +202,20 @@ export default {
         pagesize:100
       })
       if(res){
-        console.log(res)
-        this.$layer.msg("注册成功")
+        
       }else{
         this.$layer.msg(res.data.msg)
       }
     },
+    // 打开手机绑定
+    openPhone(){
+      this.popShow = true
+    },
+
+    // 关闭手机绑定
+    closePhone(){
+      this.popShow = false
+    }
   },
   mounted() {
     

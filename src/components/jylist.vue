@@ -91,11 +91,11 @@
             </div>
         </div>
         
-      <div class="list_item" v-for="(item,key) in jyzlist" :key="key" @click="routerTo(item.gas_id)">
+      <div class="list_item" v-for="(item,key) in jyzlist" :key="key" @click="routerTo(item.id)">
         <!-- <router-link to="jylist" class="ls_go"></router-link> -->
         <div class="ls_top flexbox">
           <div class="ls_l">
-            <img :src="item.gas_logo_small" alt="" class="ls_img">
+            <img :src="item.logo_small" alt="" class="ls_img">
             <!-- 如果休息中显示 -->
             <div class="if_stop" style="display:none;">
               <span>休息中</span>
@@ -104,8 +104,8 @@
             </div>
           </div>
           <div class="ls_m">
-            <div class="p_name">{{item.gas_name}}</div>
-            <p class="price">VIP特权价 ￥<span class="bold">{{item.discount_price}}</span><a class="oldprice">国标价 ￥ {{item.official_price}}</a></p>
+            <div class="p_name">{{item.name}}</div>
+            <p class="price">VIP特权价 ￥<span class="bold" v-if="item">{{item.prices.priceYfq}}</span><a class="oldprice">国标价 ￥ {{item.prices.priceOfficial}}</a></p>
           </div>
           <div class="ls_r" style="display:none;">
             <div class="dz">{{item.dazhe}}</div>
@@ -117,10 +117,10 @@
         </div>
         <div class="ls_bot">
           <img src="../assets/images/icon-address.png" alt="" class="d_img">
-          <div class="d_name">{{item.gas_address}}</div>
+          <div class="d_name">{{item.address}}</div>
           <button class="d_map">
             <img src="../assets/images/icon-nav-white.png" alt="" class="map_img">
-            {{(item.juli/1000).toFixed(1)}}km
+            {{item.distance}}km
           </button>
         </div>
       </div>
@@ -130,6 +130,7 @@
     </div>
 </template>
 <script>
+import {getLocation} from "@/util/wxUtil"
 import { api } from "@/api/api"
 export default {
   components: {
@@ -165,7 +166,7 @@ export default {
     };
   },
   created() {
-    
+    this.getLocationFn()
   },
   computed: {
     
@@ -206,22 +207,24 @@ export default {
     },
     async getGaslist(){
       let res = await api.get_gaslist({
-        action:'get_gaslist',
-        latitude:'36.30556423523153',
-        longitude:'104.48060937499996',
-        oilName:this.btnOilNumber+'#',
-        cityName:'',
-        orderBy:'1',
-        gasType:'',
-        page:1,
+        lat:'36.30556423523153',
+        lng:'104.48060937499996',
+        oil_numbers:this.btnOilNumber+'#',
+        pageNum:1,
         pagesize:100
       })
-      if(res.data.code==200){
-        this.jyzlist = res.data.result
+      if(res.data.code==0){
+        let data = JSON.parse(res.data.data)
+        this.jyzlist = data.data.items
       }else{
-        this.$layer.msg(res.data.message)
+        this.$layer.msg(res.data.msg)
       }
     },
+    
+    async getLocationFn(){
+        let data=await getLocation()
+        console.log(data) //获取地址信息
+    }
   },
   mounted() {
     this.getGaslist()
@@ -696,7 +699,6 @@ export default {
   font-size: 12px;
   color: #747474;
   margin-left: 10px;
-  margin-right: 20px;
   padding-top:8px;
   width:65%;
 }
