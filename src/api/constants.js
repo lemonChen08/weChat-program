@@ -28,7 +28,7 @@ export const fet = (url,data,method,postHeaders) => {
   let type = method.toLowerCase()
   let res = {}
   if(type === 'get'){
-    res = axios.get(realUrl + '/' + jsonUrl(data))
+    res = axios.get(realUrl + '?' + jsonUrl(data))
     .catch(function (error) {
       
     });
