@@ -91,7 +91,7 @@
             </div>
         </div>
         
-      <div class="list_item" v-for="(item,key) in jyzlist" :key="key" @click="routerTo(item.platform_gasid)">
+      <div class="list_item" v-for="(item,key) in jyzlist" :key="key" @click="routerTo(item.gas_id)">
         <!-- <router-link to="jylist" class="ls_go"></router-link> -->
         <div class="ls_top flexbox">
           <div class="ls_l">
