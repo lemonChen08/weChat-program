@@ -109,6 +109,7 @@
 import axios from 'axios'
 import Bindphone from "./bindPhone"
 import { api } from "@/api/api"
+import wxUtils from "@/util/wxUtil"
 export default {
   components: {
     Bindphone
@@ -137,25 +138,22 @@ export default {
     };
   },
   created() {
-    // this.getToken()
-
-    this.getGaslist()
+    
+    // this.getGaslist()
   },
   methods: {
-    //获取access_token
-    async getToken(){
-      let appid = 'wx2b58cb8bd7d7ceb1'
-      let secret = 'ab9b55ee595347953d732c5fe28467ff'
-      let grant_type = 'authorization_code'
-      let code = this.getUrlCode().code
-      if(!code){
-        code = this.getUrlCode().code
-      }
-      debugger
-      let res = await axios.get('https://api.weixin.qq.com/sns/oauth2/access_token?appid='+appid+'&secret='+secret+'&code='+code+'&grant_type='+grant_type)
-      if(res){
-
-      }
+    async getUserInfo(){
+        let res = await api.userinfo({code:localStorage.getItem('code')})
+        if(res.data.code==0){
+          this.userinfo = res.data
+          localStorage.setItem('oneToken',res.data.data.token)
+          localStorage.setItem('userInfo',res.data.data)
+          if(res.data.data.firstLogin){
+            this.popShow = true
+          }else{
+            this.popShow = false
+          }
+        }
     },
     getUrlCode() { // 截取url中的code方法
       var url = location.search
@@ -200,7 +198,7 @@ export default {
         page:1,
         pagesize:100
       })
-      if(res){
+      if(res.code==0){
         
       }else{
         this.$layer.msg(res.data.msg)
@@ -217,7 +215,7 @@ export default {
     }
   },
   mounted() {
-    
+    this.getUserInfo()
   }
 };
 </script>

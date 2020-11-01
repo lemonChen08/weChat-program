@@ -26,7 +26,7 @@ module.exports = {
     extensions: ['.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
-      '@': resolve('src')
+      '@': resolve('src'),
     }
   },
   module: {
@@ -46,7 +46,6 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 10000,
-          publicPath:"../../",
           name: utils.assetsPath('img/[name].[hash:7].[ext]')
         }
       },
@@ -59,17 +58,13 @@ module.exports = {
         }
       },
       {
-        test: /\.(woff2?|eot|ttf|TTF|otf)(\?.*)?$/,
+        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
         loader: 'url-loader',
         options: {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
-      },
-      {  
-        test: /\.scss$/,
-        loaders: ["style", "css", "sass","style-loader!css-loader!less-loader"]
-      },
+      }
     ]
   },
   node: {

@@ -22,6 +22,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 
   // these devServer options should be customized in /config/index.js
   devServer: {
+    disableHostCheck: true,
     clientLogLevel: 'warning',
     historyApiFallback: {
       rewrites: [
@@ -55,8 +56,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html',
-      inject: true,
-      //favicon: 'static/home.ico'
+      inject: true
     }),
     // copy custom static assets
     new CopyWebpackPlugin([

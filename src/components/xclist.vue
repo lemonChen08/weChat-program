@@ -1,8 +1,8 @@
 <template>
   <div class="pro_box">
     <!-- 头部搜索 -->
-    <div class="sear_head">
-      <div class="sear_box flexbox">
+    <!-- <div class="sear_head"> -->
+      <!-- <div class="sear_box flexbox">
         <input type="text" placeholder="请输入门店名称或地点回车进行搜索">
         <img src="../assets/images/sear_icon.png" alt="" @click="openmapShow">
       </div>
@@ -39,11 +39,11 @@
         <div class="dw_item">好评优先</div>
         <div class="dw_item">销量优先</div>
       </div>
-    </div>
+    </div> -->
     <!-- 头部搜索 -->
 
     <!-- 地址搜索 -->
-    <div class="sear_adress flexbox" :class="mapShow?'show':''">
+    <!-- <div class="sear_adress flexbox" :class="mapShow?'show':''">
       <div class="adr_input flexbox">
         <input type="text" placeholder="搜索地点">
         <div class="close_box" @click="closemapShow"><i class="el-icon-close"></i></div>
@@ -60,41 +60,41 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <!-- 地址搜索 -->
 
     <!-- 列表 -->
     <div class="list_box">
-      <div class="list_item" v-for="(item,key) in list">
+      <div class="list_item" v-for="(item,key) in xclist">
         <router-link to="xcdetails" class="ls_go"></router-link>
         <div class="ls_top flexbox">
           <div class="ls_l">
-            <img :src="item.img" alt="" class="ls_img">
+            <img :src="item.doorPhotoUrl" alt="" class="ls_img">
             <!-- 如果休息中显示 -->
-            <div class="if_stop">
+            <!-- <div class="if_stop">
               <span>休息中</span>
               <span>营业时间</span>
               <span>{{item.time}}</span>
-            </div>
+            </div> -->
           </div>
           <div class="ls_m">
-            <div class="p_name">{{item.name}}</div>
+            <div class="p_name">{{item.shopName}}</div>
             <div class="p_cord flexbox">
-              <div class="rank">{{item.rank}}</div>
-              <div class="sale">已售 {{item.sale}}</div>
+              <div class="rank">{{item.score}}</div>
+              <div class="sale">已售 {{item.totalNum}}</div>
             </div>
           </div>
           <div class="ls_r">
-            <div class="dz">{{item.dazhe}}</div>
-            <div class="pay_num">￥{{item.pay}}</div>
+            <div class="dz">{{item.Tdiscount}}折</div>
+            <div class="pay_num">￥{{item.Tprice}}</div>
           </div> 
         </div>
         <div class="ls_bot flexbox">
           <img src="../assets/images/icon-address.png" alt="" class="d_img">
-          <div class="d_name">{{item.adress}}</div>
+          <div class="d_name">{{item.address}}</div>
           <button class="d_map flexbox">
             <img src="../assets/images/icon-nav-white.png" alt="" class="map_img">
-            {{item.km}}
+            {{$_toDistance(item.distance)}}
           </button>
         </div>
       </div>
@@ -111,50 +111,55 @@ export default {
     return {
       // 打开搜索下拉
       phoneShow:0,
-
+      price: Infinity,
+      discount: Infinity,
       // 打开搜索地址
       mapShow:false,
-      list:[
-        {
-          img:require('../assets/images/details_baner.jpg'),
-          time:'8:00-12:00',
-          name:'新业汽车美容有限公司',
-          rank:'4.7分',
-          sale:'2',
-          dazhe:'7.6折',
-          pay:'38',
-          adress:'广东省深圳市龙岗区布沙路78号樟树布综合楼后侧',
-          km:'0.23km'
-        },
-        {
-          img:require('../assets/images/details_baner.jpg'),
-          time:'8:00-12:00',
-          name:'新业汽车美容有限公司',
-          rank:'4.7分',
-          sale:'2',
-          dazhe:'7.6折',
-          pay:'38',
-          adress:'广东省深圳市龙岗区布沙路78号樟树布综合楼后侧',
-          km:'0.23km'
-        },
-        {
-          img:require('../assets/images/details_baner.jpg'),
-          time:'8:00-12:00',
-          name:'新业汽车美容有限公司',
-          rank:'4.7分',
-          sale:'2',
-          dazhe:'7.6折',
-          pay:'38',
-          adress:'广东省深圳市龙岗区布沙路78号樟树布综合楼后侧',
-          km:'0.23km'
-        },
+      xclist:[
       ]
     };
   },
   created() {
-    
+    this.getxclist()
   },
   methods: {
+    async getxclist(){
+      let res = await api.storesList({
+        cityName:'深圳市',
+        lat:'22.60104',
+        lng:'114.045517',
+        pageNum:1,
+        pageSize:100,
+        priority:'dis',//距离优先：dis，评分优先：score，销量优先：sales;
+      })
+      if(res.data.code==0){
+        debugger
+        let data = JSON.parse(res.data.data)
+        this.xclist = data.data.items
+        this.xclist.forEach((item,i)=>{
+          item.serviceList.forEach((ktem,k)=>{
+            let finalPrice = parseFloat(ktem.finalPrice)
+            let price = parseFloat(ktem.price)
+            if (finalPrice < price) {
+              item.Tprice = finalPrice 
+            }
+            item.Tdiscount = (finalPrice / price).toFixed(2)
+          })
+        })
+      }
+    },
+    $_toDistance (distance) {
+      if (!distance) {
+        return '一键导航'
+      }
+      if (distance > 1) {
+        let num = distance / 1000
+        return (num.toFixed(2) + 'km')
+      } else {
+        let num = distance / 1000
+        return (num + 'm')
+      }
+    },
     // 下拉筛选
     choosetype(e){
       if(this.phoneShow == e.target.dataset.num){
@@ -353,7 +358,7 @@ export default {
 
 /* 产品列表 */
 .list_box{
-  padding-top: 26vw;
+  /* padding-top: 26vw; */
 }
 .list_item{
   padding: 3%;

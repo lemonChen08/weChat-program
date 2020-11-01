@@ -49,7 +49,7 @@
             :key="idx" 
             v-for="(type, idx) in oilTypes"
             @click="doSelectOilType(type.value)">
-            {{ type.key | oilType }}
+            {{ type.key }}
           </button>
         </div>
       </div>
@@ -131,6 +131,16 @@
           <div class="pad-benefit" v-if="benefit">
             约{{amount}}L，加油直降<strong class="color-red" style="font-size: 4.5vw; margin: 0.5vw;">{{ benefit }}</strong>元
           </div>
+          <button class="g-button black" :disabled="!price || isProcessing" @click="checkPhone">
+            <div v-if="!isProcessing && price && myInfo.phone">
+              确认支付 <span style="font-size: 5vw;">{{ finalPayPrice }}</span> 元
+            </div>
+            <div v-if="!isProcessing && price && !myInfo.phone">
+              授权手机号并支付 <span style="font-size: 5vw;">{{ finalPayPrice }}</span> 元
+            </div>
+            <span v-if="!price">请先输入加油金额</span>
+            <span v-if="isProcessing">正在支付中</span>
+          </button>
         </div>  
       </div>  
     </div>  
@@ -139,15 +149,15 @@
             :price="truePrice"
             switchName="point_enable_czb"
             @change="handleChange"
-          />
-          <equity-editor
+          /> -->
+          <!-- <equity-editor
             ref="equity-editor"
             v-if="truePrice && channelInfo.channel_config && channelInfo.channel_config.equity_points_switch"
             :equityTopPrice="benefit"
             :recharge="toRecharge"
             @change="equityChange"
-          />
-          <div v-if="showAuth" style="margin-bottom:4.5vw;">
+          /> -->
+          <!-- <div v-if="showAuth" style="margin-bottom:4.5vw;">
             <span class="text-to-vip fee ghyy-bank-tip">
               <div class='_availableAmount' v-if="remain.availableAmount == 0 && ghyyRechargeSwitch == 1">
                   <span>充值上海银行卡最高赠送3.5%，
@@ -162,30 +172,15 @@
               </div>
             </span>
             <div v-if="myInfo.ghyy_bank_card" style="font-size:4vw;margin-top:3vw;"  @click="toRoute('/bindCardCourse')">如何绑卡？</div>
-          </div>
-          <button class="g-button black" :disabled="!price || isProcessing || !myInfo.isVip" @click="checkPhone">
-            <div v-if="!isProcessing && price && myInfo.phone">
-              确认支付 <span style="font-size: 5vw;">{{ finalPayPrice }}</span> 元
-            </div>
-            <div v-if="!isProcessing && price && !myInfo.phone">
-              授权手机号并支付 <span style="font-size: 5vw;">{{ finalPayPrice }}</span> 元
-            </div>
-            <span v-if="!price">请先输入加油金额</span>
-            <span v-if="isProcessing">正在支付中</span>
-          </button>
-          <span v-if="fee && isRealPriceChannel" class="text-to-vip fee">
-            加油通道服务费为 {{ fee }} 元
-          </span>
-          <span v-if="!myInfo.isVip" class="text-to-vip" @click="toVipLink">
+          </div> -->
+          
+          <!-- <span v-if="!myInfo.isVip" class="text-to-vip" @click="toVipLink">
             点此办理会员享受优惠
-          </span>
-        </div>
-      </div>
-      <span :class="['color-red text-tips', this.gunNumber ? '' : 'bottom']" v-if="$route.query && $route.query.channel_id == 1793">
+          </span> -->
+      <!-- <span :class="['color-red text-tips', this.gunNumber ? '' : 'bottom']" v-if="$route.query && $route.query.channel_id == 1793">
         重要提示：请务必先到加油站，与工作人员确认后再付款，切勿先买单后前往加油站，避免异常订单产生。
 优惠价格实时更新具体价格以支付时显示为准。
       </span> -->
-    </div>
   </div>
 </template>
 <script>
@@ -250,6 +245,9 @@ export default {
       isPay: true,
       authentication: false,
       alertObject: {},
+      myInfo:{
+        phone:'13631620136'
+      }
     };
   },
   created() {
@@ -335,11 +333,12 @@ export default {
       return result.toFixed(2)
     },
     finalPayPrice () { // 最终展示在按钮上的金额
-      const pointPrice = this.usePoint * this.channelInfo.point_integer_ratio / this.channelInfo.point_exchange_ratio || 0
+      // const pointPrice = this.usePoint * this.channelInfo.point_integer_ratio / this.channelInfo.point_exchange_ratio || 0
+      const pointPrice = 0
       let result = this.truePrice - pointPrice
-      if (this.channelInfo.channel_config && this.channelInfo.channel_config.equity_points_switch) {
-        return (this.price - this.equity_points).toFixed(2)
-      }
+      // if (this.channelInfo.channel_config && this.channelInfo.channel_config.equity_points_switch) {
+      //   return (this.price - this.equity_points).toFixed(2)
+      // }
       if (this.discountBundle && (this.discountBundle.threshold <= this.price)) {
         result = result - this.discountBundle.money
         console.warn('有优惠券')
@@ -360,11 +359,12 @@ export default {
       const maxPoint = Math.floor(maxPrice * (this.channelInfo.point_integer_ratio / this.channelInfo.point_exchange_ratio))
       return maxPoint > this.myPoint ? this.myPoint : maxPoint
     },
-    // benefit () { // 优惠金额
-    //   const pointPrice = this.usePoint * this.channelInfo.point_integer_ratio / this.channelInfo.point_exchange_ratio || 0
-    //   let result = this.truePrice - pointPrice
-    //   return (Math.round((this.price - parseFloat(result)) * 100) / 100)
-    // },
+    benefit () { // 优惠金额
+      // const pointPrice = this.usePoint * this.channelInfo.point_integer_ratio / this.channelInfo.point_exchange_ratio || 0
+      const pointPrice = 0
+      let result = this.truePrice - pointPrice
+      return (Math.round((this.price - parseFloat(result)) * 100) / 100)
+    },
   },
   methods: {
     getDiscount () {
@@ -406,7 +406,7 @@ export default {
     },
     doInput (value) {
       this.price = value
-      scrollTo('.pad-gas-station')
+      // scrollTo('.pad-gas-station')
       if (value <= this.discountBundle.threshold) {
         this.discountBundle = {}
       }
@@ -416,7 +416,7 @@ export default {
         document.body.scrollTop = document.body.scrollHeight
         window.clearTimeout(timer)
       }, 300)
-      scrollToBottom('.pad-gas-station')
+      // scrollToBottom('.pad-gas-station')
     },
     onInput () {
       if (this.price && isNaN(this.price)) {
@@ -491,6 +491,83 @@ export default {
         this.oilType = this.oilTypes[0].value
       }
     },
+    checkPhone () {
+      if (this.myInfo.phone) {
+        this.toPay()
+      } else {
+        this.showBindPhone = true
+      }
+    },
+    async toPay () {
+      this.isProcessing = true
+      // const channel_id = session.get(session.KEY_CURRENT_CHANNEL_ID) || 0
+      // let price
+      // const { channel_config } = this.channelInfo
+      // if (channel_config && channel_config.equity_points_switch) {
+      //   if (this.equity_points) {
+      //     price = this.price - this.equity_points
+      //   } else {
+      //     price = this.price
+      //   }
+      // } else {
+      //   price = this.truePrice
+      // }
+      // let bundle = {
+      //   channel_id: parseInt(channel_id),
+      //   gas_id: this.id,
+      //   gun_id: this.gunNumber,
+      //   price: parseFloat(price) * 100,
+      //   unit_price: Math.round(parseFloat(this.oilNumber.priceYfq) * 100),
+      //   origin_price: Math.round(this.price * 100),
+      //   origin_unit_price: Math.round(this.oilNumber.priceGun * 100),
+      //   oil_name: this.oilNumber.oilName,
+      //   oil_type: this.oilNumber.oilType,
+      //   units: parseFloat(this.amount),
+      //   gas_from: this.oilNumber.from
+      // } 
+      // if (this.$route.query.extra) { // 第三方附加参数【省心×方诺科技】
+      //   bundle.extra = this.$route.query.extra
+      // }
+      // if (this.usePoint) { // 第三方积分必须为整数【省心×一点停】
+      //   bundle.point = Math.floor(this.usePoint) * this.channelInfo.point_integer_ratio
+      // }
+      // if (this.discountBundle.id) { // 使用线上加油优惠券【省心×银商加油站】
+      //   bundle.coupon_id = this.discountBundle.id
+      // }
+      // if (channel_config && channel_config.equity_points_switch) {
+      //   bundle.equity_points = this.equity_points * 100
+      // }
+      let res = await czbOrderApis.create(bundle)
+      report('加油支付', '点击', '创建加油订单')
+      if (res.code !== 200) {
+        this.isProcessing = false
+        report('加油支付', '回调', '创建加油订单失败')
+        if (res.message === '油站返回错误![平台余额不足]') {
+          this.isProcessing = false
+          this.$hxui.toast.warn('暂不支持该油站')
+        } else {
+          this.isProcessing = false
+          this.$hxui.toast.warn(res.message)
+        }
+        return
+      }
+      let timeout = window.setTimeout(() => {
+        this.isProcessing = false
+        window.clearTimeout(timeout)
+      }, 2500)
+      const { id } = res.data
+      session.save('myBankInfo', {rebate: this.bank.rebate, availableAmount: this.remain.availableAmount, isPay: this.isPay})
+      // debugger
+      report('加油支付', '回调', '创建加油订单成功')
+      if (this.CouponDetail.is_receive !== 0) {
+        toUnitePay(id, `/czbOrder/${id}?success=1`, { isYsPay: this.oilNumber.from === GasStationSource.SHENGXIN })
+      } else {
+        this.showBanner = true
+        setTimeout(() => {
+          toUnitePay(id, `/czbOrder/${id}?success=1`, { isYsPay: this.oilNumber.from === GasStationSource.SHENGXIN })
+        }, 3000)
+      }
+    },
   },
   mounted() {
     this.getGasDetail()
@@ -523,7 +600,8 @@ export default {
       overflow: hidden;
       background-color:  #f6f6f6;
       .image{
-         height: 35vw
+         height: 35vw;
+         width:100%;
       }
       .bg-gas-station {
         width: 100%;
@@ -533,7 +611,7 @@ export default {
       }
     }
     .card-station {
-      width: calc(100% - 6vw);
+      // width: calc(100% - 6vw);
       border-radius: 3vw;
       box-shadow: 1px 5px 20px 0px rgba(19, 18, 18, 0.1);
       margin: -10vw 0 0 3vw;
@@ -1041,6 +1119,460 @@ export default {
         height: 4.2vw;
         width: auto;
 }
-
-
+.right{float:right;}
+.hx-row {
+  width: 100%;
+  padding: 1vw 0;
+  color: #474747;
+  background-color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  border-bottom: 1px solid #f6f6f6;
+}
+.hx-row.sm .label {
+    padding: 0;
+}
+.hx-row.null {
+    padding: 0 !important;
+}
+.hx-row.center {
+    text-align: center;
+}
+.hx-row.left div.content input, .hx-row.left div.content textarea {
+    text-align: left;
+}
+.hx-row label, .hx-row .content {
+    display: inline-block;
+    font-size: 3.8vw;
+    vertical-align: top;
+}
+.hx-row.oneline {
+    display: block;
+    padding: 0;
+}
+.hx-row.oneline label {
+      display: block;
+      width: 100%;
+}
+.hx-row.oneline .content {
+      width: 100%;
+}
+.hx-row.oneline .content .input, .hx-row.oneline .content textarea, .hx-row.oneline .content input {
+        text-align: left;
+}
+.hx-row label {
+    min-width: 20vw;
+    margin-right: 1vw;
+    padding: 2vw 0;
+    color: black;
+    font-weight: 500;
+    font-size: 3.8vw;
+    line-height: 1.6;
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+}
+.hx-row label .sub-label {
+      font-size: 3.5vw;
+      color: #aaa;
+      font-weight: 400;
+}
+.hx-row label.multiLine {
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
+}
+.hx-row label.title {
+      font-size: 3.8vw;
+      font-weight: 800;
+}
+.hx-row label .tip {
+      color: #FFBC00;
+      font-size: 3.5vw;
+}
+.hx-row div.content {
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    position: relative;
+    padding: 0;
+    vertical-align: top;
+    text-align: right;
+    -webkit-box-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: end;
+        -ms-flex-pack: end;
+            justify-content: flex-end;
+}
+.hx-row div.content:hover .btn-clear {
+      display: -webkit-inline-box;
+      display: -ms-inline-flexbox;
+      display: inline-flex;
+}
+.hx-row div.content .hx-switch {
+      top: 50%;
+      position: absolute !important;
+      transform: translateY(-50%);
+      -webkit-transform: translateY(-50%);
+      -moz-transform: translateY(-50%);
+      -o-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+}
+.hx-row div.content .text {
+      padding: 2vw 0 2vw 2vw;
+      width: 100%;
+      display: block;
+      border-radius: 2vw;
+      line-height: 1.6;
+      word-break: break-all;
+}
+.hx-row div.content .text.left {
+        text-align: left;
+}
+.hx-row div.content .text.border {
+        border: 1px solid #c1c1c1;
+}
+.hx-row div.content .text.disabled {
+        border: 1px solid #f6f6f6;
+        background-color: #f6f6f6;
+}
+.hx-row div.content .text.tip {
+        font-size: 3.5vw;
+        font-weight: 300;
+        color: #aaa;
+        line-height: 3.5vw;
+        height: 3.5vw;
+        margin-top: 1vw;
+}
+.hx-row div.content .divider {
+      display: inline-block;
+      margin: 0 3vw 0;
+      width: 1px;
+      height: 40%;
+      background-color: #f6f6f6;
+}
+.hx-row div.content button.btn-text {
+      background-color: transparent;
+      border: none;
+      color: #FFBC00;
+      padding: 0;
+      min-width: 20vw;
+      cursor: default;
+}
+.hx-row div.content input [type='file'] {
+      position: absolute;
+      visibility: hidden;
+}
+.hx-row div.content input, .hx-row div.content select {
+      border: none;
+      text-align: right;
+      -webkit-box-flex: 1;
+          -ms-flex: 1;
+              flex: 1;
+      font-size: 3.8vw;
+      padding-right: 0;
+}
+.hx-row div.content textarea {
+      -webkit-box-flex: 1;
+          -ms-flex: 1;
+              flex: 1;
+      display: block;
+      font-size: 3.8vw;
+      line-height: 1.6;
+      padding: 2vw 0;
+      height: auto;
+      border: none;
+      text-align: right;
+}
+.hx-row div.content textarea + .degree {
+      top: auto;
+      bottom: 0;
+      height: 10vw;
+      line-height: 10vw;
+}
+.hx-row div.content textarea ~ .btn-clear {
+      top: auto;
+      bottom: 0;
+}
+.hx-row div.content .pad-dropdown {
+      position: absolute;
+      top: 11vw;
+      left: 0;
+      width: 100%;
+      padding: 3vw;
+      z-index: 123;
+      display: inline-block;
+      background-color: white;
+      opacity: .0;
+      visibility: hidden;
+      -webkit-box-shadow: 0 5px 20px -6px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 5px 20px -6px rgba(0, 0, 0, 0.3);
+      transition: all 0.4s;
+      -webkit-transition: all 0.4s;
+      -moz-transition: all 0.4s;
+      -o-transition: all 0.4s;
+      -ms-transition: all 0.4s;
+}
+.hx-row div.content .pad-dropdown.show {
+        visibility: visible;
+        opacity: 1.0;
+}
+.hx-row div.content .pad-tags {
+      width: 100%;
+      padding: 0;
+      display: block;
+      min-height: 7vw;
+}
+.hx-row div.content .pad-tags .tag {
+        padding: 0 0 0 3vw;
+        height: 7vw;
+        line-height: 7vw;
+        background-color: #FFBC00;
+        display: inline-block;
+        font-size: 3.5vw;
+        font-weight: 300;
+        color: white;
+        margin: 0 0.5vw 1vw 0;
+        border-radius: 7vw 7vw;
+        -webkit-border-radius: 7vw 7vw;
+        -moz-border-radius: 7vw 7vw;
+        -o-border-radius: 7vw 7vw;
+        -ms-border-radius: 7vw 7vw;
+}
+.hx-row div.content .pad-tags .tag span {
+          width: auto;
+          display: inline-block;
+          height: 7vw;
+          line-height: 7vw;
+          margin-right: 1vw;
+          font-size: 3.5vw;
+}
+.hx-row div.content .pad-tags .tag .btn-remove {
+          color: rgba(255, 255, 255, 0.93);
+          width: 7vw;
+          height: 7vw;
+          display: inline-block;
+          font-size: 4.3vw;
+          font-weight: 100;
+          float: right;
+          background-color: transparent;
+}
+.hx-row div.content .pad-tags .tag .btn-remove:hover {
+            color: #ff5a50;
+}
+.hx-row div.content .for-image {
+      height: 120px;
+      display: inline-block;
+      overflow: hidden;
+      position: relative;
+}
+.hx-row div.content .for-image img {
+        margin-right: 0;
+}
+.hx-row div.content .for-image .dot {
+        position: absolute;
+        right: 8px;
+        top: 4px;
+        cursor: default;
+        display: block;
+        height: 5vw;
+        line-height: 5vw;
+        padding: 0 0.5vw;
+        font-size: 10px;
+        border-radius: 2vw;
+        -webkit-border-radius: 2vw;
+        -moz-border-radius: 2vw;
+        -o-border-radius: 2vw;
+        -ms-border-radius: 2vw;
+        background-color: #aaa;
+        color: rgba(255, 255, 255, 0.93);
+}
+.hx-row div.content .for-image .dot:hover {
+          background-color: #a5a5a5;
+}
+.hx-row div.content .for-image .dot.clear {
+          background-color: #FFBC00;
+          color: white;
+}
+.hx-row div.content .for-image .dot.clear:hover {
+            background-color: #f5b400;
+}
+.hx-row div.content .for-image .empty-image {
+        height: 120px;
+        width: 160px;
+        line-height: 120px;
+        text-align: center;
+        background-color: #f6f6f6;
+        color: #aaa;
+        border-radius: 2vw;
+        -webkit-border-radius: 2vw;
+        -moz-border-radius: 2vw;
+        -o-border-radius: 2vw;
+        -ms-border-radius: 2vw;
+        font-size: 4.3vw;
+        padding: 0;
+}
+.hx-row div.content .for-image.preview:after {
+        content: '\67E5\770B\5927\56FE';
+        color: white;
+        background-color: rgba(0, 0, 0, 0.6);
+        visibility: hidden;
+        opacity: .0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        font-weight: 200;
+        line-height: 120px;
+        text-align: center;
+        border-radius: 2vw;
+        -webkit-border-radius: 2vw;
+        -moz-border-radius: 2vw;
+        -o-border-radius: 2vw;
+        -ms-border-radius: 2vw;
+        transition: all 0.4s;
+        -webkit-transition: all 0.4s;
+        -moz-transition: all 0.4s;
+        -o-transition: all 0.4s;
+        -ms-transition: all 0.4s;
+}
+.hx-row div.content .for-image.preview:hover:after {
+        opacity: 1.0;
+        visibility: visible;
+}
+.hx-row div.content .icon {
+      height: 4.56vw;
+      width: auto;
+      margin-left: 1vw;
+}
+.hx-row div.content .btn-clear {
+      top: 50%;
+      position: absolute !important;
+      transform: translateY(-50%);
+      -webkit-transform: translateY(-50%);
+      -moz-transform: translateY(-50%);
+      -o-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+      right: 3vw;
+      height: 18px;
+      width: 18px;
+      border-radius: 30px;
+      padding: 0;
+      display: none;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      background-color: #c1c1c1;
+}
+.hx-row div.content .btn-clear img.icon {
+        width: 60%;
+        height: 60%;
+        border: none;
+        margin: 0;
+}
+.hx-row div.content .btn-clear:hover {
+        background-color: #FFBC00;
+}
+.hx-row div.content select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+           appearance: none;
+      border: none;
+      text-align: right;
+}
+.card-station .row-price {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+}
+.card-station .row-price + .row-price {
+      margin-top: 0.6vw;
+}
+.card-station .row-price .price, .card-station .row-price .officialPrice, .card-station .row-price .tag {
+      display: -webkit-inline-box;
+      display: -ms-inline-flexbox;
+      display: inline-flex;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      font-size: 3vw;
+}
+.card-station .row-price .price strong, .card-station .row-price .officialPrice strong, .card-station .row-price .tag strong {
+        font-size: 4vw;
+}
+.card-station .row-price .tag {
+      color: #ff8d0a;
+      padding: 0 1vw;
+      border-radius: 4vw;
+      border: 1px solid #ff8d0a;
+}
+.card-station .row-price .officialPrice {
+      color: #c1c1c1;
+      margin-left: 3vw;
+      text-decoration: line-through;
+}
+.g-button {
+  width: 100%;
+  display: block;
+  font-size: 4.3vw;
+  height: 12vw;
+  border-radius: 2vw;
+  background-color: #FFBC00;
+  color: white;
+  -webkit-box-shadow: 0 1vw 3vw rgba(255, 188, 0, 0.2);
+          box-shadow: 0 1vw 3vw rgba(255, 188, 0, 0.2);
+  font-weight: 400;
+}
+.g-button.text {
+    background-color: transparent;
+    color: #747474;
+    -webkit-box-shadow: none;
+            box-shadow: none;
+    text-decoration: underline;
+    line-height: 1.5;
+}
+.g-button.black {
+    background-color: black;
+    color: white;
+    -webkit-box-shadow: 0 1vw 3vw rgba(0, 0, 0, 0.2);
+            box-shadow: 0 1vw 3vw rgba(0, 0, 0, 0.2);
+}
+.g-button.red {
+    background-color: #ff5a50;
+    color: white;
+    -webkit-box-shadow: 0 1vw 3vw rgba(255, 90, 80, 0.2);
+            box-shadow: 0 1vw 3vw rgba(255, 90, 80, 0.2);
+}
+.g-button.green {
+    background-color: #52c93f;
+    color: white;
+    -webkit-box-shadow: 0 1vw 3vw rgba(82, 201, 63, 0.2);
+            box-shadow: 0 1vw 3vw rgba(82, 201, 63, 0.2);
+}
+.g-button.default {
+    background-color: #f6f6f6;
+    color: white;
+    -webkit-box-shadow: 0 1vw 3vw rgba(246, 246, 246, 0.2);
+            box-shadow: 0 1vw 3vw rgba(246, 246, 246, 0.2);
+    color: #747474;
+}
+.g-button:disabled {
+    background-color: #aaa;
+    color: white;
+    -webkit-box-shadow: 0 1vw 3vw rgba(170, 170, 170, 0.2);
+            box-shadow: 0 1vw 3vw rgba(170, 170, 170, 0.2);
+}
 </style>
