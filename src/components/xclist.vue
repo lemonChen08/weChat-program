@@ -190,7 +190,7 @@ export default {
     },
   },
   mounted() {
-    this.getLogin()
+    // this.getLogin()
   }
 };
 </script>

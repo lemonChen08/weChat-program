@@ -41,8 +41,8 @@
                 <div class="zone-options">
                     <button v-for="(item, idx) in gasolineNumbers"
                     :key="idx"
-                    @click="doSelectNumber(item)"
-                    :class="['btn-option', oil_numbers === item && 'selected']">
+                    @click="doSelectNumber(OilTypes.GASOLINE, item)"
+                    :class="['btn-option', searchInfo.oil_numbers === item && 'selected']">
                     {{ item }}#
                     </button>
                 </div>
@@ -54,8 +54,8 @@
                 <div class="zone-options">
                     <button v-for="(item, idx) in dieselNumbers"
                     :key="idx"
-                    @click="doSelectNumber(item)"
-                    :class="['btn-option', oil_numbers === item && 'selected']">
+                    @click="doSelectNumber(OilTypes.DIESEL, item)"
+                    :class="['btn-option', searchInfo.oil_numbers === item && 'selected']">
                     {{ item }}#
                     </button>
                 </div>
@@ -67,8 +67,8 @@
                 <div class="zone-options">
                     <button v-for="(item, idx) in gasNumbers"
                     :key="idx"
-                    @click="doSelectNumber(item)"
-                    :class="['btn-option', oil_numbers === item && 'selected']">
+                    @click="doSelectNumber(OilTypes.GAS, item)"
+                    :class="['btn-option', searchInfo.oil_numbers === item && 'selected']">
                     {{ item }}
                     </button>
                 </div>
@@ -91,7 +91,7 @@
             </div>
         </div>
         
-      <div class="list_item" v-for="(item,key) in jyzlist" :key="key" @click="routerTo(item.id)">
+      <div class="list_item" v-for="(item,key) in jyzlist" :key="key" @click="routerTo(item)">
         <!-- <router-link to="jylist" class="ls_go"></router-link> -->
         <div class="ls_top flexbox">
           <div class="ls_l">
@@ -105,7 +105,7 @@
           </div>
           <div class="ls_m">
             <div class="p_name">{{item.name}}</div>
-            <p class="price">VIP特权价 ￥<span class="bold" v-if="item">{{item.prices.priceYfq}}</span><a class="oldprice">国标价 ￥ {{item.prices.priceOfficial}}</a></p>
+            <p class="price">VIP特权价 ￥<span class="bold" v-if="item">{{item.price.priceYfq}}</span><a class="oldprice">国标价 ￥ {{item.price.priceOfficial}}</a></p>
           </div>
           <div class="ls_r" style="display:none;">
             <div class="dz">{{item.dazhe}}</div>
@@ -131,6 +131,16 @@
 </template>
 <script>
 import {getLocation} from "@/util/wxUtil"
+import { 
+  GasStationSource,
+  OilTypes,
+  gasNumbers,
+  GhyyOrderStatuses,
+  oilTypeArray,
+  gasolineNumbers, 
+  dieselNumbers,
+  gasStationBrandArray  
+} from '../util/const'
 import { api } from "@/api/api"
 export default {
   components: {
@@ -141,7 +151,6 @@ export default {
       showOilNumber: false,
       showBrand:false,
       showAddressSelector:false,
-      oil_numbers:'',
       searchInfo: {
         lat: '',
         lng: '',
@@ -152,16 +161,11 @@ export default {
         page: 1,
         address: ''
       },
-      btnOilNumber:'92',
-      gasolineNumbers:['90','92','95','98','101'],
-      dieselNumbers:['-40','-35','-30','-20','-10','国四','0'],
-      gasNumbers:['CNG','LNG'],
-      gasStationBrandArray:[
-        { value: 1, key: '中石油' },
-        { value: 2, key: '中石化' },
-        { value: 3, key: '壳牌' },
-        { value: 4, key: '其他' }
-      ],
+      OilTypes,
+      gasolineNumbers, 
+      dieselNumbers, 
+      gasNumbers,
+      gasStationBrandArray,
       jyzlist:[]
     };
   },
@@ -169,11 +173,20 @@ export default {
     this.getLocationFn()
   },
   computed: {
-    
+    btnOilNumber () {
+      const { oil_numbers, oil_types } = this.searchInfo
+      if (!oil_numbers) {
+        return '全部油号'
+      }
+      const oilType = oilTypeArray.filter(v => v.value === oil_types)
+      if (oil_numbers && oilType.length) {
+        return `${oil_numbers}${oil_types !== OilTypes.GAS ? '#' : ''}${oilType[0].key}`
+      }
+    },
   },
   methods: {
-    routerTo(id){
-        this.$router.push({ name: 'jydetail', params: { gasId: id }});
+    routerTo(item){
+        this.$router.push({ path: '/jydetail', query: { gasId:item.id,oil_number: this.searchInfo.oil_numbers}});
     },  
     doToggleOilNumber () {
       this.showOilNumber = !this.showOilNumber
@@ -187,8 +200,9 @@ export default {
         this.showOilNumber = false
       }  
     },
-    doSelectNumber(item){
-      this.btnOilNumber = item
+    doSelectNumber(oil_types, oil_numbers){
+      this.searchInfo.oil_types = oil_types
+      this.searchInfo.oil_numbers = oil_numbers
       this.showOilNumber = false
       this.getGaslist()
     },
@@ -209,18 +223,38 @@ export default {
       let res = await api.get_gaslist({
         lat:'36.30556423523153',
         lng:'104.48060937499996',
-        oil_numbers:this.btnOilNumber+'#',
+        oil_numbers:this.searchInfo.oil_numbers+'#',
         pageNum:1,
         pagesize:100
       })
       if(res.data.code==0){
         let data = JSON.parse(res.data.data)
-        this.jyzlist = data.data.items
+        // this.jyzlist = data.data.items
+        data.data.items = data.data.items.map(v => {
+          v.price = this.getPriceByOilNumber(v, this.searchInfo.oil_numbers)
+          return v 
+        })
+        this.jyzlist = this.jyzlist.concat(data.data.items)
       }else{
         this.$layer.msg(res.data.msg)
       }
     },
-    
+    // 根据传入的油号获取检测站的价格信息
+   getPriceByOilNumber (v, oil_numbers) {
+      if (!v.prices || (v.prices && !v.prices.length)) {
+        return null
+      }
+      if (!oil_numbers) {
+        return v.prices[0]
+      }
+      for (let i = 0; i < v.prices.length; i++) {
+        // eslint-disable-next-line
+        if (parseInt(oil_numbers) == v.prices[i].oilNo) {
+          return v.prices[i]
+        }
+      }
+      return {}
+    },
     async getLocationFn(){
         let data=await getLocation()
         console.log(data) //获取地址信息
