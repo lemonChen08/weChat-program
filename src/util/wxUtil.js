@@ -1,28 +1,38 @@
 import wx from "weixin-jsapi";
+
  
  
 import { getJSSDK } from '@/api/wx';//获取appid信息的接口,以后台人员接口为准
 // import { payorders } from "@/api/appointment";//一个更具订单id获取appid的接口
- 
- 
-const wxUtils = () => {
+
+const wxUtils = (jsurl) => {
   return new Promise((resolve, reject) => {
-    getJSSDK().then(async data => {
+    getJSSDK(jsurl).then(async data => {
       await wx.config({
-        debug: false, // TODO: 测试阶段使用
-        appId: data.appid,
-        timestamp: data.timestamp,
-        nonceStr: data.nonceStr,
-        signature: data.signature,
+        debug: true, // TODO: 测试阶段使用
+        appId: data.data.data.appId,
+        timestamp: data.data.data.timestamp,
+        nonceStr: data.data.data.nonceStr,
+        signature: data.data.data.signature,
         jsApiList: [
           'getLocation',
           'hideMenuItems'
         ]
       });
+      wx.getLocation({
+        type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+        success: response => {
+          console.log('地理位置获取成功',response)
+          localStorage.setItem('latlon',response)
+        },
+        fail: err => {
+          console.log('获取位置失败', JSON.stringify(err))
+        },
+        cancel: err => {
+          console.log('用户拒绝授权获取地理位置', err)
+        }
+      })  
       wxReady(resolve)
-    }).catch(error => {
-      reject();
-      console.log(error);
     })
   })
 }
@@ -72,19 +82,5 @@ const wxReady = resolve => {  //不让分享
  
 // }
  
-// 获取地理位置
-const getLocation = () => {
-  return new Promise((resolve, reject) => {
-    wx.getLocation({
-      type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-      success: response => {
-        resolve(response);
-      },
-      fail: err => {
-        reject(err);
-      }
-    });
-  });
-};
 export { getLocation };
 export default wxUtils;

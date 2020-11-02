@@ -1,6 +1,6 @@
 <template>
     <div class="pad-gas-stations">
-        <div class="pad-banner-gasoline options" style="padding: 0;">
+        <!-- <div class="pad-banner-gasoline options" style="padding: 0;">
             <button class="btn-switch" @click="gasMode = 1">
                 <img class="icon" src="../assets/images/refuel_list_ic_preferential@2x.png" alt="">
                 <span class="text-name">优惠加油</span>
@@ -27,13 +27,13 @@
             <button class="btn-item" @click="doToggleBrand">
                 全部品牌
                 <img :class="['icon', showBrand && 'revert']" src="../assets/images/icon-expand.png"/>
-            </button>
+            </button> -->
             <!-- <button class="btn-search-location" 
                 style="width: 40px;"
                 @click="showAddressSelector = true">
                 <img class="icon-search" src="../assets/images/icon-search.png"/>
             </button> -->
-            <div :class="['pad-option', showOilNumber && 'show']"  style="padding-top: 3vw;">
+            <!-- <div :class="['pad-option', showOilNumber && 'show']"  style="padding-top: 3vw;">
                 <div class="section">
                 <header class="title">
                     汽油
@@ -89,7 +89,7 @@
                 <button class="btn-search" @click="doConfirmBrand">确定</button>
                 </div>
             </div>
-        </div>
+        </div> -->
         
       <div class="list_item" v-for="(item,key) in jyzlist" :key="key" @click="routerTo(item)">
         <!-- <router-link to="jylist" class="ls_go"></router-link> -->
@@ -220,9 +220,10 @@ export default {
        this.getGaslist()
     },
     async getGaslist(){
+      let latlon = localStorage.getItem('latlon')
       let res = await api.get_gaslist({
-        lat:'36.30556423523153',
-        lng:'104.48060937499996',
+        lat:latlon.latitude,
+        lng:latlon.longitude,
         oil_numbers:this.searchInfo.oil_numbers+'#',
         pageNum:1,
         pagesize:100

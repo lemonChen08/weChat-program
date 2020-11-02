@@ -10,12 +10,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-// const PrerenderSPAPlugin = require('prerender-spa-plugin')
-// const Renderer = PrerenderSPAPlugin.PuppeteerRenderer
 
-const env = process.env.NODE_ENV === 'testing'
-  ? require('../config/test.env')
-  : require('../config/prod.env')
+const env = require('../config/prod.env')
 
 const webpackConfig = merge(baseWebpackConfig, {
   module: {
@@ -39,9 +35,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     new UglifyJsPlugin({
       uglifyOptions: {
         compress: {
-          warnings: false,
-          drop_debugger: true,//关闭debug
-          drop_console: true,//关闭console
+          warnings: false
         }
       },
       sourceMap: config.build.productionSourceMap,
@@ -67,9 +61,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
-      filename: process.env.NODE_ENV === 'testing'
-        ? 'index.html'
-        : config.build.index,
+      filename: config.build.index,
       template: 'index.html',
       inject: true,
       minify: {
@@ -80,31 +72,8 @@ const webpackConfig = merge(baseWebpackConfig, {
         // https://github.com/kangax/html-minifier#options-quick-reference
       },
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-      chunks: ['manifest', 'vendor', 'app'],
       chunksSortMode: 'dependency'
     }),
-    // 配置PrerenderSPAPlugin
-  //   new PrerenderSPAPlugin({
-  //     // 生成文件的路径，也可以与webpakc打包的一致。
-  //     staticDir: path.join(__dirname, '../dist'),
-      
-  //     // 对应自己的路由文件，比如index有参数，就需要写成 /index/param1。
-  //     routes: ['/home'],
-     
-  //     // 这个很重要，如果没有配置这段，也不会进行预编译
-  //     // renderer: new Renderer({
-  //     //     inject: {
-  //     //       foo: 'bar'
-  //     //     },
-  //     //     headless: true,
-  //     //     // 在 main.js 中 document.dispatchEvent(new Event('render-event'))，两者的事件名称要对应上。
-  //     //     renderAfterDocumentEvent: 'render-event'
-  //     // }),
-  //     // renderer: new PrerenderSPAPlugin.PuppeteerRenderer({//这样写renderAfterTime生效了
-  //     //   renderAfterTime: 5000
-  //     //   // renderAfterDocumentEvent: 'render-event'
-  //     // })
-  // }),
     // keep module.id stable when vendor modules does not change
     new webpack.HashedModuleIdsPlugin(),
     // enable scope hoisting
