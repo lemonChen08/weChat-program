@@ -6,7 +6,7 @@
       </el-carousel-item>
     </el-carousel>
     <div class="pad-functions">
-      <div class="item-normal">
+      <div class="item-normal" @click="toJylist">
         <div class="card-navigator">
           <img src="../assets/images/jiayou.png" class="icon"/>
           <span class="tag">8折</span>
@@ -15,7 +15,7 @@
           </div>
         </div>
       </div>
-      <div class="item-normal">
+      <div class="item-normal" @click="toXclist">
         <div class="card-navigator">
           <img src="../assets/images/xiche.png" class="icon"/>
           <span class="tag">8折</span>
@@ -109,7 +109,8 @@
 import axios from 'axios'
 import Bindphone from "./bindPhone"
 import { api } from "@/api/api"
-import wxUtils from "@/util/wxUtil"
+import {getLocation} from "@/util/wxUtil"
+const qs = require('qs')
 export default {
   components: {
     Bindphone
@@ -142,16 +143,18 @@ export default {
     // this.getGaslist()
   },
   methods: {
+
     async getUserInfo(){
         let res = await api.userinfo({code:localStorage.getItem('code')})
         if(res.data.code==0){
+          this.getLocationFn()
           this.userinfo = res.data
           localStorage.setItem('oneToken',res.data.data.token)
-          localStorage.setItem('userInfo',res.data.data)
+          localStorage.setItem('userInfo',JSON.stringify(res.data.data))
           if(res.data.data.firstLogin){
             this.popShow = true
           }else{
-            this.popShow = false
+            this.popShow = true
           }
         }
     },
@@ -213,10 +216,34 @@ export default {
     // 关闭手机绑定
     closePhone(){
       this.popShow = false
+    },
+    toJylist(){
+      this.$router.replace('/jylist')
+    },
+    toXclist(){
+      this.$router.replace('/xclist')
+    },
+    async getLocationFn(){
+        let data=await getLocation()
+        if(data){
+          localStorage.setItem('latlon',JSON.stringify(data))
+        }
     }
   },
   mounted() {
-    this.getUserInfo()
+    let userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    const url = window.location.href;
+    const parseUrl = qs.parse(url.split('?')[1])
+    if(!userInfo){
+      if(!parseUrl.code){
+        
+        this.getUserInfo()
+      }
+    }else{
+      this.popShow = userInfo.firstLogin
+      this.getLocationFn()
+    }
+    
   }
 };
 </script>

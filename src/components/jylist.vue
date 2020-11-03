@@ -91,7 +91,7 @@
             </div>
         </div> -->
         
-      <div class="list_item" v-for="(item,key) in jyzlist" :key="key" @click="routerTo(item)">
+      <div class="list_item" v-for="(item,key) in jyzlist" :key="key" @click="routerTo(item)" v-if="jyzlist.length>0">
         <!-- <router-link to="jylist" class="ls_go"></router-link> -->
         <div class="ls_top flexbox">
           <div class="ls_l">
@@ -124,7 +124,7 @@
           </button>
         </div>
       </div>
-        <div class="pad-list">
+        <div class="pad-list" v-else>
             <div class="hx-emptyset transparent">附近暂无加油站</div>
         </div>
     </div>
@@ -170,7 +170,7 @@ export default {
     };
   },
   created() {
-    this.getLocationFn()
+    
   },
   computed: {
     btnOilNumber () {
@@ -186,7 +186,7 @@ export default {
   },
   methods: {
     routerTo(item){
-        this.$router.push({ path: '/jydetail', query: { gasId:item.id,oil_number: this.searchInfo.oil_numbers}});
+        this.$router.push({ path: '/jydetail', query: { gasItem:JSON.stringify(item),gasId:item.id,oil_number: this.searchInfo.oil_numbers}});
     },  
     doToggleOilNumber () {
       this.showOilNumber = !this.showOilNumber
@@ -220,7 +220,8 @@ export default {
        this.getGaslist()
     },
     async getGaslist(){
-      let latlon = localStorage.getItem('latlon')
+      let latlon = JSON.parse(localStorage.getItem('latlon'))
+      console.log(latlon)
       let res = await api.get_gaslist({
         lat:latlon.latitude,
         lng:latlon.longitude,
@@ -277,7 +278,7 @@ export default {
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    overflow-y: hidden;
+    // overflow-y: hidden;
 }
 .ghyyType {
   // 

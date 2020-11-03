@@ -38,8 +38,10 @@ router.beforeEach((to, from, next) => {
       }
 })
 router.afterEach((to, from) => { //对于微信分享或者是获取经纬度这些不需要路由前调用的咱就放到这边
-  let jsUrl = encodeURIComponent(window.location.protocol + '//' + window.location.host + to.fullPath)
-  wxUtils(jsUrl).then(() => {})
+  if(!localStorage.getItem('jsSdkConfig')){
+    let jsUrl = encodeURIComponent(window.location.origin + to.fullPath)
+    wxUtils(jsUrl).then(() => {})
+  }
 })
 
 function getUrlCode() { // 截取url中的code方法

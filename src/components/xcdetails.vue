@@ -1,99 +1,138 @@
 <template>
     <div class="details_box">
-      <img src="../assets/images/details_baner.jpg" alt="" style="width:100%">
-      <div class="dt_top">
-        <div class="dt_time">营业时间 8:00-12:00</div>
-        <div class="dt_name">炸金花集团公司</div>
+      <img :src="images[0].shopImgUrl" alt="" style="width:100%;">
+      <div class="dt_top"  v-if="!parseInt(xcDetail.isOpen) && parseInt(xcDetail.isStatus) === 4">
+        <div class="dt_time">营业时间 {{ xcDetail.openTimeStart }}-{{ xcDetail.openTimeEnd }}</div>
+        <div class="dt_name">{{xcDetail.shopName}}</div>
         <div class="dt_adress flexbox">
           <img src="../assets/images/icon-address.png" alt="" class="dt_img">
-          <div class="dt_text">广东省深圳市龙岗区沙平北路517号</div>
-          <button class="dt_btn flexbox">
+          <div class="dt_text">{{xcDetail.address}}</div>
+          <button class="dt_btn flexbox" v-show="false">
             <img src="../assets/images/icon-nav-white.png" alt="">
             一键导航
           </button>
         </div>
       </div>
       <div class="dt_mid">
-        <div class="dt_title">门店服务 <span>共10项</span></div>
-        <div class="dt_item flexbox" v-for="(item,key) in list" @click="checkFuntion(item,key)">
+        <div class="dt_title">门店服务 <span>共{{ services.length }}项</span></div>
+        <div class="dt_item flexbox" v-for="(item,key) in services" @click="checkFuntion(item,key)">
           <div class="dt_check">
             <div class="no_chek"></div>
             <img src="../assets/images/check.png" alt="" v-if="key==n">
           </div>
           <div class="dt_cont">
-            <div class="dm_name">{{item.name}}</div>
-            <div class="dm_text">有效期 {{item.time}} 天</div>
+            <div class="dm_name">{{item.serviceName}}</div>
+            <div class="dm_text">有效期 30 天</div>
           </div>
           <div class="dt_pay">
-            <div class="f_price">￥{{item.f_price}}</div>
-            <del class="t_price">门店价￥{{item.t_price}}</del>
+            <div class="f_price">￥{{item.finalPrice}}</div>
+            <del class="t_price">门店价￥{{item.price}}</del>
           </div>
         </div>
       </div>
       <div class="dt_bot flexbox">
         <div class="bot_left">
           <div class="bot_t flexbox">
-            <div class="b_price">￥{{formValue.f_price}}</div>
-            <del class="t_price">￥{{formValue.t_price}}</del>
+            <div class="b_price">￥{{current.finalPrice}}</div>
+            <del class="t_price">￥{{current.price}}</del>
           </div>
-          <div class="bot_f">{{formValue.name}}</div>
+          <div class="bot_f">{{current.serviceName}}</div>
         </div>
         <div class="bot_right flexbox">
           <a href="javascript:;" class="flexbox">
             <img src="../assets/images/zx.png" alt="">
             <small>咨询/预约</small>
           </a>
-          <button>去结算</button>
+          <button class="btn-main" 
+            @click="doCreateOrder" 
+            :disabled="isProcessing" 
+            v-text="isProcessing ? '结算中' : '去结算'">
+          </button>
         </div>
       </div>
+      <Bindphone @closepop='closePhone' v-show="showBindPhone"></Bindphone>
     </div>
 </template>
 <script>
 import { api } from "@/api/api"
+import Bindphone from "./bindPhone"
 export default {
   components: {
   },
   data() {
     return {
-      n:0,
-      formValue:{
-        f_price:'',
-        t_price:'',
-        name:''
-      },
-      list:[
-        {
-          name:'标准洗车-五座轿车',
-          time:'30',
-          f_price:'35.00',
-          t_price:'40.00',
-        },
-        {
-          name:'标准洗车-五座轿车1',
-          time:'30',
-          f_price:'38.00',
-          t_price:'60.00',
-        },
-        {
-          name:'标准洗车-五座轿车2',
-          time:'30',
-          f_price:'39.00',
-          t_price:'50.00',
-        },
-      ]
+      showBindPhone:false,
+      isProcessing:false,
+      xcDetail:{},
+      images:[],
+      services:[],
+      current: {},
+      n:null,
+      phone:null
     };
   },
   created() {
-    this.formValue.f_price = this.list[0].f_price 
-    this.formValue.t_price = this.list[0].t_price 
-    this.formValue.name = this.list[0].name 
+    this.getXcDetail()
+    let userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    this.phone = userInfo.phone
+    
   },
   methods: {
+    // 关闭手机绑定
+    closePhone(){
+      this.showBindPhone = false
+    },
     checkFuntion(item,key){
-      this.formValue.f_price = item.f_price
-      this.formValue.t_price = item.t_price
-      this.formValue.name = item.name;
+      this.price = item.finalPrice
+      this.current = item
       this.n = key
+    },
+    async getXcDetail(){
+      let res = await api.storesDetail({
+        lat:this.$route.query.latitude,
+        lng:this.$route.query.longitude,
+        shopCode:this.$route.query.shopCode
+      })
+      if(res.data.code==0){
+        let data = JSON.parse(res.data.data)
+        this.xcDetail = data.data
+        this.images = data.data.imgList
+        this.services = data.data.serviceList
+        this.checkFuntion(this.services[0],0)
+      }else{
+        this.$layer.msg(res.data.message)
+      }
+    },
+    async doCreateOrder () {
+      if (!this.phone) {
+        this.showBindPhone = true
+        return
+      }
+      // const channel_id = session.get(session.KEY_CURRENT_CHANNEL_ID) || 0
+      // const info = JSON.stringify(Object.assign({}, this.detail, this.current))
+      // console.log('data::::::', this.myChannel)
+      const bundle = {
+        // channel_id: parseInt(channel_id),
+        shopCode: this.xcDetail.shopCode, // 商店编号 
+        serviceCode: this.current.serviceCode, // 服务编号
+        price: this.current.finalPrice * 100, // 优惠价（元转分）
+        originPrice: this.current.price * 100, // 门店价（原价）（元转分）
+        status:this.xcDetail.isStatus
+      }
+      this.isProcessing = true
+      let res = await api.carWashPay(bundle)
+      this.isProcessing = false
+      console.warn(res)
+      // this.toPay(res.data.id)
+    },
+    async toPay (id) {
+      this.isProcessing = true
+      try {
+        toUnitePay(id, `/washcarOrder/${id}?success=1`)
+        report('洗车支付', '回调', '创建洗车订单成功')
+      } catch (err) {
+        report('洗车支付', '回调', '创建洗车订单失败')
+      }
     }
   },
   mounted() {

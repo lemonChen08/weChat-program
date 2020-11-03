@@ -190,6 +190,7 @@ import {
   OilTypes,
   GhyyOrderStatuses
 } from '../util/const'
+import {WXinvoke} from "@/util/wxUtil"
 export default {
   components: {
   },
@@ -251,7 +252,8 @@ export default {
     };
   },
   created() {
-    console.log(OilTypes.GASOLINE)
+    let userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    this.myInfo.phone = userInfo.phone
   },
   computed:{
     unitPrice () {
@@ -498,7 +500,7 @@ export default {
         this.showBindPhone = true
       }
     },
-    async toPay () {
+    toPay () {
       this.isProcessing = true
       // const channel_id = session.get(session.KEY_CURRENT_CHANNEL_ID) || 0
       // let price
@@ -537,11 +539,27 @@ export default {
       // if (channel_config && channel_config.equity_points_switch) {
       //   bundle.equity_points = this.equity_points * 100
       // }
-      let res = await czbOrderApis.create(bundle)
-      report('加油支付', '点击', '创建加油订单')
+      // let res = await czbOrderApis.create(bundle)
+      // report('加油支付', '点击', '创建加油订单')
+      let gasItem = JSON.parse(this.$route.query.gasItem)
+      let data = {
+        "gasFrom": gasItem.price.from,
+        "gasId": this.$route.query.gasId,
+        "gunId": this.gunNumber,
+        "oilName": this.oilNumber.oilName,
+        "oilType": this.oilNumber.oilType,
+        "originPrice": Math.round(this.price * 100),
+        "originUnitPrice": Math.round(this.oilNumber.priceGun * 100),
+        "price": parseFloat(this.price) * 100,
+        "unitPrice": Math.round(parseFloat(this.oilNumber.priceYfq) * 100),
+        "units": parseFloat(this.amount),
+      }
+      WXinvoke(data,()=>{
+        console.log(1)
+      })
       if (res.code !== 200) {
         this.isProcessing = false
-        report('加油支付', '回调', '创建加油订单失败')
+        // report('加油支付', '回调', '创建加油订单失败')
         if (res.message === '油站返回错误![平台余额不足]') {
           this.isProcessing = false
           this.$hxui.toast.warn('暂不支持该油站')
@@ -556,17 +574,18 @@ export default {
         window.clearTimeout(timeout)
       }, 2500)
       const { id } = res.data
-      session.save('myBankInfo', {rebate: this.bank.rebate, availableAmount: this.remain.availableAmount, isPay: this.isPay})
+      toUnitePay(id, `/czbOrder/${id}?success=1`, { isYsPay: this.oilNumber.from === GasStationSource.SHENGXIN })
+      // session.save('myBankInfo', {rebate: this.bank.rebate, availableAmount: this.remain.availableAmount, isPay: this.isPay})
       // debugger
-      report('加油支付', '回调', '创建加油订单成功')
-      if (this.CouponDetail.is_receive !== 0) {
-        toUnitePay(id, `/czbOrder/${id}?success=1`, { isYsPay: this.oilNumber.from === GasStationSource.SHENGXIN })
-      } else {
-        this.showBanner = true
-        setTimeout(() => {
-          toUnitePay(id, `/czbOrder/${id}?success=1`, { isYsPay: this.oilNumber.from === GasStationSource.SHENGXIN })
-        }, 3000)
-      }
+      // report('加油支付', '回调', '创建加油订单成功')
+      // if (this.CouponDetail.is_receive !== 0) {
+      //   toUnitePay(id, `/czbOrder/${id}?success=1`, { isYsPay: this.oilNumber.from === GasStationSource.SHENGXIN })
+      // } else {
+      //   this.showBanner = true
+      //   setTimeout(() => {
+      //     toUnitePay(id, `/czbOrder/${id}?success=1`, { isYsPay: this.oilNumber.from === GasStationSource.SHENGXIN })
+      //   }, 3000)
+      // }
     },
   },
   mounted() {

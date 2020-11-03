@@ -2,8 +2,8 @@
     <!-- 绑定手机号 -->
       <div class="phone_box">
         <div class="phone_centent">
-          <div class="close_box" @click="closePhone"></div>
-          <div class="phone_title">手机登录</div>
+          <!-- <div class="close_box" @click="closePhone"></div> -->
+          <div class="phone_title">手机绑定</div>
           <div class="phone_list">
             <div class="phone_item">
               <div class="form_text">手机号码<span>*</span></div>
@@ -42,14 +42,13 @@ export default {
             this.$layer.msg("请输入手机号码")
             return
         }
-        let res = await api.userLogin({
-            nickName:'',
-            openId:'1',
-            phone:this.phone,
-            pic:''
+        let res = await api.bindPhone({
+            inviteCode:'',
+            verifyCode:'',
+            phone:this.phone
         })
         if(res.data.code==0){
-            localStorage.setItem('oneToken',res.data.data.token)
+            this.$layer.msg("绑定成功")
             this.closePhone()   
         }else{
             this.$layer.msg(res.data.msg)

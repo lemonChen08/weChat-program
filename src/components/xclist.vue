@@ -66,7 +66,7 @@
     <!-- 列表 -->
     <div class="list_box">
       <div class="list_item" v-for="(item,key) in xclist">
-        <router-link to="xcdetails" class="ls_go"></router-link>
+        <router-link :to="{path:'/xcdetails',query:{shopCode: item.shopCode,latitude:item.latitude,longitude:item.longitude}}" class="ls_go"></router-link>
         <div class="ls_top flexbox">
           <div class="ls_l">
             <img :src="item.doorPhotoUrl" alt="" class="ls_img">
@@ -126,10 +126,11 @@ export default {
   },
   methods: {
     async getxclist(){
+      let latlon = JSON.parse(localStorage.getItem('latlon'))
       let res = await api.storesList({
         cityName:'深圳市',
-        lat:'22.60104',
-        lng:'114.045517',
+        lat:latlon.latitude,
+        lng:latlon.longitude,
         pageNum:1,
         pageSize:100,
         priority:'dis',//距离优先：dis，评分优先：score，销量优先：sales;
