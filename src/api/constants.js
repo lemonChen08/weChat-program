@@ -33,10 +33,11 @@ export const fet = (url,data,method,postHeaders) => {
       
     });
   } else if(type === 'post'){
-    res = axios.post(realUrl,qs.stringify(data),postHeaders)
-    .catch(function (error) {
-     
-    });
+    if(url=='api/gasStationOrder/create' || url=='api/carWashOrder/create'){
+      res = axios.post(realUrl,data,postHeaders)
+    }else{
+      res = axios.post(realUrl,qs.stringify(data),postHeaders)
+    }
   } else if(type === 'put') {
     res = axios.put(realUrl,qs.stringify(data),postHeaders)
     .catch(function (error) {

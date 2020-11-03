@@ -1,5 +1,6 @@
 // import wx from "weixin-jsapi";
 const wx = window.wx
+import { sha256 } from 'js-sha256'
  
  
 import { getJSSDK,payorders } from '@/api/wx';//获取appid信息的接口,以后台人员接口为准
@@ -19,7 +20,8 @@ const wxUtils = (jsurl) => {
         signature: data.data.data.signature,
         jsApiList: [
           'getLocation',
-          'hideMenuItems'
+          'hideMenuItems',
+          'chooseWXPay'
         ]
       });
       // wx.getLocation({
@@ -63,24 +65,37 @@ const wxReady = resolve => {  //不让分享
 // 微信支付
 const WXinvoke = (data, resolve) => {  //orderId 订单ID
   payorders(data).then(res => {
-    wx.chooseWXPay(
-      'getBrandWCPayRequest', {
-        "appId": res.data.data.appid, // 公众号名称，由商户传入
-        "timeStamp": res.data.data.timestamp, // 时间戳，自1970年以来的秒数
-        "nonceStr": res.data.data.nonce_str, // 随机串
-        "package": res.data.data.package,
-        "signType": res.data.data.sign, // 微信签名方式：
-        "paySign": res.data.data.signature // 微信签名
-      },
-      function (res) {
-        setTimeout(function () {
-          if (res.err_msg == "get_brand_wcpay_request:ok") {
-            resolve()
-          }
-        }, 500);
-      }
-    );
+    let payData = {
+      "appId": res.data.data.appid, // 公众号名称，由商户传入
+      "timeStamp": parseInt(new Date().getTime() / 1000).toString(), // 时间戳，自1970年以来的秒数
+      "nonceStr": res.data.data.nonce_str, // 随机串
+      "package": "prepay_id=" + res.data.data.prepay_id,
+      "signType": 'HMAC-SHA256', // 微信签名方式：
+    }
+    payData.paySign = createSign(payData);
+      wx.chooseWXPay(
+        'getBrandWCPayRequest',payData ,
+        function (res) {
+          console.log(res)
+          setTimeout(function () {
+            if (res.err_msg == "get_brand_wcpay_request:ok") {
+              resolve()
+            }
+          }, 500);
+        }
+      )
   });
+}
+// 生成签名
+function createSign(data) {
+  var stringA;
+  var array = [];
+  for (var obj in data) {
+      array.push(obj + "=" + data[obj]);
+  }
+  stringA = array.join("&") + "&key=" + key;
+  let paySign = sha256(stringA).toUpperCase()
+  return paySign;
 }
 const getLocation = () => {
   return new Promise((resolve, reject) => {

@@ -154,7 +154,7 @@ export default {
           if(res.data.data.firstLogin){
             this.popShow = true
           }else{
-            this.popShow = true
+            this.popShow = false
           }
         }
     },
