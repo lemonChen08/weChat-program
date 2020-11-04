@@ -27,77 +27,76 @@
     </div>
     <!-- 列表 -->
     <div class="list_box">
-      <div class="list_item" v-for="(item,key) in list">
-        <router-link to="jylist" class="ls_go"></router-link>
+      <div class="list_item">
         <div class="listtitle">
-          <h2 class="title">附近加油站3</h2>
+          <h2 class="title">附近加油站</h2>
           <router-link to="jylist" class="more">更多></router-link>
         </div>
-        <div class="ls_top flexbox">
+        <div class="ls_top flexbox" @click="routerTo(jyzlist[0])">
           <div class="ls_l">
-            <img :src="item.img" alt="" class="ls_img">
+            <img :src="jyzlist[0].logo_small" alt="" class="ls_img">
             <!-- 如果休息中显示 -->
-            <div class="if_stop">
+            <div class="if_stop" style="display:none;">
               <span>休息中</span>
               <span>营业时间</span>
-              <span>{{item.time}}</span>
+              <span>{{jyzlist[0].time}}</span>
             </div>
           </div>
           <div class="ls_m">
-            <div class="p_name">{{item.name}}</div>
-            <p class="price">VIP特权价 ￥<span class="bold">5.08</span><a class="oldprice">国标价 ￥ 5.58</a></p>
+            <div class="p_name">{{jyzlist[0].name}}</div>
+            <p class="price">VIP特权价 ￥<span class="bold">{{jyzlist[0].price.priceYfq}}</span><a class="oldprice">国标价 ￥ {{jyzlist[0].price.priceOfficial}}</a></p>
           </div>
-          <div class="ls_r">
-            <div class="dz">{{item.dazhe}}</div>
-            <div class="pay_num">￥{{item.pay}}</div>
+          <div class="ls_r" style="display:none;">
+            <div class="dz">{{jyzlist[0].dazhe}}</div>
+            <div class="pay_num">￥{{jyzlist[0].pay}}</div>
           </div> 
         </div>
         <div class="ls_bot flexbox">
           <img src="../assets/images/icon-address.png" alt="" class="d_img">
-          <div class="d_name">{{item.adress}}</div>
+          <div class="d_name">{{jyzlist[0].adress}}</div>
           <button class="d_map flexbox">
             <img src="../assets/images/icon-nav-white.png" alt="" class="map_img">
-            {{item.km}}
+            {{jyzlist[0].distance}}
           </button>
         </div>
       </div>
     </div>
     <!-- 列表 -->
     <div class="list_box">
-      <div class="list_item" v-for="(item,key) in list">
-        <router-link to="xcdetails" class="ls_go"></router-link>
+      <div class="list_item">
+        <router-link :to="{path:'/xcdetails',query:{shopCode: xclist[0].shopCode,latitude:xclist[0].latitude,longitude:xclist[0].longitude}}" class="ls_go"></router-link>
         <div class="listtitle">
           <h2 class="title">附近洗车店</h2>
           <router-link to="xcdetails" class="more">更多></router-link>
         </div>
         <div class="ls_top flexbox">
           <div class="ls_l">
-            <img :src="item.img" alt="" class="ls_img">
+            <img :src="xclist[0].doorPhotoUrl" alt="" class="ls_img">
             <!-- 如果休息中显示 -->
-            <div class="if_stop">
+            <div class="if_stop" style="display:none">
               <span>休息中</span>
               <span>营业时间</span>
-              <span>{{item.time}}</span>
+              <span>{{xclist[0].time}}</span>
             </div>
           </div>
           <div class="ls_m">
-            <div class="p_name">{{item.name}}</div>
+            <div class="p_name">{{xclist[0].shopName}}</div>
             <div class="p_cord flexbox">
-              <div class="rank">{{item.rank}}</div>
-              <div class="sale">已售 {{item.sale}}</div>
+              <div class="rank">{{xclist[0].score}}</div>
+              <div class="sale">已售 {{xclist[0].totalNum}}</div>
             </div>
           </div>
           <div class="ls_r">
-            <div class="dz">{{item.dazhe}}</div>
-            <div class="pay_num">￥{{item.pay}}</div>
+            <div class="dz">{{xclist[0].Tdiscount}}</div>
+            <div class="pay_num">￥{{xclist[0].Tprice}}</div>
           </div> 
         </div>
         <div class="ls_bot flexbox">
           <img src="../assets/images/icon-address.png" alt="" class="d_img">
-          <div class="d_name">{{item.adress}}</div>
+          <div class="d_name">{{xclist[0].address}}</div>
           <button class="d_map flexbox">
             <img src="../assets/images/icon-nav-white.png" alt="" class="map_img">
-            {{item.km}}
+            {{$_toDistance(xclist[0].distance)}}
           </button>
         </div>
       </div>
@@ -110,7 +109,7 @@ import axios from 'axios'
 import Bindphone from "./bindPhone"
 import { api } from "@/api/api"
 import {getLocation} from "@/util/wxUtil"
-
+import wxAuth from '../util/wxShare.js'
 // import { loadBMap } from '../util/loadBMap'
 const qs = require('qs')
 export default {
@@ -125,6 +124,8 @@ export default {
       bannerList:[require('../assets/images/banner1.png'),require('../assets/images/banner2.png')],
       // 打开搜索地址
       mapShow:false,
+      xclist:[],
+      jyzlist:[],
       list:[
         {
           img:require('../assets/images/details_baner.jpg'),
@@ -142,10 +143,23 @@ export default {
   },
   created() {
     
-    // this.getGaslist()
   },
   methods: {
-
+    routerTo(item){
+        this.$router.push({ path: '/jydetail', query: { gasItem:JSON.stringify(item),gasId:item.id,oil_number:'92'}});
+    },  
+    $_toDistance (distance) {
+      if (!distance) {
+        return '一键导航'
+      }
+      if (distance > 1) {
+        let num = distance / 1000
+        return (num.toFixed(2) + 'km')
+      } else {
+        let num = distance / 1000
+        return (num + 'm')
+      }
+    },
     async getUserInfo(){
         let res = await api.userinfo({code:localStorage.getItem('code')})
         if(res.data.code==0){
@@ -159,27 +173,6 @@ export default {
             this.popShow = false
           }
         }
-    },
-    async getGaslist(){
-      let latlon = JSON.parse(localStorage.getItem('latlon'))
-      let res = await api.get_gaslist({
-        lat:latlon.latitude,
-        lng:latlon.longitude,
-        oil_numbers:'92#',
-        pageNum:1,
-        pagesize:100
-      })
-      if(res.data.code==0){
-        let data = JSON.parse(res.data.data)
-        // this.jyzlist = data.data.items
-        data.data.items = data.data.items.map(v => {
-          v.price = this.getPriceByOilNumber(v, this.searchInfo.oil_numbers)
-          return v 
-        })
-        this.jyzlist = this.jyzlist.concat(data.data.items)
-      }else{
-        this.$layer.msg(res.data.msg)
-      }
     },
     getUrlCode() { // 截取url中的code方法
       var url = location.search
@@ -212,24 +205,68 @@ export default {
     closemapShow(){
       this.mapShow = false
     },
+    async getxclist(){
+      let latlon = JSON.parse(localStorage.getItem('latlon'))
+      let res = await api.storesList({
+        cityName:'深圳市',
+        lat:latlon.latitude,
+        lng:latlon.longitude,
+        pageNum:1,
+        pageSize:100,
+        priority:'dis',//距离优先：dis，评分优先：score，销量优先：sales;
+      })
+      if(res.data.code==0){
+        let data = JSON.parse(res.data.data)
+        this.xclist = data.data.items
+        this.xclist.forEach((item,i)=>{
+          item.serviceList.forEach((ktem,k)=>{
+            let finalPrice = parseFloat(ktem.finalPrice)
+            let price = parseFloat(ktem.price)
+            if (finalPrice < price) {
+              item.Tprice = finalPrice 
+            }
+            item.Tdiscount = (finalPrice / price).toFixed(2)
+          })
+        })
+      }
+    },
     async getGaslist(){
-      debugger
+      let latlon = JSON.parse(localStorage.getItem('latlon'))
       let res = await api.get_gaslist({
-        action:'get_gaslist',
-        latitude:'36.30556423523153',
-        longitude:'104.48060937499996',
-        oilName:'92#',
-        cityName:'',
-        orderBy:'1',
-        gasType:'',
-        page:1,
+        lat:latlon.latitude,
+        lng:latlon.longitude,
+        oil_numbers:'92#',
+        pageNum:1,
         pagesize:100
       })
-      if(res.code==0){
-        
+      if(res.data.code==0){
+
+        let data = JSON.parse(res.data.data)
+        // this.jyzlist = data.data.items
+        data.data.items = data.data.items.map(v => {
+          v.price = this.getPriceByOilNumber(v, 92)
+          return v 
+        })
+        this.jyzlist = this.jyzlist.concat(data.data.items)
       }else{
-        this.$layer.msg(res.data.msg)
+        this.getUserInfo()
       }
+    },
+    // 根据传入的油号获取检测站的价格信息
+   getPriceByOilNumber (v, oil_numbers) {
+      if (!v.prices || (v.prices && !v.prices.length)) {
+        return null
+      }
+      if (!oil_numbers) {
+        return v.prices[0]
+      }
+      for (let i = 0; i < v.prices.length; i++) {
+        // eslint-disable-next-line
+        if (parseInt(oil_numbers) == v.prices[i].oilNo) {
+          return v.prices[i]
+        }
+      }
+      return {}
     },
     // 打开手机绑定
     openPhone(){
@@ -254,6 +291,14 @@ export default {
     }
   },
   mounted() {
+    let token = localStorage.getItem('oneToken')
+    if(token){
+      wxShare().then(() => {
+        this.getxclist()
+        this.getGaslist()
+      })
+    }
+    
     // let userInfo = JSON.parse(localStorage.getItem('userInfo'))
     // const url = window.location.href;
     // const parseUrl = qs.parse(url.split('?')[1])
@@ -269,20 +314,20 @@ export default {
     // loadBMap()
     
     /////
-    let myGeo = new BMap.Geocoder()
-    myGeo.getLocation(new BMap.Point(), function(result) {
-      if (result) {
-        alert(result.point.lng,result.point.lat)
-        alert('拿到了纬度'+result.point.lng)
-        let latlon = {
-          latitude:result.point.lat,
-          longitude:result.point.lng
-        }
-        localStorage.setItem('latlon',JSON.stringify(latlon))
-      }else{
-        alert('出粗了')
-      }
-    })
+    // let myGeo = new BMap.Geocoder()
+    // myGeo.getLocation(new BMap.Point(), function(result) {
+    //   if (result) {
+    //     alert(result.point.lng,result.point.lat)
+    //     alert('拿到了纬度'+result.point.lng)
+    //     let latlon = {
+    //       latitude:result.point.lat,
+    //       longitude:result.point.lng
+    //     }
+    //     localStorage.setItem('latlon',JSON.stringify(latlon))
+    //   }else{
+    //     alert('出粗了')
+    //   }
+    // })
   }
 };
 </script>
@@ -414,8 +459,8 @@ export default {
   line-height:24px;
   padding-bottom:10px;
 }
-.list_item .listtitle .title{float:left;font-weight: bold;}
-.list_item .listtitle .more{float:right;}
+.list_item .listtitle .title{float:left;font-weight: 500;font-size:16px;}
+.list_item .listtitle .more{float:right;font-size:14px;}
 .ls_go{
   position: absolute;
   width: 100%;

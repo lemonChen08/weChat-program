@@ -188,7 +188,8 @@ import { api } from "@/api/api"
 import { 
   GasStationSource,
   OilTypes,
-  GhyyOrderStatuses
+  GhyyOrderStatuses,
+  oilTypeArray
 } from '../util/const'
 import {WXinvoke} from "@/util/wxUtil"
 export default {
@@ -422,12 +423,12 @@ export default {
     },
     onInput () {
       if (this.price && isNaN(this.price)) {
-        this.$hxui.toast.warn('请输入数字')
+        this.$layer.msg('请输入数字')
         this.price = ''
         return
       }
       if (this.price && !isNaN(this.price) && (this.price > 1800 || this.price <= 0)) {
-        this.$hxui.toast.warn('单次充值金额在1800元内')
+        this.$layer.msg('单次充值金额在1800元内')
         this.price = this.price <= 0 ? '' : 1800
       }
       // const { channel_config } = this.channelInfo
@@ -473,11 +474,11 @@ export default {
         return
       }
       for (let price of this.item.prices) {
-        debugger
+        
         if (!oilTypes.filter(v => v.value === price.oilType).length) {
-          
+          let val = oilTypeArray.filter((item)=>{return item.value==price.oilType})
           oilTypes.push({ 
-            key: price.oilType, 
+            key: val[0].key  , 
             value: price.oilType
           })
         }
@@ -554,7 +555,7 @@ export default {
         "unitPrice": Math.round(parseFloat(this.oilNumber.priceYfq) * 100),
         "units": parseFloat(this.amount),
       }
-      WXinvoke(data,()=>{
+      WXinvoke(data,res=>{
         if (res.code !== 200) {
           this.isProcessing = false
           // report('加油支付', '回调', '创建加油订单失败')
@@ -575,7 +576,7 @@ export default {
       // const { id } = res.data
       // toUnitePay(id, `/czbOrder/${id}?success=1`, { isYsPay: this.oilNumber.from === GasStationSource.SHENGXIN })
       // session.save('myBankInfo', {rebate: this.bank.rebate, availableAmount: this.remain.availableAmount, isPay: this.isPay})
-      // debugger
+      // 
       // report('加油支付', '回调', '创建加油订单成功')
       // if (this.CouponDetail.is_receive !== 0) {
       //   toUnitePay(id, `/czbOrder/${id}?success=1`, { isYsPay: this.oilNumber.from === GasStationSource.SHENGXIN })
@@ -683,6 +684,7 @@ export default {
         display: block;
         line-height: 2.4;
         font-size: 3.8vw * 1.1;
+        text-align:left;
       }
       .pad-options {
         padding: 0 0 3vw;
@@ -723,6 +725,8 @@ export default {
           padding: 1vw 0 0;
           margin-bottom: 0;
           color: #000;
+          overflow:hidden;
+          strong{float:left;}
           .line-through {
             color: #aaa;
             text-decoration: line-through;

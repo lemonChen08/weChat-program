@@ -17,6 +17,24 @@ Vue.config.productionTip = false
 Vue.prototype.$layer = layer(Vue);
 Vue.prototype.$wxShare = wxShare
 
+
+router.beforeEach((to, from, next) => {
+  let token = localStorage.getItem('oneToken')
+  if(!token){
+    wxShare()
+  }else{
+    wxAuth().then(res => {
+      localStorage.setItem('userInfo',JSON.stringify(res.data.data))
+      localStorage.setItem('oneToken',res.data.data.token)
+      const url = window.location.href;
+      const parseUrl = qs.parse(url.split('?')[1])
+      const hasParse = JSON.stringify(qs) === '{}';
+      const newUrl = `${url.split('?')[0]}${ hasParse ? `?${qs.stringify(parseUrl)}` : '' }`
+      location.assign(newUrl)
+    });
+  }
+  next()
+})
 // let vConsole = new VConsole()
 // router.beforeEach((to, from, next) => {
 //       let code = ''
@@ -48,18 +66,18 @@ Vue.prototype.$wxShare = wxShare
 //   // }
 // })
 
-function getUrlCode() { // 截取url中的code方法
-      var url = location.search
-      var theRequest = new Object()
-      if (url.indexOf("?") != -1) {
-          var str = url.substr(1)
-          var strs = str.split("&")
-          for(var i = 0; i < strs.length; i ++) {
-              theRequest[strs[i].split("=")[0]]=(strs[i].split("=")[1])
-          }
-      }
-      return theRequest
-    }
+// function getUrlCode() { // 截取url中的code方法
+//       var url = location.search
+//       var theRequest = new Object()
+//       if (url.indexOf("?") != -1) {
+//           var str = url.substr(1)
+//           var strs = str.split("&")
+//           for(var i = 0; i < strs.length; i ++) {
+//               theRequest[strs[i].split("=")[0]]=(strs[i].split("=")[1])
+//           }
+//       }
+//       return theRequest
+//     }
 /* eslint-disable no-new */
 var vm = new Vue({
   el: '#app',
@@ -68,19 +86,7 @@ var vm = new Vue({
   template: '<App/>',
   render:h => h(App),
   mounted() {
-    let token = localStorage.getItem('oneToken')
-    if(token){
-      this.$wxShare()
-    }else{
-      wxAuth().then(res => {
-        localStorage.setItem('oneToken',res.data.data.token)
-        const url = window.location.href;
-        const parseUrl = qs.parse(url.split('?')[1])
-        const hasParse = JSON.stringify(qs) === '{}';
-        const newUrl = `${url.split('?')[0]}${ hasParse ? `?${qs.stringify(parseUrl)}` : '' }`
-        location.assign(newUrl)
-      });
-    }
+    
     
   } 
 })

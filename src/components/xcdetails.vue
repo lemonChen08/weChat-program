@@ -39,10 +39,10 @@
           <div class="bot_f">{{current.serviceName}}</div>
         </div>
         <div class="bot_right flexbox">
-          <a href="javascript:;" class="flexbox">
+          <!-- <a href="javascript:;" class="flexbox">
             <img src="../assets/images/zx.png" alt="">
             <small>咨询/预约</small>
-          </a>
+          </a> -->
           <button class="btn-main" 
             @click="doCreateOrder" 
             :disabled="isProcessing" 
@@ -59,6 +59,7 @@ import Bindphone from "./bindPhone"
 import {xcWXinvoke} from "@/util/wxUtil"
 export default {
   components: {
+    Bindphone
   },
   data() {
     return {
@@ -121,7 +122,7 @@ export default {
         status:this.xcDetail.isStatus
       }
       this.isProcessing = true
-      xcWXinvoke(data,()=>{
+      xcWXinvoke(bundle,res=>{
         if (res.code !== 200) {
           this.isProcessing = false
           // report('加油支付', '回调', '创建加油订单失败')
@@ -141,15 +142,6 @@ export default {
       }) 
       this.isProcessing = false
       // this.toPay(res.data.id)
-    },
-    async toPay (id) {
-      this.isProcessing = true
-      try {
-        toUnitePay(id, `/washcarOrder/${id}?success=1`)
-        report('洗车支付', '回调', '创建洗车订单成功')
-      } catch (err) {
-        report('洗车支付', '回调', '创建洗车订单失败')
-      }
     }
   },
   mounted() {

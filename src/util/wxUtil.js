@@ -73,7 +73,7 @@ const WXinvoke = (data, resolve) => {  //orderId 订单ID
       "signType": 'HMAC-SHA256', // 微信签名方式：
     }
     payData.paySign = createSign(payData);
-    alert("package==="+payData.package)
+    // alert("package==="+payData.package)
       wx.chooseWXPay(
         'getBrandWCPayRequest',payData ,
         function (res) {
@@ -126,7 +126,7 @@ const getLocation = () => {
     wx.getLocation({
       type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
       success: response => {
-        alert('地址拿到了')
+        // alert('地址拿到了')
         resolve(response);
       },
       fail: err => {

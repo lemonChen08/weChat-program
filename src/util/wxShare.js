@@ -1,38 +1,64 @@
 import { getJSSDK,payorders,xcpayorders } from '@/api/wx';
-
+import router from '../router'
 // 朋友圈
-export default function wxShare() {
-    if (!isWeixinBrowser()) {
-        return;
-    }
-    loadShareSignature();
-    wx.ready(function () {
-        wx.getLocation({
-            type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-            success: response => {
-                alert('地理位置获取成功',JSON.stringify(response))
-                localStorage.setItem('latlon',JSON.stringify(response))
-            },
-            fail: err => {
-                alert('获取位置失败', JSON.stringify(err))
-            },
-            cancel: err => {
-                alert('用户拒绝授权获取地理位置', err)
-            }
-        })  
-    });
-    wx.error(p => {
-        console.log(p)
-    });
-}
-
+// export default function wxShare() {
+//     if (!isWeixinBrowser()) {
+//         return;
+//     }
+//     loadShareSignature();
+//     wx.ready(function () {
+//         wx.getLocation({
+//             type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+//             success: response => {
+//                 // alert('地理位置获取成功',JSON.stringify(response))
+//                 localStorage.setItem('latlon',JSON.stringify(response))
+//             },
+//             fail: err => {
+//                 alert('获取位置失败', JSON.stringify(err))
+//             },
+//             cancel: err => {
+//                 alert('用户拒绝授权获取地理位置', err)
+//             }
+//         })  
+//     });
+//     wx.error(p => {
+//         console.log(p)
+//     });
+// }
+const wxShare = () => {
+    return new Promise((resolve, reject) => {
+        if (!isWeixinBrowser()) {
+            return;
+        }
+        loadShareSignature();
+        wx.ready(function () {
+            wx.getLocation({
+                type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+                success: response => {
+                    // alert('地理位置获取成功',JSON.stringify(response))
+                    localStorage.setItem('latlon',JSON.stringify(response))
+                    resolve()
+                },
+                fail: err => {
+                    alert('获取位置失败', JSON.stringify(err))
+                },
+                cancel: err => {
+                    alert('用户拒绝授权获取地理位置', err)
+                }
+            })  
+        });
+        wx.error(p => {
+            console.log(p)
+        });
+    })
+}    
 function loadShareSignature() {
     if (sessionStorage.shareSignature) {
         let shareSignature = JSON.parse(sessionStorage.shareSignature);
         setShareConfig(shareSignature);
         return;
     }
-    let url = location.origin
+    let url = window.location.origin + router.currentRoute.fullPath
     getJSSDK(url).then(async data => {
         if(data.data.code==0){
             sessionStorage.shareSignature = JSON.stringify(data.data.data)
@@ -43,7 +69,7 @@ function loadShareSignature() {
 
 function setShareConfig(shareSignature) {
     wx.config({
-        debug: true,
+        debug: false,
         appId: shareSignature.appId,
         timestamp: shareSignature.timestamp,
         nonceStr: shareSignature.nonceStr,
@@ -67,3 +93,4 @@ function isWeixinBrowser() {
         return false;
     }
 }
+export default wxShare;
