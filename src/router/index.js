@@ -13,10 +13,12 @@ import xcdetails from '@/components/xcdetails.vue' //洗车详情
 import home from '@/components/home.vue' //洗车详情
 import jylist from '@/components/jylist.vue' //加油列表
 import jydetail from '@/components/jydetail.vue' //加油详情
+import lacation from '@/components/lacation.vue'
 
 Vue.use(Router)
 
 export default new Router({
+	mode: 'history',
   routes: [
 		{
 		  path: '/',
@@ -72,6 +74,11 @@ export default new Router({
 			path: '/jydetail',
 			name: 'jydetail',
 			component: jydetail
+		},
+		{
+			path: '/lacation',
+			name: 'lacation',
+			component: lacation
 		},
   ]
 })

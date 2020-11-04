@@ -56,6 +56,7 @@
 <script>
 import { api } from "@/api/api"
 import Bindphone from "./bindPhone"
+import {xcWXinvoke} from "@/util/wxUtil"
 export default {
   components: {
   },
@@ -120,9 +121,25 @@ export default {
         status:this.xcDetail.isStatus
       }
       this.isProcessing = true
-      let res = await api.carWashPay(bundle)
+      xcWXinvoke(data,()=>{
+        if (res.code !== 200) {
+          this.isProcessing = false
+          // report('加油支付', '回调', '创建加油订单失败')
+          if (res.message === '油站返回错误![平台余额不足]') {
+            this.isProcessing = false
+            this.$layer.msg('暂不支持该油站')
+          } else {
+            this.isProcessing = false
+            this.$layer.msg(res.message)
+          }
+          return
+        }
+        let timeout = window.setTimeout(() => {
+          this.isProcessing = false
+          window.clearTimeout(timeout)
+        }, 2500)
+      }) 
       this.isProcessing = false
-      console.warn(res)
       // this.toPay(res.data.id)
     },
     async toPay (id) {

@@ -21,7 +21,7 @@ const jsonUrl = (json) => {
 
 export const fet = (url,data,method,postHeaders) => {
   var oneToken = localStorage.getItem("oneToken");
-  if (oneToken) {
+  if (oneToken && url!=='api/user/getOpenId') {
       axios.defaults.headers.common['authorization'] = oneToken
   }
   let realUrl = server['development'] + url
@@ -30,13 +30,19 @@ export const fet = (url,data,method,postHeaders) => {
   if(type === 'get'){
     res = axios.get(realUrl + '?' + jsonUrl(data))
     .catch(function (error) {
-      
+      alert(error)
     });
   } else if(type === 'post'){
     if(url=='api/gasStationOrder/create' || url=='api/carWashOrder/create'){
       res = axios.post(realUrl,data,postHeaders)
+      .catch(function (error) {
+        alert(error)
+      });
     }else{
       res = axios.post(realUrl,qs.stringify(data),postHeaders)
+      .catch(function (error) {
+        alert(error)
+      });
     }
   } else if(type === 'put') {
     res = axios.put(realUrl,qs.stringify(data),postHeaders)

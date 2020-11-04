@@ -555,26 +555,25 @@ export default {
         "units": parseFloat(this.amount),
       }
       WXinvoke(data,()=>{
-        console.log(1)
-      })
-      if (res.code !== 200) {
-        this.isProcessing = false
-        // report('加油支付', '回调', '创建加油订单失败')
-        if (res.message === '油站返回错误![平台余额不足]') {
+        if (res.code !== 200) {
           this.isProcessing = false
-          this.$hxui.toast.warn('暂不支持该油站')
-        } else {
-          this.isProcessing = false
-          this.$hxui.toast.warn(res.message)
+          // report('加油支付', '回调', '创建加油订单失败')
+          if (res.message === '油站返回错误![平台余额不足]') {
+            this.isProcessing = false
+            this.$layer.msg('暂不支持该油站')
+          } else {
+            this.isProcessing = false
+            this.$layer.msg(res.message)
+          }
+          return
         }
-        return
-      }
-      let timeout = window.setTimeout(() => {
-        this.isProcessing = false
-        window.clearTimeout(timeout)
-      }, 2500)
-      const { id } = res.data
-      toUnitePay(id, `/czbOrder/${id}?success=1`, { isYsPay: this.oilNumber.from === GasStationSource.SHENGXIN })
+        let timeout = window.setTimeout(() => {
+          this.isProcessing = false
+          window.clearTimeout(timeout)
+        }, 2500)
+      })  
+      // const { id } = res.data
+      // toUnitePay(id, `/czbOrder/${id}?success=1`, { isYsPay: this.oilNumber.from === GasStationSource.SHENGXIN })
       // session.save('myBankInfo', {rebate: this.bank.rebate, availableAmount: this.remain.availableAmount, isPay: this.isPay})
       // debugger
       // report('加油支付', '回调', '创建加油订单成功')

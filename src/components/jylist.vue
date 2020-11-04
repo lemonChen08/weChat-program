@@ -230,6 +230,7 @@ export default {
         pagesize:100
       })
       if(res.data.code==0){
+
         let data = JSON.parse(res.data.data)
         // this.jyzlist = data.data.items
         data.data.items = data.data.items.map(v => {
@@ -238,8 +239,17 @@ export default {
         })
         this.jyzlist = this.jyzlist.concat(data.data.items)
       }else{
-        this.$layer.msg(res.data.msg)
+        this.getUserInfo()
       }
+    },
+    async getUserInfo(){
+        let res = await api.userinfo({code:localStorage.getItem('code')})
+        if(res.data.code==0){
+          this.getGaslist()
+          this.getLocationFn()
+          localStorage.setItem('oneToken',res.data.data.token)
+          localStorage.setItem('userInfo',JSON.stringify(res.data.data))
+        }
     },
     // 根据传入的油号获取检测站的价格信息
    getPriceByOilNumber (v, oil_numbers) {
@@ -259,7 +269,9 @@ export default {
     },
     async getLocationFn(){
         let data=await getLocation()
-        console.log(data) //获取地址信息
+        if(data){
+          localStorage.setItem('latlon',JSON.stringify(data))
+        }
     }
   },
   mounted() {

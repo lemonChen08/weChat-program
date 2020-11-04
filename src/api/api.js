@@ -21,9 +21,9 @@ api.storesList = params => {
 api.storesDetail = params => {
   return fet('api/user/stores',params,'get')
 }
-api.carWashPay = params => {
-  return fet('api/carWashOrder/create',params,'post',{headers:{'Content-Type':'application/json;charset=UTF-8'}})
-}
+// api.carWashPay = params => {
+//   return fet('api/carWashOrder/create',params,'post',{headers:{'Content-Type':'application/json;charset=UTF-8'}})
+// }
 api.userinfo = params => {
   return fet('api/user/getOpenId',params,'post')
 }

@@ -30,7 +30,7 @@
       <div class="list_item" v-for="(item,key) in list">
         <router-link to="jylist" class="ls_go"></router-link>
         <div class="listtitle">
-          <h2 class="title">附近加油站</h2>
+          <h2 class="title">附近加油站3</h2>
           <router-link to="jylist" class="more">更多></router-link>
         </div>
         <div class="ls_top flexbox">
@@ -110,6 +110,8 @@ import axios from 'axios'
 import Bindphone from "./bindPhone"
 import { api } from "@/api/api"
 import {getLocation} from "@/util/wxUtil"
+
+// import { loadBMap } from '../util/loadBMap'
 const qs = require('qs')
 export default {
   components: {
@@ -117,7 +119,7 @@ export default {
   },
   data() {
     return {
-      popShow:true,
+      popShow:false,
       // 打开搜索下拉
       phoneShow:0,
       bannerList:[require('../assets/images/banner1.png'),require('../assets/images/banner2.png')],
@@ -157,6 +159,27 @@ export default {
             this.popShow = false
           }
         }
+    },
+    async getGaslist(){
+      let latlon = JSON.parse(localStorage.getItem('latlon'))
+      let res = await api.get_gaslist({
+        lat:latlon.latitude,
+        lng:latlon.longitude,
+        oil_numbers:'92#',
+        pageNum:1,
+        pagesize:100
+      })
+      if(res.data.code==0){
+        let data = JSON.parse(res.data.data)
+        // this.jyzlist = data.data.items
+        data.data.items = data.data.items.map(v => {
+          v.price = this.getPriceByOilNumber(v, this.searchInfo.oil_numbers)
+          return v 
+        })
+        this.jyzlist = this.jyzlist.concat(data.data.items)
+      }else{
+        this.$layer.msg(res.data.msg)
+      }
     },
     getUrlCode() { // 截取url中的code方法
       var url = location.search
@@ -231,19 +254,35 @@ export default {
     }
   },
   mounted() {
-    let userInfo = JSON.parse(localStorage.getItem('userInfo'))
-    const url = window.location.href;
-    const parseUrl = qs.parse(url.split('?')[1])
-    if(!userInfo){
-      if(!parseUrl.code){
-        
-        this.getUserInfo()
-      }
-    }else{
-      this.popShow = userInfo.firstLogin
-      this.getLocationFn()
-    }
+    // let userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    // const url = window.location.href;
+    // const parseUrl = qs.parse(url.split('?')[1])
+    // if(!userInfo){
+    //   if(!parseUrl.code){
+    //     this.getUserInfo()
+    //     this.getLocationFn()
+    //   }
+    // }else{
+    //   this.popShow = userInfo.firstLogin
+    //   this.getLocationFn()
+    // }
+    // loadBMap()
     
+    /////
+    let myGeo = new BMap.Geocoder()
+    myGeo.getLocation(new BMap.Point(), function(result) {
+      if (result) {
+        alert(result.point.lng,result.point.lat)
+        alert('拿到了纬度'+result.point.lng)
+        let latlon = {
+          latitude:result.point.lat,
+          longitude:result.point.lng
+        }
+        localStorage.setItem('latlon',JSON.stringify(latlon))
+      }else{
+        alert('出粗了')
+      }
+    })
   }
 };
 </script>

@@ -3,7 +3,7 @@ const wx = window.wx
 import { sha256 } from 'js-sha256'
  
  
-import { getJSSDK,payorders } from '@/api/wx';//获取appid信息的接口,以后台人员接口为准
+import { getJSSDK,payorders,xcpayorders } from '@/api/wx';//获取appid信息的接口,以后台人员接口为准
 // import { payorders } from "@/api/appointment";//一个更具订单id获取appid的接口
 
 const wxUtils = (jsurl) => {
@@ -27,14 +27,14 @@ const wxUtils = (jsurl) => {
       // wx.getLocation({
       //   type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
       //   success: response => {
-      //     console.log('地理位置获取成功',response)
+      //     alert('地理位置获取成功',JSON.stringify(response))
       //     localStorage.setItem('latlon',JSON.stringify(response))
       //   },
       //   fail: err => {
-      //     console.log('获取位置失败', JSON.stringify(err))
+      //     alert('获取位置失败', JSON.stringify(err))
       //   },
       //   cancel: err => {
-      //     console.log('用户拒绝授权获取地理位置', err)
+      //     alert('用户拒绝授权获取地理位置', err)
       //   }
       // })  
       wxReady(resolve)
@@ -73,6 +73,30 @@ const WXinvoke = (data, resolve) => {  //orderId 订单ID
       "signType": 'HMAC-SHA256', // 微信签名方式：
     }
     payData.paySign = createSign(payData);
+    alert("package==="+payData.package)
+      wx.chooseWXPay(
+        'getBrandWCPayRequest',payData ,
+        function (res) {
+          console.log(res)
+          setTimeout(function () {
+            if (res.err_msg == "get_brand_wcpay_request:ok") {
+              resolve()
+            }
+          }, 500);
+        }
+      )
+  });
+}
+const xcWXinvoke = (data, resolve) => {  //orderId 订单ID
+  xcpayorders(data).then(res => {
+    let payData = {
+      "appId": res.data.data.appid, // 公众号名称，由商户传入
+      "timeStamp": parseInt(new Date().getTime() / 1000).toString(), // 时间戳，自1970年以来的秒数
+      "nonceStr": res.data.data.nonce_str, // 随机串
+      "package": "prepay_id=" + res.data.data.prepay_id,
+      "signType": 'HMAC-SHA256', // 微信签名方式：
+    }
+    payData.paySign = createSign(payData);
       wx.chooseWXPay(
         'getBrandWCPayRequest',payData ,
         function (res) {
@@ -93,7 +117,7 @@ function createSign(data) {
   for (var obj in data) {
       array.push(obj + "=" + data[obj]);
   }
-  stringA = array.join("&") + "&key=" + key;
+  stringA = array.join("&") + "&key=" + 'e3fe67e0ff6080f5272736db75ba8532';
   let paySign = sha256(stringA).toUpperCase()
   return paySign;
 }
@@ -102,13 +126,17 @@ const getLocation = () => {
     wx.getLocation({
       type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
       success: response => {
+        alert('地址拿到了')
         resolve(response);
       },
       fail: err => {
-        reject(err);
+        alert('获取位置失败', JSON.stringify(err))
+      },
+      cancel: err => {
+        alert('用户拒绝授权获取地理位置', err)
       }
     });
   });
 };
-export { getLocation,WXinvoke };
+export { getLocation,WXinvoke,xcWXinvoke };
 export default wxUtils;
