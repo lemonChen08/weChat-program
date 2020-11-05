@@ -32,6 +32,7 @@ router.beforeEach((to, from, next) => {
       const newUrl = `${url.split('?')[0]}${ hasParse ? `?${qs.stringify(parseUrl)}` : '' }`
       location.assign(newUrl)
     });
+    
   }
   next()
 })

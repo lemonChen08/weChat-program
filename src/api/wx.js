@@ -13,3 +13,7 @@ export function payorders(params) {
 export function xcpayorders(params) {
     return fet('api/carWashOrder/create',params,'post',{headers:{'Content-Type':'application/json;charset=UTF-8'}})
 }
+export function wxPayConfig(id) {
+    let params = {'prepay_id':id}
+    return fet('api/user/wxPayConfig',params,'get')
+}

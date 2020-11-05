@@ -102,6 +102,7 @@
       </div>
     </div>
     <Bindphone @closepop='closePhone' v-show="popShow"></Bindphone>
+    <div class="fadePop" v-show="fadePop">请求数据中</div>
   </div>
 </template>
 <script>
@@ -118,6 +119,7 @@ export default {
   },
   data() {
     return {
+      fadePop:true,
       popShow:false,
       // 打开搜索下拉
       phoneShow:0,
@@ -162,6 +164,7 @@ export default {
     },
     async getUserInfo(){
         let res = await api.userinfo({code:localStorage.getItem('code')})
+        
         if(res.data.code==0){
           this.getLocationFn()
           this.userinfo = res.data
@@ -207,6 +210,7 @@ export default {
     },
     async getxclist(){
       let latlon = JSON.parse(localStorage.getItem('latlon'))
+      alert(11)
       let res = await api.storesList({
         cityName:'深圳市',
         lat:latlon.latitude,
@@ -216,6 +220,9 @@ export default {
         priority:'dis',//距离优先：dis，评分优先：score，销量优先：sales;
       })
       if(res.data.code==0){
+
+        alert(22)
+        this.fadePop = false
         let data = JSON.parse(res.data.data)
         this.xclist = data.data.items
         this.xclist.forEach((item,i)=>{
@@ -228,9 +235,16 @@ export default {
             item.Tdiscount = (finalPrice / price).toFixed(2)
           })
         })
+      }else if(res.data.code==401){
+        localStorage.clear()
+        sessionStorage.clear()
+        window.location.reload()
+      }else{
+        alert(res.data.msg)
       }
     },
     async getGaslist(){
+      alert(33)
       let latlon = JSON.parse(localStorage.getItem('latlon'))
       let res = await api.get_gaslist({
         lat:latlon.latitude,
@@ -240,7 +254,8 @@ export default {
         pagesize:100
       })
       if(res.data.code==0){
-
+        alert(44)
+        this.fadePop = false
         let data = JSON.parse(res.data.data)
         // this.jyzlist = data.data.items
         data.data.items = data.data.items.map(v => {
@@ -248,8 +263,12 @@ export default {
           return v 
         })
         this.jyzlist = data.data.items
+      }else if(res.data.code==401){
+        localStorage.clear()
+        sessionStorage.clear()
+        window.location.reload()
       }else{
-        this.getUserInfo()
+        alert(res.data.msg)
       }
     },
     // 根据传入的油号获取检测站的价格信息
@@ -329,6 +348,16 @@ export default {
 };
 </script>
 <style scoped>
+.fadePop{
+  position:absolute;
+  top:0;
+  left:0;
+  bottom:0;
+  right:0;
+  color:#fff;
+  background:rgba(0,0,0,0.5);
+  z-index:999;
+}
 .pad-functions{padding:3vw 0;background:#fff;}
 .item-normal{
   flex: 1;
