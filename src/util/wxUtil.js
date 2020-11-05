@@ -67,14 +67,15 @@ const WXinvoke = (data, resolve) => {  //orderId 订单ID
   payorders(data).then(res => {
     wxPayConfig(res.data.data.prepay_id).then(resdata=>{
       let payData = {
-        "appId": res.data.data.appid, // 公众号名称，由商户传入
-        "timestamp": parseInt(new Date().getTime() / 1000).toString(), // 时间戳，自1970年以来的秒数
-        "nonceStr": res.data.data.nonce_str, // 随机串
-        "package": "prepay_id=" + res.data.data.prepay_id,
+        "appId": resdata.data.data.appId, // 公众号名称，由商户传入
+        "timeStamp": resdata.data.data.timestamp, // 时间戳，自1970年以来的秒数
+        "nonceStr": resdata.data.data.nonceStr, // 随机串
+        "package": resdata.data.data.package,
         "signType": 'MD5', // 微信签名方式：
+        "paySign":resdata.data.data.paySign
       }
-      payData.paySign = createSign(payData);
-        wx.chooseWXPay(
+      // payData.paySign = createSign(payData);
+        wx.invoke(
           'getBrandWCPayRequest',payData ,
           function (res) {
             console.log(res)
@@ -101,7 +102,7 @@ const xcWXinvoke = (data, resolve) => {  //orderId 订单ID
         "paySign":resdata.data.data.paySign
       }
       // payData.paySign = createSign(payData);
-        wx.chooseWXPay(
+        wx.invoke(
           'getBrandWCPayRequest',payData ,
           function (res) {
             console.log(res)

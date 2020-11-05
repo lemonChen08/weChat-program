@@ -5,7 +5,6 @@
         <img :src="item" height="100%"  width="100%"/>
       </el-carousel-item>
     </el-carousel>
-    <div  @click="topay" style="height:30px;">2222</div>
     <div class="pad-functions">
       <div class="item-normal" @click="toJylist">
         <div class="card-navigator">
@@ -103,6 +102,7 @@
       </div>
     </div>
     <Bindphone @closepop='closePhone' v-show="popShow"></Bindphone>
+    <div class="fadePop" v-show="fadePop">请求数据中</div>
   </div>
 </template>
 <script>
@@ -112,7 +112,6 @@ import { api } from "@/api/api"
 import {getLocation} from "@/util/wxUtil"
 import wxShare from '../util/wxShare.js'
 // import { loadBMap } from '../util/loadBMap'
-import {xcWXinvoke} from "@/util/wxUtil"
 const qs = require('qs')
 export default {
   components: {
@@ -120,6 +119,7 @@ export default {
   },
   data() {
     return {
+      fadePop:true,
       popShow:false,
       // 打开搜索下拉
       phoneShow:0,
@@ -164,6 +164,7 @@ export default {
     },
     async getUserInfo(){
         let res = await api.userinfo({code:localStorage.getItem('code')})
+        
         if(res.data.code==0){
           this.getLocationFn()
           this.userinfo = res.data
@@ -209,6 +210,7 @@ export default {
     },
     async getxclist(){
       let latlon = JSON.parse(localStorage.getItem('latlon'))
+      alert(11)
       let res = await api.storesList({
         cityName:'深圳市',
         lat:latlon.latitude,
@@ -218,6 +220,9 @@ export default {
         priority:'dis',//距离优先：dis，评分优先：score，销量优先：sales;
       })
       if(res.data.code==0){
+
+        alert(22)
+        this.fadePop = false
         let data = JSON.parse(res.data.data)
         this.xclist = data.data.items
         this.xclist.forEach((item,i)=>{
@@ -230,9 +235,16 @@ export default {
             item.Tdiscount = (finalPrice / price).toFixed(2)
           })
         })
+      }else if(res.data.code==401){
+        localStorage.clear()
+        sessionStorage.clear()
+        window.location.reload()
+      }else{
+        alert(res.data.msg)
       }
     },
     async getGaslist(){
+      alert(33)
       let latlon = JSON.parse(localStorage.getItem('latlon'))
       let res = await api.get_gaslist({
         lat:latlon.latitude,
@@ -242,7 +254,8 @@ export default {
         pagesize:100
       })
       if(res.data.code==0){
-
+        alert(44)
+        this.fadePop = false
         let data = JSON.parse(res.data.data)
         // this.jyzlist = data.data.items
         data.data.items = data.data.items.map(v => {
@@ -250,8 +263,12 @@ export default {
           return v 
         })
         this.jyzlist = data.data.items
+      }else if(res.data.code==401){
+        localStorage.clear()
+        sessionStorage.clear()
+        window.location.reload()
       }else{
-        this.getUserInfo()
+        alert(res.data.msg)
       }
     },
     // 根据传入的油号获取检测站的价格信息
@@ -290,27 +307,6 @@ export default {
         if(data){
           localStorage.setItem('latlon',JSON.stringify(data))
         }
-    },
-    topay(){
-      let bundle = {
-        originPrice: 4000,
-        price: 3300,
-        serviceCode: "81",
-        shopCode: "1524454375966667564",
-        status: "4"
-      }
-      xcWXinvoke(bundle,res=>{
-        if (res.code !== 200) {
-          this.isProcessing = false
-          // report('加油支付', '回调', '创建加油订单失败')
-          if (res.message === '油站返回错误![平台余额不足]') {
-            this.$layer.msg('暂不支持该油站')
-          } else {
-            this.$layer.msg(res.message)
-          }
-          return
-        }
-      }) 
     }
   },
   mounted() {
@@ -352,6 +348,16 @@ export default {
 };
 </script>
 <style scoped>
+.fadePop{
+  position:absolute;
+  top:0;
+  left:0;
+  bottom:0;
+  right:0;
+  color:#fff;
+  background:rgba(0,0,0,0.5);
+  z-index:999;
+}
 .pad-functions{padding:3vw 0;background:#fff;}
 .item-normal{
   flex: 1;

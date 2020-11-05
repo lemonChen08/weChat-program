@@ -558,6 +558,8 @@ export default {
       WXinvoke(data,res=>{
         if (res.code !== 200) {
           this.isProcessing = false
+          this.$layer.msg('支付成功')
+          this.$router.push("/xcdetail")
           // report('加油支付', '回调', '创建加油订单失败')
           if (res.message === '油站返回错误![平台余额不足]') {
             this.isProcessing = false
