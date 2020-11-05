@@ -5,6 +5,7 @@
         <img :src="item" height="100%"  width="100%"/>
       </el-carousel-item>
     </el-carousel>
+    <div  @click="topay" style="height:30px;">2222</div>
     <div class="pad-functions">
       <div class="item-normal" @click="toJylist">
         <div class="card-navigator">
@@ -111,6 +112,7 @@ import { api } from "@/api/api"
 import {getLocation} from "@/util/wxUtil"
 import wxShare from '../util/wxShare.js'
 // import { loadBMap } from '../util/loadBMap'
+import {xcWXinvoke} from "@/util/wxUtil"
 const qs = require('qs')
 export default {
   components: {
@@ -288,6 +290,27 @@ export default {
         if(data){
           localStorage.setItem('latlon',JSON.stringify(data))
         }
+    },
+    topay(){
+      let bundle = {
+        originPrice: 4000,
+        price: 3300,
+        serviceCode: "81",
+        shopCode: "1524454375966667564",
+        status: "4"
+      }
+      xcWXinvoke(bundle,res=>{
+        if (res.code !== 200) {
+          this.isProcessing = false
+          // report('加油支付', '回调', '创建加油订单失败')
+          if (res.message === '油站返回错误![平台余额不足]') {
+            this.$layer.msg('暂不支持该油站')
+          } else {
+            this.$layer.msg(res.message)
+          }
+          return
+        }
+      }) 
     }
   },
   mounted() {
