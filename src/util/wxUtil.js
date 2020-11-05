@@ -13,7 +13,7 @@ const wxUtils = (jsurl) => {
         localStorage.setItem('jsSdkConfig',data.data.data)
       }
       await wx.config({
-        debug: true, // TODO: 测试阶段使用
+        debug: false, // TODO: 测试阶段使用
         appId: data.data.data.appId,
         timestamp: data.data.data.timestamp,
         nonceStr: data.data.data.nonceStr,
