@@ -9,22 +9,29 @@ const WX_AUTH_URL = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid='
  */
 export default function wxAuth() {
     return new Promise((resolve, reject) => {
-        let openid = cookie.get('openid');
-        if (openid) {
-            resolve(openid);
-            return;
-        }
+        // let openid = cookie.get('openid');
+        // if (openid) {
+        //     resolve(openid);
+        //     return;
+        // }
         let code = getUrlParam('code');
         if (!code) {//未经过微信授权
+            // alert('没有code')
             let currentUrl = encodeURIComponent(window.location.href);
             window.location.replace(WX_AUTH_URL.replace('REDIRECT_URI', currentUrl));
         } else {
+            // alert('有code')
             getOpenid({code:code}).then(async res => {
+                // alert('获取到了openid？'+res.data.code)
                 if(res.data.code==0){
                     console.log("微信授权完成");
                     resolve(res);
-                }else {
-                    console.log("换取openid失败");
+                }else if(res.data.code==401){
+                localStorage.clear()
+                sessionStorage.clear()
+                window.location.reload()
+                }else{
+                alert(JSON.stringify(res))
                 }
             })
         }

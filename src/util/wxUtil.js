@@ -1,7 +1,6 @@
 // import wx from "weixin-jsapi";
 const wx = window.wx
-import md5 from 'js-md5';
- 
+import router from '../router'
  
 import { getJSSDK,payorders,xcpayorders,wxPayConfig } from '@/api/wx';//获取appid信息的接口,以后台人员接口为准
 // import { payorders } from "@/api/appointment";//一个更具订单id获取appid的接口
@@ -78,12 +77,7 @@ const WXinvoke = (data, resolve) => {  //orderId 订单ID
         wx.invoke(
           'getBrandWCPayRequest',payData ,
           function (res) {
-            console.log(res)
-            setTimeout(function () {
-              if (res.err_msg == "get_brand_wcpay_request:ok") {
-                resolve()
-              }
-            }, 500);
+            resolve(res)
           }
         )
     });

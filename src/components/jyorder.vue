@@ -6,36 +6,45 @@
           <div class="od_t yellow_text">待支付</div>
         </div>
         <div class="order_pay flexbox">
-          支付金额： <div class="od_m">30</div>元  <del>50元</del>
+          支付金额： <div class="od_m">{{payData.price/100}}</div>元  <del>{{payData.originPrice/100}}元</del>
         </div>
         <div class="order_adress flexbox">
           <img src="../assets/images/dz_icon.png" alt="" class="od_img">
           <div class="od_name">加油店</div>
           <div class="od_line"></div>
-          <div class="od_cp">炸金花集团有限公司</div>
+          <div class="od_cp">{{payData.jydname}}</div>
         </div>
         <div class="order_btn flexbox">
-          <div class="btn_go yellow_btn">继续支付</div>
-          <router-link to="order_details" class="btn_go">查看</router-link>
+          <div class="btn_go yellow_btn" @click="toPay">继续支付</div>
+          <!-- <router-link to="order_details" class="btn_go">查看</router-link> -->
         </div>
       </div>
     </div>
 </template>
 <script>
 import { api } from "@/api/api"
+import {WXinvoke} from "@/util/wxUtil"
 export default {
   components: {
   },
   data() {
     return {
-      
+      payData:{}
     };
   },
   created() {
-    
+    this.payData = JSON.parse(this.$route.query.payData)
   },
   methods: {
-
+    toPay(){
+      WXinvoke(this.payData,res=>{
+        alert('支付回调'+JSON.stringify(res))
+        if (res.err_msg == "get_brand_wcpay_request:ok") {
+          this.$layer.msg('支付成功')    
+          this.$router.push('home')
+        }
+      })  
+    }
     
   },
   mounted() {

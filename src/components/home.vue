@@ -210,7 +210,7 @@ export default {
     },
     async getxclist(){
       let latlon = JSON.parse(localStorage.getItem('latlon'))
-      alert(11)
+      // alert(11)
       let res = await api.storesList({
         cityName:'深圳市',
         lat:latlon.latitude,
@@ -221,7 +221,7 @@ export default {
       })
       if(res.data.code==0){
 
-        alert(22)
+        // alert(22)
         this.fadePop = false
         let data = JSON.parse(res.data.data)
         this.xclist = data.data.items
@@ -244,7 +244,7 @@ export default {
       }
     },
     async getGaslist(){
-      alert(33)
+      // alert(33)
       let latlon = JSON.parse(localStorage.getItem('latlon'))
       let res = await api.get_gaslist({
         lat:latlon.latitude,
@@ -254,7 +254,7 @@ export default {
         pagesize:100
       })
       if(res.data.code==0){
-        alert(44)
+        // alert(44)
         this.fadePop = false
         let data = JSON.parse(res.data.data)
         // this.jyzlist = data.data.items

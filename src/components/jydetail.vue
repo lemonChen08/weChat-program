@@ -131,15 +131,16 @@
           <div class="pad-benefit" v-if="benefit">
             约{{amount}}L，加油直降<strong class="color-red" style="font-size: 4.5vw; margin: 0.5vw;">{{ benefit }}</strong>元
           </div>
-          <button class="g-button black" :disabled="!price || isProcessing" @click="checkPhone">
-            <div v-if="!isProcessing && price && myInfo.phone">
+          <button class="g-button black" :disabled="!price || isProcessing">
+            <div v-if="!isProcessing && price && myInfo.phone && !isPay"  @click="checkPhone">
               确认支付 <span style="font-size: 5vw;">{{ finalPayPrice }}</span> 元
             </div>
-            <div v-if="!isProcessing && price && !myInfo.phone">
+            <!-- <div v-if="!isProcessing && price && !myInfo.phone">
               授权手机号并支付 <span style="font-size: 5vw;">{{ finalPayPrice }}</span> 元
-            </div>
+            </div> -->
             <span v-if="!price">请先输入加油金额</span>
             <span v-if="isProcessing">正在支付中</span>
+            <span v-if="isPay"><router-link to="/home">返回首页</router-link></span>
           </button>
         </div>  
       </div>  
@@ -244,7 +245,7 @@ export default {
         rebate: null // 银行卡返利
       },
       isBindCard:  false,
-      isPay: true,
+      isPay: false,
       authentication: false,
       alertObject: {},
       myInfo:{
@@ -542,6 +543,7 @@ export default {
       // }
       // let res = await czbOrderApis.create(bundle)
       // report('加油支付', '点击', '创建加油订单')
+      let price = this.truePrice
       let gasItem = JSON.parse(this.$route.query.gasItem)
       let data = {
         "gasFrom": gasItem.price.from,
@@ -551,30 +553,33 @@ export default {
         "oilType": this.oilNumber.oilType,
         "originPrice": Math.round(this.price * 100),
         "originUnitPrice": Math.round(this.oilNumber.priceGun * 100),
-        "price": parseFloat(this.price) * 100,
+        "price": parseFloat(price) * 100,
         "unitPrice": Math.round(parseFloat(this.oilNumber.priceYfq) * 100),
         "units": parseFloat(this.amount),
+        'jydname':this.item.name
       }
       WXinvoke(data,res=>{
-        if (res.code !== 200) {
+        // alert('支付回调'+JSON.stringify(res))
+        if (res.err_msg == "get_brand_wcpay_request:ok") {
           this.isProcessing = false
-          this.$layer.msg('支付成功')
-          this.$router.push("/xcdetail")
-          // report('加油支付', '回调', '创建加油订单失败')
-          if (res.message === '油站返回错误![平台余额不足]') {
-            this.isProcessing = false
-            this.$layer.msg('暂不支持该油站')
-          } else {
-            this.isProcessing = false
-            this.$layer.msg(res.message)
-          }
-          return
+          this.$layer.msg('支付成功')    
+          this.isPay = true
+        }else{
+          this.$router.push({ path: '/jyorder', query: {payData:JSON.stringify(data)}});
         }
-        let timeout = window.setTimeout(() => {
-          this.isProcessing = false
-          window.clearTimeout(timeout)
-        }, 2500)
-      })  
+      })
+        // if (res.code !== 200) {
+          
+        //   if (res.message === '油站返回错误![平台余额不足]') {
+        //     this.isProcessing = false
+        //     this.$layer.msg('暂不支持该油站')
+        //   } else {
+        //     this.isProcessing = false
+        //     this.$layer.msg(res.message)
+        //   }
+        //   return
+        // }
+        
       // const { id } = res.data
       // toUnitePay(id, `/czbOrder/${id}?success=1`, { isYsPay: this.oilNumber.from === GasStationSource.SHENGXIN })
       // session.save('myBankInfo', {rebate: this.bank.rebate, availableAmount: this.remain.availableAmount, isPay: this.isPay})

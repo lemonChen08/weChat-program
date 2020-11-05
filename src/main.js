@@ -20,6 +20,7 @@ Vue.prototype.$wxShare = wxShare
 
 router.beforeEach((to, from, next) => {
   let token = localStorage.getItem('oneToken')
+  // alert('token=='+token)
   if(token){
     wxShare()
   }else{
