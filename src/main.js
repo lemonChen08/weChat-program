@@ -20,7 +20,7 @@ Vue.prototype.$wxShare = wxShare
 
 router.beforeEach((to, from, next) => {
   let token = localStorage.getItem('oneToken')
-  if(!token){
+  if(token){
     wxShare()
   }else{
     wxAuth().then(res => {

@@ -69,7 +69,7 @@ function loadShareSignature() {
 
 function setShareConfig(shareSignature) {
     wx.config({
-        debug: false,
+        debug: true,
         appId: shareSignature.appId,
         timestamp: shareSignature.timestamp,
         nonceStr: shareSignature.nonceStr,

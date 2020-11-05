@@ -66,8 +66,8 @@ const wxReady = resolve => {  //不让分享
 const WXinvoke = (data, resolve) => {  //orderId 订单ID
   payorders(data).then(res => {
     let payData = {
-      "appId": res.data.data.appid, // 公众号名称，由商户传入
-      "timeStamp": parseInt(new Date().getTime() / 1000).toString(), // 时间戳，自1970年以来的秒数
+      // "appId": res.data.data.appid, // 公众号名称，由商户传入
+      "timestamp": parseInt(new Date().getTime() / 1000).toString(), // 时间戳，自1970年以来的秒数
       "nonceStr": res.data.data.nonce_str, // 随机串
       "package": "prepay_id=" + res.data.data.prepay_id,
       "signType": 'HMAC-SHA256', // 微信签名方式：

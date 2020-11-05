@@ -27,7 +27,7 @@
     </div>
     <!-- 列表 -->
     <div class="list_box">
-      <div class="list_item">
+      <div class="list_item" v-if="jyzlist.length>0">
         <div class="listtitle">
           <h2 class="title">附近加油站</h2>
           <router-link to="jylist" class="more">更多></router-link>
@@ -63,7 +63,7 @@
     </div>
     <!-- 列表 -->
     <div class="list_box">
-      <div class="list_item">
+      <div class="list_item"  v-if="xclist.length>0">
         <router-link :to="{path:'/xcdetails',query:{shopCode: xclist[0].shopCode,latitude:xclist[0].latitude,longitude:xclist[0].longitude}}" class="ls_go"></router-link>
         <div class="listtitle">
           <h2 class="title">附近洗车店</h2>
@@ -109,7 +109,7 @@ import axios from 'axios'
 import Bindphone from "./bindPhone"
 import { api } from "@/api/api"
 import {getLocation} from "@/util/wxUtil"
-import wxAuth from '../util/wxShare.js'
+import wxShare from '../util/wxShare.js'
 // import { loadBMap } from '../util/loadBMap'
 const qs = require('qs')
 export default {
@@ -124,8 +124,8 @@ export default {
       bannerList:[require('../assets/images/banner1.png'),require('../assets/images/banner2.png')],
       // 打开搜索地址
       mapShow:false,
-      xclist:[],
-      jyzlist:[],
+      xclist:[{}],
+      jyzlist:[{}],
       list:[
         {
           img:require('../assets/images/details_baner.jpg'),
@@ -247,7 +247,7 @@ export default {
           v.price = this.getPriceByOilNumber(v, 92)
           return v 
         })
-        this.jyzlist = this.jyzlist.concat(data.data.items)
+        this.jyzlist = data.data.items
       }else{
         this.getUserInfo()
       }
@@ -291,13 +291,10 @@ export default {
     }
   },
   mounted() {
-    let token = localStorage.getItem('oneToken')
-    if(token){
-      wxShare().then(() => {
+    wxShare().then(() => {
         this.getxclist()
         this.getGaslist()
       })
-    }
     
     // let userInfo = JSON.parse(localStorage.getItem('userInfo'))
     // const url = window.location.href;
