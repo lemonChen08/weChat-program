@@ -25,15 +25,15 @@ router.beforeEach((to, from, next) => {
   if(token){
     wxShare().then(res=>{next()})
   }else{
-    // wxAuth().then(res => {
-    //   localStorage.setItem('userInfo',JSON.stringify(res.data.data))
-    //   localStorage.setItem('oneToken',res.data.data.token)
-    //   const url = window.location.href;
-    //   const parseUrl = qs.parse(url.split('?')[1])
-    //   const hasParse = JSON.stringify(qs) === '{}';
-    //   const newUrl = `${url.split('?')[0]}${ hasParse ? `?${qs.stringify(parseUrl)}` : '' }`
-    //   location.assign(newUrl)
-    // })
+    wxAuth().then(res => {
+      localStorage.setItem('userInfo',JSON.stringify(res.data.data))
+      localStorage.setItem('oneToken',res.data.data.token)
+      const url = window.location.href;
+      const parseUrl = qs.parse(url.split('?')[1])
+      const hasParse = JSON.stringify(qs) === '{}';
+      const newUrl = `${url.split('?')[0]}${ hasParse ? `?${qs.stringify(parseUrl)}` : '' }`
+      location.assign(newUrl)
+    })
     
   }
   // next()
