@@ -1,5 +1,7 @@
 <template>
-    <div class="center_box">
+    <div class="" style="position:absolute;top:0;right:0;bottom:0;left:0;">
+      <div class="main">
+        <div class="center_box">
       <div class="car_box">
         <img src="../assets/images/w_car.jpg" alt="" class="car_img">
         <img src="../assets/images/user.jpg" alt="" class="car_header">
@@ -29,18 +31,21 @@
           <i class="item_go el-icon-arrow-right"></i>
         </router-link>
       </div>
-
-
+      </div>
+      </div>
+      <Tabs></Tabs>
       <!-- 绑定手机号 -->
       <Bindphone @closepop='closePhone' v-show="phoneShow"></Bindphone>
     </div>
 </template>
 <script>
+import Tabs from './tabs'
 import { api } from "@/api/api"
 import Bindphone from "./bindPhone"
 export default {
   components: {
-    Bindphone
+    Bindphone,
+    Tabs
   },
   data() {
     return {

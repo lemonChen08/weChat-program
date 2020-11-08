@@ -14,6 +14,7 @@ import home from '@/components/home.vue' //洗车详情
 import jylist from '@/components/jylist.vue' //加油列表
 import jydetail from '@/components/jydetail.vue' //加油详情
 import lacation from '@/components/lacation.vue'
+import jyorder1 from '@/components/jyorder1.vue'
 
 Vue.use(Router)
 
@@ -78,6 +79,11 @@ export default new Router({
 			path: '/lacation',
 			name: 'lacation',
 			component: lacation
+		},
+		{
+			path: '/jyorder1',
+			name: 'jyorder1',
+			component: jyorder1
 		},
   ]
 })

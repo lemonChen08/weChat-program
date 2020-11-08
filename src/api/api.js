@@ -27,4 +27,7 @@ api.storesDetail = params => {
 api.userinfo = params => {
   return fet('api/user/getOpenId',params,'post')
 }
+api.getorder = params => {
+  return fet('api/gasStationOrder/list',params,'get')
+}
 export {api}
