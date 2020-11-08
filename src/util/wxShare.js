@@ -30,51 +30,40 @@ const wxShare = () => {
         if (!isWeixinBrowser()) {
             return;
         }
-        loadShareSignature();
-        wx.ready(function () {
-            wx.getLocation({
-                type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-                success: response => {
-                    // alert('地理位置获取成功',JSON.stringify(response))
-                    localStorage.setItem('latlon',JSON.stringify(response))
-                    resolve()
-                },
-                fail: err => {
-                    alert('获取位置失败', JSON.stringify(err))
-                },
-                cancel: err => {
-                    alert('用户拒绝授权获取地理位置', err)
-                }
-            })  
-        });
+        let url = window.location.origin + router.currentRoute.fullPath
+    // alert('没有config')
+    getJSSDK(url).then( data => {
+        // alert('获取到了config'+data.data.code)
+        console.log(111)
+        if(data.data.code==0){
+            sessionStorage.shareSignature = JSON.stringify(data.data.data)
+            setShareConfig(data.data.data);
+            resolve()
+        }else if(data.data.code==401){
+            localStorage.clear()
+            sessionStorage.clear()
+            window.location.reload()
+        }else{
+            alert(JSON.stringify(data))
+        }
+        
+    })
+        
         wx.error(p => {
             console.log(p)
         });
     })
 }    
-function loadShareSignature() {
+const loadShareSignature = () => {
     
-    if (sessionStorage.shareSignature) {
-        // alert('有config')
-        let shareSignature = JSON.parse(sessionStorage.shareSignature);
-        setShareConfig(shareSignature);
-        return;
-    }
-    let url = window.location.origin + router.currentRoute.fullPath
-    // alert('没有config')
-    getJSSDK(url).then(async data => {
-        // alert('获取到了config'+data.data.code)
-        if(data.data.code==0){
-            sessionStorage.shareSignature = JSON.stringify(data.data.data)
-            setShareConfig(data.data.data);
-        }else if(data.data.code==401){
-            localStorage.clear()
-            sessionStorage.clear()
-            window.location.reload()
-          }else{
-            alert(JSON.stringify(data))
-          }
-    })
+    // if (sessionStorage.shareSignature) {
+    //     // alert('有config')
+    //     let shareSignature = JSON.parse(sessionStorage.shareSignature);
+    //     setShareConfig(shareSignature);
+    //     return;
+    // }
+    
+    
 }
 
 function setShareConfig(shareSignature) {
@@ -91,6 +80,22 @@ function setShareConfig(shareSignature) {
             'getLocation',
             'hideMenuItems',
             'chooseWXPay']
+    });
+    wx.ready(function () {
+        wx.getLocation({
+            type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+            success: response => {
+                // alert('地理位置获取成功',JSON.stringify(response))
+                localStorage.setItem('latlon',JSON.stringify(response))
+                
+            },
+            fail: err => {
+                alert('获取位置失败', JSON.stringify(err))
+            },
+            cancel: err => {
+                alert('用户拒绝授权获取地理位置', err)
+            }
+        })  
     });
 }
 

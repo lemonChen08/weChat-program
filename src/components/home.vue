@@ -1,7 +1,8 @@
 <template>
   <div class="pro_box">
+    <div class="main">
     <el-carousel height="150px">
-      <el-carousel-item v-for="item in bannerList" :key="item">
+      <el-carousel-item v-for="(item,key) in bannerList" :key="key">
         <img :src="item" height="100%"  width="100%"/>
       </el-carousel-item>
     </el-carousel>
@@ -34,7 +35,7 @@
         </div>
         <div class="ls_top flexbox" @click="routerTo(jyzlist[0])">
           <div class="ls_l">
-            <img :src="jyzlist[0].logo_small" alt="" class="ls_img">
+            <img :src="jyzlist[0].logo_big" alt="" class="ls_img">
             <!-- 如果休息中显示 -->
             <div class="if_stop" style="display:none;">
               <span>休息中</span>
@@ -44,7 +45,7 @@
           </div>
           <div class="ls_m">
             <div class="p_name">{{jyzlist[0].name}}</div>
-            <p class="price">VIP特权价 ￥<span class="bold">{{jyzlist[0].price.priceYfq}}</span><a class="oldprice">国标价 ￥ {{jyzlist[0].price.priceOfficial}}</a></p>
+            <p class="price">VIP特权价 ￥<span class="bold">{{jyzlist[0].price.priceYfq || 0}}</span><a class="oldprice">国标价 ￥ {{jyzlist[0].price.priceOfficial}}</a></p>
           </div>
           <div class="ls_r" style="display:none;">
             <div class="dz">{{jyzlist[0].dazhe}}</div>
@@ -53,7 +54,7 @@
         </div>
         <div class="ls_bot flexbox">
           <img src="../assets/images/icon-address.png" alt="" class="d_img">
-          <div class="d_name">{{jyzlist[0].adress}}</div>
+          <div class="d_name">{{jyzlist[0].address}}</div>
           <button class="d_map flexbox">
             <img src="../assets/images/icon-nav-white.png" alt="" class="map_img">
             {{jyzlist[0].distance}}
@@ -103,19 +104,25 @@
     </div>
     <Bindphone @closepop='closePhone' v-show="popShow"></Bindphone>
     <div class="fadePop" v-show="fadePop">请求数据中</div>
+    </div>
+    <Tabs></Tabs>
   </div>
 </template>
 <script>
+import Tabs from './tabs'
 import axios from 'axios'
 import Bindphone from "./bindPhone"
 import { api } from "@/api/api"
 import {getLocation} from "@/util/wxUtil"
 import wxShare from '../util/wxShare.js'
 // import { loadBMap } from '../util/loadBMap'
+import img1 from "@/assets/images/banner1.png"
+import img2 from "@/assets/images/banner1.png"
 const qs = require('qs')
 export default {
   components: {
-    Bindphone
+    Bindphone,
+    Tabs
   },
   data() {
     return {
@@ -123,11 +130,11 @@ export default {
       popShow:false,
       // 打开搜索下拉
       phoneShow:0,
-      bannerList:[require('../assets/images/banner1.png'),require('../assets/images/banner2.png')],
+      bannerList:[img1,img2],
       // 打开搜索地址
       mapShow:false,
       xclist:[{}],
-      jyzlist:[{}],
+      jyzlist:[{price:{priceYfq:0}}],
       list:[
         {
           img:require('../assets/images/details_baner.jpg'),
@@ -306,14 +313,23 @@ export default {
         let data=await getLocation()
         if(data){
           localStorage.setItem('latlon',JSON.stringify(data))
+          this.getGaslist()
+          this.getxclist()
+        
         }
     }
   },
   mounted() {
-    wxShare().then(() => {
-        this.getxclist()
-        this.getGaslist()
-      })
+    this.getLocationFn()
+    // wxShare().then(() => {
+    //     // let token = localStorage.getItem('oneToken')
+    //     // if(token){
+    //       console.log(222)
+    //       this.getxclist()
+    //     this.getGaslist()
+    //     // }
+        
+    //   })
     
     // let userInfo = JSON.parse(localStorage.getItem('userInfo'))
     // const url = window.location.href;

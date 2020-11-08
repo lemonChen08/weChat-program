@@ -110,6 +110,9 @@ button {
   -webkit-tap-highlight-color: transparent;
   font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 }
+.main{flex: 1;
+  height: calc(100% - 10vh);
+  z-index: 10;    overflow-y: scroll;}
 strong{font-weight: bold;}
 input:-webkit-autofill,
 textarea:-webkit-autofill,
