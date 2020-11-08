@@ -30,6 +30,12 @@ const wxShare = () => {
         if (!isWeixinBrowser()) {
             return;
         }
+        // let shareSignature = JSON.parse(sessionStorage.shareSignature);
+        // if(shareSignature){
+        //     setShareConfig(shareSignature);
+        //     resolve()
+        //     return
+        // }
         let url = window.location.origin + router.currentRoute.fullPath
     // alert('没有config')
     getJSSDK(url).then( data => {
@@ -56,12 +62,23 @@ const wxShare = () => {
 }    
 const loadShareSignature = () => {
     
-    // if (sessionStorage.shareSignature) {
-    //     // alert('有config')
-    //     let shareSignature = JSON.parse(sessionStorage.shareSignature);
-    //     setShareConfig(shareSignature);
-    //     return;
-    // }
+    let url = window.location.origin + router.currentRoute.fullPath
+    // alert('没有config')
+    getJSSDK(url).then( data => {
+        // alert('获取到了config'+data.data.code)
+        console.log(111)
+        if(data.data.code==0){
+            sessionStorage.shareSignature = JSON.stringify(data.data.data)
+            setShareConfig(data.data.data);
+        }else if(data.data.code==401){
+            localStorage.clear()
+            sessionStorage.clear()
+            window.location.reload()
+        }else{
+            alert(JSON.stringify(data))
+        }
+        
+    })
     
     
 }
@@ -79,7 +96,10 @@ function setShareConfig(shareSignature) {
             'onMenuShareAppMessage',
             'getLocation',
             'hideMenuItems',
-            'chooseWXPay']
+            'chooseWXPay'],
+        // fail: err =>{
+        //     loadShareSignature()
+        // }    
     });
     wx.ready(function () {
         wx.getLocation({
