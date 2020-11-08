@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     toHome(){
-        this.$router.push('/home')
+        this.$router.push('/')
     },
     toMe(){
         this.$router.push('/center')
