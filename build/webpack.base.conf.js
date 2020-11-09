@@ -42,11 +42,11 @@ module.exports = {
         include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]
       },
       {
-        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        test: /\.(png|jpg|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
         options: {
           limit: 10000,
-          publicPath:"../../",
+          // publicPath:"../../",
           name: utils.assetsPath('img/[name].[hash:7].[ext]')
         }
       },
