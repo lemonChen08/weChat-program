@@ -38,10 +38,10 @@ export default {
   methods: {
     toPay(){
       WXinvoke(this.payData,res=>{
-        alert('支付回调'+JSON.stringify(res))
+        // alert('支付回调'+JSON.stringify(res))
         if (res.err_msg == "get_brand_wcpay_request:ok") {
           this.$layer.msg('支付成功')    
-          this.$router.push('home')
+          this.$router.push('/home')
         }
       })  
     }

@@ -140,7 +140,7 @@
             </div> -->
             <span v-if="!price">请先输入加油金额</span>
             <span v-if="isProcessing">正在支付中</span>
-            <span v-if="isPay"><router-link to="/home">返回首页</router-link></span>
+            <span v-if="isPay"><router-link to="home">返回首页</router-link></span>
           </button>
         </div>  
       </div>  
