@@ -3,7 +3,7 @@
     <div class="main">
     <el-carousel height="150px">
       <el-carousel-item v-for="(item,key) in bannerList" :key="key">
-        <img :src="item" height="100%"  width="100%"/>
+        <img :src="item.url" height="100%"  width="100%"/>
       </el-carousel-item>
     </el-carousel>
     <div class="pad-functions">
@@ -130,7 +130,11 @@ export default {
       popShow:false,
       // 打开搜索下拉
       phoneShow:0,
-      bannerList:[img1,img2],
+      bannerList:[{
+        url:require('../assets/images/banner1.png')
+      },{
+        url:require('../assets/images/banner2.png')
+      }],
       // 打开搜索地址
       mapShow:false,
       xclist:[{}],
