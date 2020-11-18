@@ -44,6 +44,7 @@ const wxShare = () => {
         if(data.data.code==0){
             sessionStorage.shareSignature = JSON.stringify(data.data.data)
             // setShareConfig(data.data.data);
+            // alert(data.data.data)
             wx.config({
                 debug: false,
                 appId: data.data.data.appId,

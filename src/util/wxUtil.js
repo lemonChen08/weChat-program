@@ -130,7 +130,8 @@ const getLocation = () => {
         resolve(response);
       },
       fail: err => {
-        alert('获取位置失败2', JSON.stringify(err))
+        // alert('获取位置失败2', err)
+        resolve(err);
       },
       cancel: err => {
         alert('用户拒绝授权获取地理位置', err)
