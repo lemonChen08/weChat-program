@@ -9,7 +9,7 @@ api.bindPhone = params => {
   return fet('api/user/bindPhone',params,'post')
 }
 api.get_gaslist = params => {
-  return fet('api/user/gasStations',params,'post')
+  return fet('get_gaslist',params,'post')
 }
 
 api.get_station = params => {
