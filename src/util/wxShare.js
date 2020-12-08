@@ -43,7 +43,22 @@ const wxShare = () => {
         console.log(111)
         if(data.data.code==0){
             sessionStorage.shareSignature = JSON.stringify(data.data.data)
-            setShareConfig(data.data.data);
+            // setShareConfig(data.data.data);
+            // alert(data.data.data)
+            wx.config({
+                debug: false,
+                appId: data.data.data.appId,
+                timestamp: data.data.data.timestamp,
+                nonceStr: data.data.data.nonceStr,
+                signature: data.data.data.signature,
+                jsApiList: [
+                    'checkJsApi',
+                    'onMenuShareTimeline',
+                    'onMenuShareAppMessage',
+                    'getLocation',
+                    'hideMenuItems',
+                    'chooseWXPay']  
+            });
             resolve()
         }else if(data.data.code==401){
             localStorage.clear()
@@ -96,27 +111,23 @@ function setShareConfig(shareSignature) {
             'onMenuShareAppMessage',
             'getLocation',
             'hideMenuItems',
-            'chooseWXPay'],
-        // fail: err =>{
-        //     loadShareSignature()
-        // }    
+            'chooseWXPay']  
     });
-    wx.ready(function () {
-        wx.getLocation({
-            type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-            success: response => {
-                // alert('地理位置获取成功',JSON.stringify(response))
-                localStorage.setItem('latlon',JSON.stringify(response))
-                
-            },
-            fail: err => {
-                alert('获取位置失败', JSON.stringify(err))
-            },
-            cancel: err => {
-                alert('用户拒绝授权获取地理位置', err)
-            }
-        })  
-    });
+    // wx.ready(function () {
+        // wx.getLocation({
+        //     type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+        //     success: response => {
+        //         // alert('地理位置获取成功',JSON.stringify(response))
+        //         localStorage.setItem('latlon',JSON.stringify(response))
+        //     },
+        //     fail: err => {
+        //         alert('获取位置失败1', JSON.stringify(err))
+        //     },
+        //     cancel: err => {
+        //         alert('用户拒绝授权获取地理位置', err)
+        //     }
+        // })  
+    // });
 }
 
 function isWeixinBrowser() {

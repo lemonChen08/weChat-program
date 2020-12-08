@@ -3,7 +3,7 @@
     <div class="main">
     <el-carousel height="150px">
       <el-carousel-item v-for="(item,key) in bannerList" :key="key">
-        <img :src="item" height="100%"  width="100%"/>
+        <img :src="item.url" height="100%"  width="100%"/>
       </el-carousel-item>
     </el-carousel>
     <div class="pad-functions">
@@ -67,7 +67,7 @@
       <div class="list_item"  v-if="xclist.length>0">
         <router-link :to="{path:'/xcdetails',query:{shopCode: xclist[0].shopCode,latitude:xclist[0].latitude,longitude:xclist[0].longitude}}" class="ls_go"></router-link>
         <div class="listtitle">
-          <h2 class="title">附近洗车店</h2>
+          <h2 class="title">附近洗车店11</h2>
           <router-link to="xcdetails" class="more">更多></router-link>
         </div>
         <div class="ls_top flexbox">
@@ -103,8 +103,8 @@
       </div>
     </div>
     <Bindphone @closepop='closePhone' v-show="popShow"></Bindphone>
-    <div class="fadePop" v-show="fadePop">请求数据中</div>
-    </div>
+    <!-- <div class="fadePop" v-show="fadePop">请求数据中</div>-->
+    </div> 
     <Tabs></Tabs>
   </div>
 </template>
@@ -130,7 +130,11 @@ export default {
       popShow:false,
       // 打开搜索下拉
       phoneShow:0,
-      bannerList:[img1,img2],
+      bannerList:[{
+        url:require('../assets/images/banner1.png')
+      },{
+        url:require('../assets/images/banner2.png')
+      }],
       // 打开搜索地址
       mapShow:false,
       xclist:[{}],
@@ -309,14 +313,16 @@ export default {
     toXclist(){
       this.$router.replace('/xclist')
     },
-    async getLocationFn(){
-        let data=await getLocation()
-        if(data){
-          localStorage.setItem('latlon',JSON.stringify(data))
-          this.getGaslist()
-          this.getxclist()
-        
-        }
+    getLocationFn(){
+        getLocation().then(data=>{
+          if(data && data.errMsg=='getLocation:ok'){
+            localStorage.setItem('latlon',JSON.stringify(data))
+            this.getGaslist()
+            this.getxclist()
+          }else{
+            this.getLocationFn()
+          }
+        })
     }
   },
   mounted() {
