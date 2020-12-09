@@ -3,8 +3,8 @@ import axios from 'axios'
 const qs = require('qs')
 let that = vm;
 const server = {
-  development: 'http://118.89.239.14:8108/',
-  production: 'http://118.89.239.14:8108/'
+  development: 'http://car.welaipay.com/station/web_route.php/',
+  production: 'http://car.welaipay.com/station/web_route.php/'
 }
 
 const jsonUrl = (json) => {

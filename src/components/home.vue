@@ -12,7 +12,7 @@
           <img src="../assets/images/jiayou.png" class="icon"/>
           <span class="tag">8折</span>
           <div class="row-info">
-            <span class="name">折扣加油</span>
+            <span class="name">折扣加油111</span>
           </div>
         </div>
       </div>
@@ -30,7 +30,7 @@
     <div class="list_box">
       <div class="list_item" v-if="jyzlist.length>0">
         <div class="listtitle">
-          <h2 class="title">附近加油站</h2>
+          <h2 class="title">附近加油站111</h2>
           <router-link to="jylist" class="more">更多></router-link>
         </div>
         <div class="ls_top flexbox" @click="routerTo(jyzlist[0])">
