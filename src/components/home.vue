@@ -258,8 +258,8 @@ export default {
       // alert(33)
       let latlon = JSON.parse(localStorage.getItem('latlon'))
       let res = await api.get_gaslist({
-        lat:latlon.latitude,
-        lng:latlon.longitude,
+        lat:102,
+        lng:103,
         oil_numbers:'92#',
         pageNum:1,
         pagesize:100
@@ -326,7 +326,9 @@ export default {
     }
   },
   mounted() {
-    this.getLocationFn()
+    // this.getLocationFn()
+    this.getGaslist()
+          this.getxclist()
     // wxShare().then(() => {
     //     // let token = localStorage.getItem('oneToken')
     //     // if(token){

@@ -23,13 +23,12 @@ router.beforeEach((to, from, next) => {
   let token = localStorage.getItem('oneToken')
   // alert('token=='+token)
   if(token){
-    wxShare().then(res=>{
-      next()
-    })
+    // wxShare().then(res=>{next()})
   }else{
     wxAuth().then(res => {
       localStorage.setItem('userInfo',JSON.stringify(res.data.data))
-      localStorage.setItem('oneToken',res.data.data.token)
+      // localStorage.setItem('oneToken',res.data.data.token)
+      localStorage.setItem('oneToken',1)
       const url = window.location.href;
       const parseUrl = qs.parse(url.split('?')[1])
       const hasParse = JSON.stringify(qs) === '{}';
@@ -38,7 +37,7 @@ router.beforeEach((to, from, next) => {
     })
     
   }
-  // next()
+  next()
 })
 // let vConsole = new VConsole()
 // router.beforeEach((to, from, next) => {
