@@ -5,7 +5,7 @@ export function getJSSDK(jsurl) {
     return fet('api/user/wxConfig',params,'get')
 }
 export function getOpenid(params) {
-    return fet('api/user/getOpenId',params,'post')
+    return fet('',params,'post')
 }
 export function payorders(params) {
     return fet('api/gasStationOrder/create',params,'post',{headers:{'Content-Type':'application/json;charset=UTF-8'}})

@@ -12,17 +12,18 @@ module.exports = {
     assetsPublicPath: '/dist',
     proxyTable: {
       '/api': {  //使用"/api"来代替"http://f.apiplus.c" 
-        target: 'http://api.welaipay.com/station/web_route.php', //源地址 
-        changeOrigin: true, //改变源 
+        target: 'http://car.welaipay.com/station/web_route.php', //源地址 
+        changeOrigin: true, // 是否跨域
         pathRewrite: { 
-          '^/api': 'http://api.welaipay.com/station/web_route.php' //路径重写 
-          } 
+          '^/api': '/api'
+        },
+        secure: false  
       }
     },
 
     // Various Dev Server settings
-    host: '192.168.0.102', // can be overwritten by process.env.HOST
-    port: 80, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    host: '192.168.3.13', // can be overwritten by process.env.HOST
+    port: 8081, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,
     notifyOnErrors: true,

@@ -9,6 +9,10 @@
               <div class="form_text">手机号码<span>*</span></div>
               <input type="text" class="phone_input" v-model="phone" placeholder="请输入手机号码">
             </div>
+            <div class="phone_item">
+              <div class="form_text">邀请码</div>
+              <input type="text" class="phone_input" v-model="inviteCode" placeholder="请输入邀请码">
+            </div>
             <!-- <div class="phone_item">
               <div class="form_text">验证码<span>*</span></div>
               <input type="text" class="phone_input code" placeholder="请输入验证码">
@@ -30,11 +34,14 @@ export default {
   props:[],
   data() {
     return {
-      phone:''
+      phone:'',
+      inviteCode:'',
+      userInfo:null
     };
   },
   created() {
-    
+    let userInfo = localStorage.getItem('userInfo')
+    this.userInfo = JSON.parse(userInfo)
   },
   methods: {
     async login(){
@@ -43,12 +50,14 @@ export default {
             return
         }
         let res = await api.bindPhone({
-            inviteCode:'',
-            verifyCode:'',
-            phone:this.phone
+            action:'wx_bind',
+            phone:this.phone,
+            wx_id:this.userInfo.wx_id
         })
-        if(res.data.code==0){
+        if(res.data.code==200){
             this.$layer.msg("绑定成功")
+            this.userInfo.phone = this.phone
+            localStorage.setItem('userInfo',JSON.stringify(this.userInfo))
             this.closePhone()   
         }else{
             this.$layer.msg(res.data.msg)

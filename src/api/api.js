@@ -6,14 +6,14 @@ api.userLogin = params => {
   return fet('api/user/login',params,'post')
 }
 api.bindPhone = params => {
-  return fet('api/user/bindPhone',params,'post')
+  return fet('',params,'post')
 }
 api.get_gaslist = params => {
-  return fet('get_gaslist',params,'post')
+  return fet('',params,'post')
 }
 
 api.get_station = params => {
-  return fet('api/user/gasStationDetail',params,'get')
+  return fet('',params,'post')
 }
 api.storesList = params => {
   return fet('api/user/stores',params,'post')

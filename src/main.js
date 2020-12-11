@@ -20,15 +20,14 @@ Vue.prototype.$wxShare = wxShare
 
 router.beforeEach((to, from, next) => {
   // debugger
-  let token = localStorage.getItem('oneToken')
+  let token = localStorage.getItem('userInfo')
   // alert('token=='+token)
   if(token){
     // wxShare().then(res=>{next()})
   }else{
     wxAuth().then(res => {
-      localStorage.setItem('userInfo',JSON.stringify(res.data.data))
+      localStorage.setItem('userInfo',JSON.stringify(res))
       // localStorage.setItem('oneToken',res.data.data.token)
-      localStorage.setItem('oneToken',1)
       const url = window.location.href;
       const parseUrl = qs.parse(url.split('?')[1])
       const hasParse = JSON.stringify(qs) === '{}';

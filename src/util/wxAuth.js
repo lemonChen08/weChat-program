@@ -22,17 +22,22 @@ export default function wxAuth() {
             window.location.replace(WX_AUTH_URL.replace('REDIRECT_URI', currentUrl));
         } else {
             // alert('有code')
-            getOpenid({code:code}).then(async res => {
+            let param = {
+                action:'wx_user',
+                code:code,
+                invita_code:''
+            }
+            getOpenid(param).then(async res => {
                 // alert('获取到了openid？'+res.data.code)
-                if(res.data.code==0){
+                if(res.data.code==200){
                     console.log("微信授权完成");
-                    resolve(res);
+                    resolve(res.data.data);
                 }else if(res.data.code==401){
-                localStorage.clear()
-                sessionStorage.clear()
-                window.location.reload()
+                    localStorage.clear()
+                    sessionStorage.clear()
+                    window.location.reload()
                 }else{
-                alert(JSON.stringify(res))
+                    alert(JSON.stringify(res))
                 }
             })
         }

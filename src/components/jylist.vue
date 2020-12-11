@@ -95,7 +95,7 @@
         <!-- <router-link to="jylist" class="ls_go"></router-link> -->
         <div class="ls_top flexbox">
           <div class="ls_l">
-            <img :src="item.logo_small" alt="" class="ls_img">
+            <img :src="item.gas_logo_big" alt="" class="ls_img">
             <!-- 如果休息中显示 -->
             <div class="if_stop" style="display:none;">
               <span>休息中</span>
@@ -105,7 +105,7 @@
           </div>
           <div class="ls_m">
             <div class="p_name">{{item.name}}</div>
-            <p class="price">VIP特权价 ￥<span class="bold" v-if="item">{{item.price.priceYfq}}</span><a class="oldprice">国标价 ￥ {{item.price.priceOfficial}}</a></p>
+            <p class="price">VIP特权价 ￥<span class="bold" v-if="item">{{item.discount_price}}</span><a class="oldprice">国标价 ￥ {{item.official_price}}</a></p>
           </div>
           <div class="ls_r" style="display:none;">
             <div class="dz">{{item.dazhe}}</div>
@@ -117,10 +117,10 @@
         </div>
         <div class="ls_bot">
           <img src="../assets/images/icon-address.png" alt="" class="d_img">
-          <div class="d_name">{{item.address}}</div>
+          <div class="d_name">{{item.gas_address}}</div>
           <button class="d_map">
             <img src="../assets/images/icon-nav-white.png" alt="" class="map_img">
-            {{item.distance}}km
+            {{item.juli/100}}km
           </button>
         </div>
       </div>
@@ -154,7 +154,7 @@ export default {
       searchInfo: {
         lat: '',
         lng: '',
-        oil_numbers: '',
+        oil_numbers: '92',
         oil_types: '',
         types: [],
         per_page: 10,
@@ -186,7 +186,7 @@ export default {
   },
   methods: {
     routerTo(item){
-        this.$router.push({ path: '/jydetail', query: { gasItem:JSON.stringify(item),gasId:item.id,oil_number: this.searchInfo.oil_numbers}});
+        this.$router.push({ path: '/jydetail', query: { gasItem:JSON.stringify(item),gasId:item.gas_id,oil_number: this.searchInfo.oil_numbers}});
     },  
     doToggleOilNumber () {
       this.showOilNumber = !this.showOilNumber
@@ -221,23 +221,16 @@ export default {
     },
     async getGaslist(){
       let latlon = JSON.parse(localStorage.getItem('latlon'))
-      console.log(latlon)
       let res = await api.get_gaslist({
-        lat:latlon.latitude,
-        lng:latlon.longitude,
-        oil_numbers:this.searchInfo.oil_numbers+'#',
-        pageNum:1,
+        action:'get_gaslist',
+        latitude:22.606497,
+        longitude:114.052402,
+        oilName:this.searchInfo.oil_numbers+'#',
+        page:1,
         pagesize:100
       })
-      if(res.data.code==0){
-
-        let data = JSON.parse(res.data.data)
-        // this.jyzlist = data.data.items
-        data.data.items = data.data.items.map(v => {
-          v.price = this.getPriceByOilNumber(v, this.searchInfo.oil_numbers)
-          return v 
-        })
-        this.jyzlist = this.jyzlist.concat(data.data.items)
+      if(res.data.code==200){
+        this.jyzlist = res.data.result
       }else{
         this.getUserInfo()
       }

@@ -3,49 +3,49 @@
       <div class="banner-station" v-if="!isLoading">
         <div class="pad-bg">
           <div class="image hx-image centerVertical block">
-            <img class="img" :src="item.logo_big || item.logo_small"/>
+            <img class="img" :src="item.gas_logo_big || item.gas_logo_small"/>
           </div>
         </div>
-        <div class="card-station shadow" v-if="item.name">
+        <div class="card-station shadow" v-if="item.gas_name">
           <div class="mask"></div>
           <span class="text-name">
-            <strong v-text="item.name"></strong>
-            <span v-if="stationPrice" class="tag">
-              {{ (stationPrice.priceSX * 10 / stationPrice.priceOfficial).toFixed(1) }} 折
-            </span>
+            <strong v-text="item.gas_name"></strong>
+            <!-- <span class="tag">
+              {{  }} 折
+            </span> -->
           </span>
-          <span class="row-price" v-if="stationPrice && oilNumber">
+          <span class="row-price">
             <span class="price">
-              VIP特权价 <strong>￥{{ oilNumber.priceYfq }}</strong>
+              VIP特权价 <strong>￥{{ selectInfo.discount_price }}</strong>
             </span>
             <span class="officialPrice" >
-              国标价 ￥ {{ stationPrice.priceOfficial }}
+              国标价 ￥ {{ selectInfo.official_price }}
             </span>
           </span>
           <div class="row-cutLine"></div>
           <span class="row-location">
             <span class="text-location">
               <img class="icon" src="../assets/images/icon-address.png" alt="">
-              <span class="text word-break">{{item.address}}</span>
+              <span class="text word-break">{{item.gas_address}}</span>
             </span>
-            <button class="btn-distance toLocation" v-if="isWxReady" @click="toLocation(item)">
+            <!-- <button class="btn-distance toLocation" v-if="isWxReady" @click="toLocation(item)">
               <img class="icon" src="../assets/images/icon-nav-white.png" alt="">
               <span>{{ item.distance ? `${item.distance}km` : '导航' }}</span>
-            </button>
+            </button> -->
           </span>
         </div>
       </div>
-    <div class="pad-select-zone" v-if="!isLoading">  
-      <div class="item-select" v-if="oilTypes.length">
-        <div class="discount" @click="getDiscount" style="height:10vw" v-if="list.length > 0">
+    <div class="pad-select-zone">  
+      <div class="item-select">
+        <!-- <div class="discount" @click="getDiscount" style="height:10vw" v-if="list.length > 0">
           <div  v-for="(item, index) in list" v-if="index < 2"  :key="index" class="tag">满{{ item.threshold + '-' + item.money }} </div>
           <button size="sm" type="main"  >领券</button>
-        </div>
+        </div> -->
         <header class="title">
           选择商品
         </header>
         <div class="pad-options">
-          <button :class="['btn-option', oilType === type.value && 'selected']" 
+          <button class="btn-option" :class="oilTypes.value==selectInfo.oilType?'selected':''" 
             :key="idx" 
             v-for="(type, idx) in oilTypes"
             @click="doSelectOilType(type.value)">
@@ -53,20 +53,20 @@
           </button>
         </div>
       </div>
-      <div class="item-select" v-if="oilTypes.length">
+      <div class="item-select" v-if="item.oilList.length">
         <header class="title">
           选择油号
         </header>
         <div class="pad-options">
-          <button :class="['btn-option', oilNumber && oilNumber.oilNo === oilNo.oilNo && 'selected']" 
+          <button class="btn-option" :class="oilTypes.value==selectInfo.oil_no?'selected':''" 
             :key="idx" 
-            v-for="(oilNo, idx) in oilNumbers"
+            v-for="(oilNo, idx) in item.oilList"
             @click="doSelectOilNumber(oilNo)"
             v-text="oilNo.oilName">
           </button>
         </div>
       </div>
-      <div class="item-select" v-if="gunNumbers.length">
+      <div class="item-select" v-if="item.oilList.length>0">
         <header class="title">
           选择枪号
         </header>
@@ -79,7 +79,7 @@
           </button>
         </div>
       </div>
-      <div class="item-select" style="margin-top: 2vw;" v-if="!oilTypes.length">
+      <div class="item-select" style="margin-top: 2vw;" v-if="!item.oilList.length">
         <div class="hx-emptyset transparent sm"
           style="min-height: 20vw; display: flex;">
           暂无油号信息
@@ -188,7 +188,7 @@
 import { api } from "@/api/api"
 import { 
   GasStationSource,
-  OilTypes,
+  // OilTypes,
   GhyyOrderStatuses,
   oilTypeArray
 } from '../util/const'
@@ -224,11 +224,15 @@ export default {
       isProcessing: false,
       item: {},
       prices: {},
-      oilTypes: [],
+      oilTypes: [
+        { value:1, key: '汽油' },
+        { value:2, key: '柴油' },
+        { value:3, key: '天然气'}
+      ],
       remain: {},
       service_fee_rate: '',
       options: [100, 200, 300, 500], // 默认金额选项
-      oilType: OilTypes.GASOLINE, // 选中的油型
+      // oilType: OilTypes.GASOLINE, // 选中的油型
       price: null, // 准备支付的价格
       oilNumber: null, // 选中的油号
       gunNumber: null, // 选中的枪号
@@ -249,13 +253,15 @@ export default {
       authentication: false,
       alertObject: {},
       myInfo:{
-        phone:'13631620136'
-      }
+        phone:''
+      },
+      selectInfo:{}
     };
   },
   created() {
     let userInfo = JSON.parse(localStorage.getItem('userInfo'))
     this.myInfo.phone = userInfo.phone
+    this.getGasDetail()
   },
   computed:{
     unitPrice () {
@@ -441,11 +447,13 @@ export default {
     },
     async getGasDetail(){
       let res = await api.get_station({
-        gasStationId:this.$route.query.gasId
+        action:'get_station',
+        phone:this.myInfo.phone,
+        gasId:this.$route.query.gasId
       })
-      if(res.data.code==0){
-        let data = JSON.parse(res.data.data)
-        this.item = data.data
+      if(res.data.code==200){
+        let data = res.data.result
+        this.item = data
         this.$_analyseOptions()
       }else{
         this.$layer.msg(res.data.message)
@@ -471,24 +479,25 @@ export default {
     $_analyseOptions () {
       let oilTypes = []
       const oil_number = this.$route.query.oil_number
-      if (!Array.isArray(this.item.prices)) {
+      if (!Array.isArray(this.item.oilList)) {
         return
       }
-      for (let price of this.item.prices) {
-        
-        if (!oilTypes.filter(v => v.value === price.oilType).length) {
-          let val = oilTypeArray.filter((item)=>{return item.value==price.oilType})
+      for (let oliItem of this.item.oilList) {
+        console.log(oilTypes)
+        console.log(oliItem)
+        if (!this.oilTypes.filter(v => v.value === oliItem.oil_type).length && oilTypes.filter(v => v.value == oliItem.oil_type).length==0) {
+          let val = this.oilTypes.filter((item)=>{return item.value==oliItem.oil_type})
           oilTypes.push({ 
             key: val[0].key  , 
-            value: price.oilType
+            value: val[0].value
           })
         }
-        if (oil_number) {
-          const oilNo = isNaN(oil_number) ? oil_number : parseInt(oil_number)
-          if (oilNo === price.oilNo) {
-            this.doSelectOilNumber(price)
-          }
-        }
+        // if (oil_number) {
+        //   const oilNo = isNaN(oil_number) ? oil_number : parseInt(oil_number)
+        //   if (oilNo === price.oilNo) {
+        //     this.doSelectOilNumber(price)
+        //   }
+        // }
       }
       this.oilTypes = oilTypes // 初始化该加油站可以选的商品类型（柴油、汽油或者天然气）
       if (!oil_number && this.oilTypes && this.oilTypes.length === 1) {
@@ -596,7 +605,7 @@ export default {
     },
   },
   mounted() {
-    this.getGasDetail()
+    
   }
 };
 </script>

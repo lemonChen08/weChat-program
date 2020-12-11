@@ -12,7 +12,7 @@
           <img src="../assets/images/jiayou.png" class="icon"/>
           <span class="tag">8折</span>
           <div class="row-info">
-            <span class="name">折扣加油111</span>
+            <span class="name">折扣加油</span>
           </div>
         </div>
       </div>
@@ -30,12 +30,12 @@
     <div class="list_box">
       <div class="list_item" v-if="jyzlist.length>0">
         <div class="listtitle">
-          <h2 class="title">附近加油站111</h2>
+          <h2 class="title">附近加油站</h2>
           <router-link to="jylist" class="more">更多></router-link>
         </div>
         <div class="ls_top flexbox" @click="routerTo(jyzlist[0])">
           <div class="ls_l">
-            <img :src="jyzlist[0].logo_big" alt="" class="ls_img">
+            <img :src="jyzlist[0].gas_logo_big" alt="" class="ls_img">
             <!-- 如果休息中显示 -->
             <div class="if_stop" style="display:none;">
               <span>休息中</span>
@@ -45,7 +45,7 @@
           </div>
           <div class="ls_m">
             <div class="p_name">{{jyzlist[0].name}}</div>
-            <p class="price">VIP特权价 ￥<span class="bold">{{jyzlist[0].price.priceYfq || 0}}</span><a class="oldprice">国标价 ￥ {{jyzlist[0].price.priceOfficial}}</a></p>
+            <p class="price">VIP特权价 ￥<span class="bold">{{jyzlist[0].discount_price || 0}}</span><a class="oldprice">国标价 ￥ {{jyzlist[0].official_price}}</a></p>
           </div>
           <div class="ls_r" style="display:none;">
             <div class="dz">{{jyzlist[0].dazhe}}</div>
@@ -54,10 +54,10 @@
         </div>
         <div class="ls_bot flexbox">
           <img src="../assets/images/icon-address.png" alt="" class="d_img">
-          <div class="d_name">{{jyzlist[0].address}}</div>
+          <div class="d_name">{{jyzlist[0].gas_address}}</div>
           <button class="d_map flexbox">
             <img src="../assets/images/icon-nav-white.png" alt="" class="map_img">
-            {{jyzlist[0].distance}}
+            {{jyzlist[0].juli/100}}
           </button>
         </div>
       </div>
@@ -67,7 +67,7 @@
       <div class="list_item"  v-if="xclist.length>0">
         <router-link :to="{path:'/xcdetails',query:{shopCode: xclist[0].shopCode,latitude:xclist[0].latitude,longitude:xclist[0].longitude}}" class="ls_go"></router-link>
         <div class="listtitle">
-          <h2 class="title">附近洗车店11</h2>
+          <h2 class="title">附近洗车店</h2>
           <router-link to="xcdetails" class="more">更多></router-link>
         </div>
         <div class="ls_top flexbox">
@@ -155,7 +155,11 @@ export default {
     };
   },
   created() {
-    
+    let userInfo = localStorage.getItem('userInfo')
+    userInfo = JSON.parse(userInfo)
+    if(userInfo.phone==''){
+      this.popShow = true
+    }
   },
   methods: {
     routerTo(item){
@@ -224,10 +228,12 @@ export default {
       // alert(11)
       let res = await api.storesList({
         cityName:'深圳市',
-        lat:latlon.latitude,
-        lng:latlon.longitude,
-        pageNum:1,
-        pageSize:100,
+        // lat:latlon.latitude,
+        // lng:latlon.longitude,
+        latitude:22.606497,
+        longitude:114.052402,
+        page:1,
+        pagesize:15,
         priority:'dis',//距离优先：dis，评分优先：score，销量优先：sales;
       })
       if(res.data.code==0){
@@ -258,22 +264,23 @@ export default {
       // alert(33)
       let latlon = JSON.parse(localStorage.getItem('latlon'))
       let res = await api.get_gaslist({
-        lat:102,
-        lng:103,
-        oil_numbers:'92#',
-        pageNum:1,
-        pagesize:100
+        action:'get_gaslist',
+        latitude:22.606497,
+        longitude:114.052402,
+        oilName:'92#',
+        page:1,
+        pagesize:15
       })
-      if(res.data.code==0){
+      if(res.data.code==200){
         // alert(44)
         this.fadePop = false
-        let data = JSON.parse(res.data.data)
+        this.jyzlist = res.data.result
         // this.jyzlist = data.data.items
-        data.data.items = data.data.items.map(v => {
-          v.price = this.getPriceByOilNumber(v, 92)
-          return v 
-        })
-        this.jyzlist = data.data.items
+        // data.data.items = data.map(v => {
+        //   v.price = this.getPriceByOilNumber(v, 92)
+        //   v.price = v.discount_price
+        //   return v 
+        // })
       }else if(res.data.code==401){
         localStorage.clear()
         sessionStorage.clear()
