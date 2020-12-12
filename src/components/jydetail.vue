@@ -45,7 +45,7 @@
           选择商品
         </header>
         <div class="pad-options">
-          <button class="btn-option" :class="oilTypes.value==selectInfo.oilType?'selected':''" 
+          <button class="btn-option" :class="type.value==selectInfo.oilType?'selected':''" 
             :key="idx" 
             v-for="(type, idx) in oilTypes"
             @click="doSelectOilType(type.value)">
@@ -58,11 +58,13 @@
           选择油号
         </header>
         <div class="pad-options">
+          {{oilTypes.value}}{{selectInfo.oil_no}}
           <button class="btn-option" :class="oilTypes.value==selectInfo.oil_no?'selected':''" 
             :key="idx" 
+            v-show="oilNo.oil_type==selectInfo.oilType"
             v-for="(oilNo, idx) in item.oilList"
             @click="doSelectOilNumber(oilNo)"
-            v-text="oilNo.oilName">
+            v-text="oilNo.oil_name">
           </button>
         </div>
       </div>
@@ -255,7 +257,9 @@ export default {
       myInfo:{
         phone:''
       },
-      selectInfo:{}
+      selectInfo:{
+        oilType:1
+      }
     };
   },
   created() {
@@ -501,7 +505,7 @@ export default {
       }
       this.oilTypes = oilTypes // 初始化该加油站可以选的商品类型（柴油、汽油或者天然气）
       if (!oil_number && this.oilTypes && this.oilTypes.length === 1) {
-        this.oilType = this.oilTypes[0].value
+        this.selectInfo.oilType = this.oilTypes[0].value
       }
     },
     checkPhone () {
