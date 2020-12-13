@@ -8,7 +8,7 @@ export function getOpenid(params) {
     return fet('',params,'post')
 }
 export function payorders(params) {
-    return fet('api/gasStationOrder/create',params,'post',{headers:{'Content-Type':'application/json;charset=UTF-8'}})
+    return fet('',params,'post')
 }
 export function xcpayorders(params) {
     return fet('api/carWashOrder/create',params,'post',{headers:{'Content-Type':'application/json;charset=UTF-8'}})

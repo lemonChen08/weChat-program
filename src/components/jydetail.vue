@@ -53,31 +53,31 @@
           </button>
         </div>
       </div>
-      <div class="item-select" v-if="item.oilList.length">
+      <div class="item-select">
         <header class="title">
           选择油号
         </header>
         <div class="pad-options">
-          {{oilTypes.value}}{{selectInfo.oil_no}}
-          <button class="btn-option" :class="oilTypes.value==selectInfo.oil_no?'selected':''" 
+          <button class="btn-option"  
             :key="idx" 
-            v-show="oilNo.oil_type==selectInfo.oilType"
-            v-for="(oilNo, idx) in item.oilList"
-            @click="doSelectOilNumber(oilNo)"
-            v-text="oilNo.oil_name">
+            v-show="oilItem.oil_type==selectInfo.oilType"
+            v-for="(oilItem, idx) in item.oilList"
+            :class="selectInfo.oil_no==oilItem.oil_name?'selected':''"
+            @click="doSelectOilNumber(oilItem)">
+            {{oilItem.oil_name}}
           </button>
         </div>
       </div>
-      <div class="item-select" v-if="item.oilList.length>0">
+      <div class="item-select">
         <header class="title">
           选择枪号
         </header>
-        <div class="pad-options" v-if="gunNumbers.length">
-          <button :class="['btn-option', gunNumber === gunNo.gunNo && 'selected']" 
+        <div class="pad-options">
+          <button class="btn-option" :class="selectInfo.gunNumber==gunNo?'selected':''" 
             :key="idx" 
             v-for="(gunNo, idx) in gunNumbers"
-            @click="doSelectGunNumber(gunNo.gunNo)">
-            {{ gunNo.gunNo }}号
+            @click="doSelectGunNumber(gunNo)">
+            {{ gunNo }}号
           </button>
         </div>
       </div>
@@ -93,23 +93,16 @@
           该油号暂无油枪
         </div>
       </div> 
-      <div class="item-select special" v-if="gunNumbers.length && gunNumber">
+      <div class="item-select special" v-if="selectInfo.gunNumber">
         <header class="title">
           <strong>油价</strong>
           <!-- <span class="right color-gray" v-if="!unitPrice">
             正在获取实时价格
           </span> -->
           <span class="right">
-          <span class="line-through">油站价 {{ oilNumber.priceGun }}元/升</span>
-          <span class="priceYfq">{{ oilNumber.priceYfq }}元/升</span>
+          <span class="line-through">油站价 {{ selectInfo.discount_price }}元/升</span>
+          <span class="priceYfq">{{ selectInfo.station_price }}元/升</span>
            
-          </span>
-        </header>
-        <header class="title" @click="selectDiscount" v-if="list.length !== 0">
-          <strong>使用优惠券</strong>
-          <span class="right" >
-            {{ discountBundle.name ? discountBundle.name : '选择优惠券>'}}
-            <!-- <span class="line-through">油站价 {{ oilNumber.priceGun }}元/升</span> -->
           </span>
         </header>
         <div class="pad-options" style="padding: 0;">
@@ -236,7 +229,8 @@ export default {
       options: [100, 200, 300, 500], // 默认金额选项
       // oilType: OilTypes.GASOLINE, // 选中的油型
       price: null, // 准备支付的价格
-      oilNumber: null, // 选中的油号
+      oilNumber: [], // 选中的油号
+      gunNumbers:[],
       gunNumber: null, // 选中的枪号
       isLoading: false,
       isMiniProgram: window.isMiniProgram,
@@ -258,7 +252,11 @@ export default {
         phone:''
       },
       selectInfo:{
-        oilType:1
+        oilType:1,
+        oil_no:'',
+        gunNumber:'',
+        station_price:'',
+        discount_price:''
       }
     };
   },
@@ -268,85 +266,16 @@ export default {
     this.getGasDetail()
   },
   computed:{
-    unitPrice () {
-      const item = this.oilNumber
-      if (!item) {
-        return
-      }
-      const priceGun = parseFloat(item.priceGun)
-      const priceYfq = parseFloat(item.priceYfq)
-      if (this.service_fee_rate === '') {
-        return null
-      }
-      const result = priceYfq + parseFloat(priceGun - priceYfq) * this.service_fee_rate
-      return `${result.toFixed(2)}`
-    },
-    stationPrice () { // 油站对应油号的国标价
-      return this.getPriceByOilNumber(this.item, this.oilNumber && this.oilNumber.oilNo)
-    },
-    oilNumbers () {
-      if (!this.item.prices) {
-        return []
-      }
-      const oilNumbers = this.item.prices.filter(v => v.oilType === this.oilType)
-      if (oilNumbers.length >= 1 && !this.$route.query.oil_number) {
-        this.doSelectOilNumber(oilNumbers[0])
-      }
-      return oilNumbers
-    },
-    gunNumbers () {
-      if (!this.oilNumber) {
-        return []
-      }
-      return this.oilNumber.gunNos || []
-    },
-    amount () { // 加油升数
-      if (isNaN(this.price)) {
-        return 0
-      }
-      let data = 0
-      if (!this.oilNumber) {
-        return
-      }
-      if (parseInt(this.oilNumber.from) === GasStationSource.CZB) {
-        data = this.price / this.oilNumber.priceGun
-        return data.toFixed(2)
-      } else {
-        data = Math.round(this.price / this.oilNumber.priceGun * 100)
-        return data / 100
-      }
-    },
     truePrice () { // 计算后的总价 = 四舍五入到2位小数(输入金额 * 优惠价 / 枪价)
       let truePrice = 0
-      if (!this.oilNumber) {
+      if (!this.selectInfo.station_price) {
         return 0
       }
       // 当用户选择的油号的优惠价等于枪价时，最终支付的订单价格即用户输入的金额数
-      console.log('DATA: ', Math.round(this.price * this.oilNumber.priceYfq / this.oilNumber.priceGun * 100))
-      truePrice = Math.round(this.price * this.oilNumber.priceYfq / this.oilNumber.priceGun * 100)
+      truePrice = Math.round(this.price * this.selectInfo.station_price / this.selectInfo.discount_price * 100)
       return truePrice / 100
     },
-    servicePrice () { // 加上平台服务费的金额数，因为目前平台服务费为0%，所以等于this.truePrice
-      const result = parseFloat(this.truePrice) + (this.item.czb_id ? parseFloat((this.price - this.truePrice) * this.service_fee_rate) : 0)
-      return isNaN(result) ? 0 : (Math.floor(result * 100) / 100)
-    },
-    finalPrice () { // 获取最终展示价格(包括抵扣掉积分)
-      console.log('TINGDOU,', this.usePoint)
-      const pointPrice = this.usePoint * this.channelInfo.point_integer_ratio / this.channelInfo.point_exchange_ratio || 0
-      let result = 0
-      if (!this.oilNumber) {
-        return '-'
-      }
-      // 当属于易加油油站的
-      if (this.oilNumber.from === GasStationSource.YJY && this.item.fee_rules && this.item.fee_rules.length) {
-        result = this.$_yjyCalculate()
-      } else {
-        result = this.servicePrice - pointPrice
-      }
-      console.log('FinalPrice', result.toFixed(2))
-      return result.toFixed(2)
-    },
-    finalPayPrice () { // 最终展示在按钮上的金额
+     finalPayPrice () { // 最终展示在按钮上的金额
       // const pointPrice = this.usePoint * this.channelInfo.point_integer_ratio / this.channelInfo.point_exchange_ratio || 0
       const pointPrice = 0
       let result = this.truePrice - pointPrice
@@ -361,23 +290,22 @@ export default {
       console.log('FinalPayPrice', result.toFixed(2))
       return result.toFixed(2)
     },
-    fee () {
-      if (parseInt(this.oilNumber.from) === GasStationSource.YJY) {
-        return Math.round((this.finalPrice - this.finalPayPrice - this.usePoint) * 100) / 100
-      } else {
-        return 0
-      }
-    },
-    maxConsumePoint () {
-      const maxPrice = (this.channelInfo.point_max_apply_ratio / 100) * this.servicePrice
-      const maxPoint = Math.floor(maxPrice * (this.channelInfo.point_integer_ratio / this.channelInfo.point_exchange_ratio))
-      return maxPoint > this.myPoint ? this.myPoint : maxPoint
-    },
-    benefit () { // 优惠金额
+     benefit () { // 优惠金额
       // const pointPrice = this.usePoint * this.channelInfo.point_integer_ratio / this.channelInfo.point_exchange_ratio || 0
       const pointPrice = 0
       let result = this.truePrice - pointPrice
       return (Math.round((this.price - parseFloat(result)) * 100) / 100)
+    },
+     amount () { // 加油升数
+      if (isNaN(this.price)) {
+        return 0
+      }
+      let data = 0
+      if (!this.selectInfo.discount_price) {
+        return
+      }
+      data = Math.round(this.price / this.selectInfo.discount_price * 100)
+      return data / 100
     },
   },
   methods: {
@@ -403,27 +331,25 @@ export default {
       }
     },
     doSelectOilType (item) {
-      this.oilType = item
-      const oilNumbers = this.item.prices.filter(v => v.oilType === this.oilType)
-      if (oilNumbers.length >= 1) {
-        this.doSelectOilNumber(oilNumbers[0])
-      }
+      this.selectInfo.oilType = item
+      // const oilNumbers = this.item.prices.filter(v => v.oilType === this.oilType)
+      // if (oilNumbers.length >= 1) {
+      //   this.doSelectOilNumber(oilNumbers[0])
+      // }
     },
     doSelectOilNumber (item) {
-      this.oilType = item.oilType
-      this.oilNumber = Object.assign({}, item)
-      !this.tempInfo && (this.gunNumber = '') // 当没有已选的缓存信息时才置空
+      this.selectInfo.oil_no = item.oil_name
+      this.gunNumbers = item.oils_gunNo
+      this.selectInfo.discount_price = item.discount_price
+      this.selectInfo.station_price = item.station_price
+      this.selectInfo.oil_id = item.oil_id
     },
     doSelectGunNumber (gunNo) {
-      this.gunNumber = gunNo
+      this.selectInfo.gunNumber = gunNo
       // scrollTo('.pad-gas-station')
     },
     doInput (value) {
       this.price = value
-      // scrollTo('.pad-gas-station')
-      if (value <= this.discountBundle.threshold) {
-        this.discountBundle = {}
-      }
     },
     doScrollBottom () {
       let timer = window.setTimeout(() => {
@@ -557,19 +483,19 @@ export default {
       // let res = await czbOrderApis.create(bundle)
       // report('加油支付', '点击', '创建加油订单')
       let price = this.truePrice
-      let gasItem = JSON.parse(this.$route.query.gasItem)
       let data = {
-        "gasFrom": gasItem.price.from,
+        'action':'order_save',
+        'phone':this.myInfo.phone,
         "gasId": this.$route.query.gasId,
-        "gunId": this.gunNumber,
-        "oilName": this.oilNumber.oilName,
-        "oilType": this.oilNumber.oilType,
-        "originPrice": Math.round(this.price * 100),
-        "originUnitPrice": Math.round(this.oilNumber.priceGun * 100),
-        "price": parseFloat(price) * 100,
-        "unitPrice": Math.round(parseFloat(this.oilNumber.priceYfq) * 100),
-        "units": parseFloat(this.amount),
-        'jydname':this.item.name
+        "oilId": this.selectInfo.oil_id,
+        "oilName": this.selectInfo.oil_no,
+        "oilNo": this.selectInfo.gunNumber,
+        "price":price,
+        "origin_price": this.price,
+        "discount_price": this.selectInfo.station_price,
+        "station_price": this.selectInfo.discount_price,
+        "oil_type": this.selectInfo.oilType,
+        "units": parseFloat(this.amount)
       }
       WXinvoke(data,res=>{
         // alert('支付回调'+JSON.stringify(res))
