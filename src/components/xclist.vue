@@ -66,35 +66,35 @@
     <!-- 列表 -->
     <div class="list_box">
       <div class="list_item" v-for="(item,key) in xclist">
-        <router-link :to="{path:'/xcdetails',query:{shopCode: item.shopCode,latitude:item.latitude,longitude:item.longitude}}" class="ls_go"></router-link>
+        <router-link :to="{path:'/xcdetails',query:{shopId: item.id,latitude:item.latitude,longitude:item.longitude}}" class="ls_go"></router-link>
         <div class="ls_top flexbox">
           <div class="ls_l">
-            <img :src="item.doorPhotoUrl" alt="" class="ls_img">
+            <img :src="item.shop_img" alt="" class="ls_img">
             <!-- 如果休息中显示 -->
-            <!-- <div class="if_stop">
+            <div class="if_stop" v-show="!xclist[0].is_open">
               <span>休息中</span>
               <span>营业时间</span>
-              <span>{{item.time}}</span>
-            </div> -->
-          </div>
-          <div class="ls_m">
-            <div class="p_name">{{item.shopName}}</div>
-            <div class="p_cord flexbox">
-              <div class="rank">{{item.score}}</div>
-              <div class="sale">已售 {{item.totalNum}}</div>
+              <span>{{item.start_opentime}}--{{item.end_opentime}}</span>
             </div>
           </div>
-          <div class="ls_r">
+          <div class="ls_m">
+            <div class="p_name">{{item.shop_name}}</div>
+            <div class="p_cord flexbox">
+              <div class="rank">{{item.score}}</div>
+              <div class="sale">已售 {{item.total_num}}</div>
+            </div>
+          </div>
+          <div class="ls_r" v-show="false">
             <div class="dz">{{item.Tdiscount}}折</div>
             <div class="pay_num">￥{{item.Tprice}}</div>
           </div> 
         </div>
         <div class="ls_bot flexbox">
           <img src="../assets/images/icon-address.png" alt="" class="d_img">
-          <div class="d_name">{{item.address}}</div>
+          <div class="d_name">{{item.shop_address}}</div>
           <button class="d_map flexbox">
             <img src="../assets/images/icon-nav-white.png" alt="" class="map_img">
-            {{$_toDistance(item.distance)}}
+            {{$_toDistance(item.juli)}}
           </button>
         </div>
       </div>
@@ -128,27 +128,18 @@ export default {
     async getxclist(){
       let latlon = JSON.parse(localStorage.getItem('latlon'))
       let res = await api.storesList({
+        action:'get_shoplist',
         cityName:'深圳市',
-        lat:latlon.latitude,
-        lng:latlon.longitude,
-        pageNum:1,
-        pageSize:100,
-        priority:'dis',//距离优先：dis，评分优先：score，销量优先：sales;
+        // lat:latlon.latitude,
+        // lng:latlon.longitude,
+        latitude:latlon.latitude,
+        longitude:latlon.longitude,
+        orderBy:1,
+        page:1,
+        pagesize:100
       })
-      if(res.data.code==0){
-        debugger
-        let data = JSON.parse(res.data.data)
-        this.xclist = data.data.items
-        this.xclist.forEach((item,i)=>{
-          item.serviceList.forEach((ktem,k)=>{
-            let finalPrice = parseFloat(ktem.finalPrice)
-            let price = parseFloat(ktem.price)
-            if (finalPrice < price) {
-              item.Tprice = finalPrice 
-            }
-            item.Tdiscount = (finalPrice / price).toFixed(2)
-          })
-        })
+      if(res.data.code==200){
+        this.xclist = res.data.result
       }
     },
     $_toDistance (distance) {

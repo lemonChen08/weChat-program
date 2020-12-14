@@ -6,28 +6,28 @@ api.userLogin = params => {
   return fet('api/user/login',params,'post')
 }
 api.bindPhone = params => {
-  return fet('',params,'post')
+  return fet('station/web_route.php',params,'post')
 }
 api.get_gaslist = params => {
-  return fet('',params,'post')
+  return fet('station/web_route.php',params,'post')
 }
 
 api.get_station = params => {
-  return fet('',params,'post')
+  return fet('station/web_route.php',params,'post')
 }
 api.storesList = params => {
-  return fet('api/user/stores',params,'post')
+  return fet('carwash/web_route.php',params,'post')
 }
 api.storesDetail = params => {
-  return fet('api/user/stores',params,'get')
+  return fet('carwash/web_route.php',params,'post')
 }
 // api.carWashPay = params => {
 //   return fet('api/carWashOrder/create',params,'post',{headers:{'Content-Type':'application/json;charset=UTF-8'}})
 // }
 api.userinfo = params => {
-  return fet('api/user/getOpenId',params,'post')
+  return fet('station/web_route.php',params,'post')
 }
 api.getorder = params => {
-  return fet('api/gasStationOrder/list',params,'get')
+  return fet('station/web_route.php',params,'get')
 }
 export {api}

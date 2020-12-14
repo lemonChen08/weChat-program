@@ -65,39 +65,39 @@
     <!-- 列表 -->
     <div class="list_box">
       <div class="list_item"  v-if="xclist.length>0">
-        <router-link :to="{path:'/xcdetails',query:{shopCode: xclist[0].shopCode,latitude:xclist[0].latitude,longitude:xclist[0].longitude}}" class="ls_go"></router-link>
+        <router-link :to="{path:'/xcdetails',query:{shopCode: xclist[0].shop_code,latitude:xclist[0].latitude,longitude:xclist[0].longitude}}" class="ls_go"></router-link>
         <div class="listtitle">
           <h2 class="title">附近洗车店</h2>
           <router-link to="xcdetails" class="more">更多></router-link>
         </div>
         <div class="ls_top flexbox">
           <div class="ls_l">
-            <img :src="xclist[0].doorPhotoUrl" alt="" class="ls_img">
+            <img :src="xclist[0].shop_img" alt="" class="ls_img">
             <!-- 如果休息中显示 -->
-            <div class="if_stop" style="display:none">
+            <div class="if_stop" v-show="!xclist[0].is_open">
               <span>休息中</span>
               <span>营业时间</span>
-              <span>{{xclist[0].time}}</span>
+              <span>{{xclist[0].start_opentime}}--{{xclist[0].end_opentime}}</span>
             </div>
           </div>
           <div class="ls_m">
-            <div class="p_name">{{xclist[0].shopName}}</div>
+            <div class="p_name">{{xclist[0].shop_name}}</div>
             <div class="p_cord flexbox">
               <div class="rank">{{xclist[0].score}}</div>
-              <div class="sale">已售 {{xclist[0].totalNum}}</div>
+              <div class="sale">已售 {{xclist[0].total_num}}</div>
             </div>
           </div>
-          <div class="ls_r">
+          <div class="ls_r" v-show="false">
             <div class="dz">{{xclist[0].Tdiscount}}</div>
             <div class="pay_num">￥{{xclist[0].Tprice}}</div>
           </div> 
         </div>
         <div class="ls_bot flexbox">
           <img src="../assets/images/icon-address.png" alt="" class="d_img">
-          <div class="d_name">{{xclist[0].address}}</div>
+          <div class="d_name">{{xclist[0].shop_address}}</div>
           <button class="d_map flexbox">
             <img src="../assets/images/icon-nav-white.png" alt="" class="map_img">
-            {{$_toDistance(xclist[0].distance)}}
+            {{$_toDistance(xclist[0].juli)}}
           </button>
         </div>
       </div>
@@ -227,31 +227,19 @@ export default {
       let latlon = JSON.parse(localStorage.getItem('latlon'))
       // alert(11)
       let res = await api.storesList({
+        action:'get_shoplist',
         cityName:'深圳市',
         // lat:latlon.latitude,
         // lng:latlon.longitude,
-        latitude:22.606497,
-        longitude:114.052402,
+        latitude:latlon.latitude,
+        longitude:latlon.longitude,
+        orderBy:1,
         page:1,
-        pagesize:15,
-        priority:'dis',//距离优先：dis，评分优先：score，销量优先：sales;
+        pagesize:15
       })
-      if(res.data.code==0){
-
-        // alert(22)
+      if(res.data.code==200){
         this.fadePop = false
-        let data = JSON.parse(res.data.data)
-        this.xclist = data.data.items
-        this.xclist.forEach((item,i)=>{
-          item.serviceList.forEach((ktem,k)=>{
-            let finalPrice = parseFloat(ktem.finalPrice)
-            let price = parseFloat(ktem.price)
-            if (finalPrice < price) {
-              item.Tprice = finalPrice 
-            }
-            item.Tdiscount = (finalPrice / price).toFixed(2)
-          })
-        })
+        this.xclist = res.data.result
       }else if(res.data.code==401){
         localStorage.clear()
         sessionStorage.clear()
@@ -265,8 +253,8 @@ export default {
       let latlon = JSON.parse(localStorage.getItem('latlon'))
       let res = await api.get_gaslist({
         action:'get_gaslist',
-        latitude:22.606497,
-        longitude:114.052402,
+        latitude:latlon.latitude,
+        longitude:latlon.longitude,
         oilName:'92#',
         page:1,
         pagesize:15
@@ -333,9 +321,9 @@ export default {
     }
   },
   mounted() {
-    // this.getLocationFn()
-    this.getGaslist()
-          this.getxclist()
+    this.getLocationFn()
+    // this.getGaslist()
+    // this.getxclist()
     // wxShare().then(() => {
     //     // let token = localStorage.getItem('oneToken')
     //     // if(token){

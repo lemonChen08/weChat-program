@@ -36,41 +36,55 @@ const wxShare = () => {
         //     resolve()
         //     return
         // }
-        let url = window.location.origin + router.currentRoute.fullPath
-    // alert('没有config')
-    getJSSDK(url).then( data => {
-        // alert('获取到了config'+data.data.code)
-        console.log(111)
-        if(data.data.code==0){
-            sessionStorage.shareSignature = JSON.stringify(data.data.data)
-            // setShareConfig(data.data.data);
-            // alert(data.data.data)
-            wx.config({
-                debug: false,
-                appId: data.data.data.appId,
-                timestamp: data.data.data.timestamp,
-                nonceStr: data.data.data.nonceStr,
-                signature: data.data.data.signature,
-                jsApiList: [
-                    'checkJsApi',
-                    'onMenuShareTimeline',
-                    'onMenuShareAppMessage',
-                    'getLocation',
-                    'hideMenuItems',
-                    'chooseWXPay']  
-            });
-            resolve()
-        }else if(data.data.code==401){
-            localStorage.clear()
-            sessionStorage.clear()
-            window.location.reload()
-        }else{
-            alert(JSON.stringify(data))
-        }
-        
-    })
-        
-        wx.error(p => {
+    let url = encodeURIComponent(window.location.origin + router.currentRoute.fullPath)
+    // if(sessionStorage.shareSignature){
+    //     let jssdk = JSON.parse(sessionStorage.shareSignature)
+    //     wx.config({
+    //         debug: true,
+    //         appId: 'wx2b58cb8bd7d7ceb1',
+    //         timestamp: jssdk.timestamp,
+    //         nonceStr: jssdk.nonceStr,
+    //         signature: jssdk.signature,
+    //         jsApiList: [
+    //             'checkJsApi',
+    //             'onMenuShareTimeline',
+    //             'onMenuShareAppMessage',
+    //             'getLocation',
+    //             'hideMenuItems',
+    //             'chooseWXPay']  
+    //     });
+    //     resolve()
+    // }else{
+        getJSSDK(url).then( data => {
+            if(data){
+                sessionStorage.shareSignature = JSON.stringify(data.data)
+                // setShareConfig(data.data.data);
+                // alert(data.data.data)
+                wx.config({
+                    debug: true,
+                    appId: 'wx2b58cb8bd7d7ceb1',
+                    timestamp: data.data.timestamp,
+                    nonceStr: data.data.nonceStr,
+                    signature: data.data.signature,
+                    jsApiList: [
+                        'checkJsApi',
+                        'onMenuShareTimeline',
+                        'onMenuShareAppMessage',
+                        'getLocation',
+                        'hideMenuItems',
+                        'chooseWXPay']  
+                });
+                resolve()
+            }else if(data.data.code==401){
+                localStorage.clear()
+                sessionStorage.clear()
+                window.location.reload()
+            }else{
+                alert(JSON.stringify(data))
+            }
+        })
+    // }
+    wx.error(p => {
             console.log(p)
         });
     })

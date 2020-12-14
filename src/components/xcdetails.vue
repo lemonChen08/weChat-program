@@ -1,12 +1,12 @@
 <template>
     <div class="details_box">
-      <img :src="images[0].shopImgUrl" alt="" style="width:100%;">
+      <img :src="xcDetail.shop_img" alt="" style="width:100%;">
       <div class="dt_top"  v-if="!parseInt(xcDetail.isOpen) && parseInt(xcDetail.isStatus) === 4">
         <div class="dt_time">营业时间 {{ xcDetail.openTimeStart }}-{{ xcDetail.openTimeEnd }}</div>
-        <div class="dt_name">{{xcDetail.shopName}}</div>
+        <div class="dt_name">{{xcDetail.shop_name}}</div>
         <div class="dt_adress flexbox">
           <img src="../assets/images/icon-address.png" alt="" class="dt_img">
-          <div class="dt_text">{{xcDetail.address}}</div>
+          <div class="dt_text">{{xcDetail.shop_address}}</div>
           <button class="dt_btn flexbox" v-show="false">
             <img src="../assets/images/icon-nav-white.png" alt="">
             一键导航
@@ -21,22 +21,22 @@
             <img src="../assets/images/check.png" alt="" v-if="key==n">
           </div>
           <div class="dt_cont">
-            <div class="dm_name">{{item.serviceName}}</div>
+            <div class="dm_name">{{item.service_name}}</div>
             <div class="dm_text">有效期 30 天</div>
           </div>
           <div class="dt_pay">
-            <div class="f_price">￥{{item.finalPrice}}</div>
-            <del class="t_price">门店价￥{{item.price}}</del>
+            <div class="f_price">￥{{item.price}}</div>
+            <del class="t_price">门店价￥{{item.final_price}}</del>
           </div>
         </div>
       </div>
       <div class="dt_bot flexbox">
         <div class="bot_left">
           <div class="bot_t flexbox">
-            <div class="b_price">￥{{current.finalPrice}}</div>
+            <div class="b_price">￥{{current.final_price}}</div>
             <del class="t_price">￥{{current.price}}</del>
           </div>
-          <div class="bot_f">{{current.serviceName}}</div>
+          <div class="bot_f">{{current.service_name}}</div>
         </div>
         <div class="bot_right flexbox">
           <!-- <a href="javascript:;" class="flexbox">
@@ -74,10 +74,9 @@ export default {
     };
   },
   created() {
-    this.getXcDetail()
     let userInfo = JSON.parse(localStorage.getItem('userInfo'))
     this.phone = userInfo.phone
-    
+    this.getXcDetail()
   },
   methods: {
     // 关闭手机绑定
@@ -91,15 +90,13 @@ export default {
     },
     async getXcDetail(){
       let res = await api.storesDetail({
-        lat:this.$route.query.latitude,
-        lng:this.$route.query.longitude,
-        shopCode:this.$route.query.shopCode
+        action:'get_shopinfo',
+        phone:this.phone,
+        shopId:this.$route.query.shopId
       })
-      if(res.data.code==0){
-        let data = JSON.parse(res.data.data)
-        this.xcDetail = data.data
-        this.images = data.data.imgList
-        this.services = data.data.serviceList
+      if(res.data.code==200){
+        this.xcDetail = res.data.result
+        this.services = res.data.result.service_list
         this.checkFuntion(this.services[0],0)
       }else{
         this.$layer.msg(res.data.message)
@@ -115,9 +112,9 @@ export default {
       // console.log('data::::::', this.myChannel)
       const bundle = {
         // channel_id: parseInt(channel_id),
-        shopCode: this.xcDetail.shopCode, // 商店编号 
-        serviceCode: this.current.serviceCode, // 服务编号
-        price: this.current.finalPrice * 100, // 优惠价（元转分）
+        shopCode: this.xcDetail.id, // 商店编号 
+        serviceCode: this.current.service_code, // 服务编号
+        price: this.current.final_price * 100, // 优惠价（元转分）
         originPrice: this.current.price * 100, // 门店价（原价）（元转分）
         status:this.xcDetail.isStatus
       }

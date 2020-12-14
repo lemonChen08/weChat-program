@@ -59,6 +59,7 @@ export default {
             this.userInfo.phone = this.phone
             localStorage.setItem('userInfo',JSON.stringify(this.userInfo))
             this.closePhone()   
+            window.location.reload()
         }else{
             this.$layer.msg(res.data.msg)
         }
