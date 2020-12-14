@@ -1,11 +1,11 @@
 <template>
   <div class="pro_box">
     <!-- 头部搜索 -->
-    <!-- <div class="sear_head"> -->
+    <div class="sear_head">
       <!-- <div class="sear_box flexbox">
         <input type="text" placeholder="请输入门店名称或地点回车进行搜索">
         <img src="../assets/images/sear_icon.png" alt="" @click="openmapShow">
-      </div>
+      </div> -->
       <div class="sear_list flexbox">
         <div class="sr_item" :class="phoneShow==1?'active':''" data-num='1' @click="choosetype">全城 <img src="../assets/images/icon-expand.png" alt="" ></div>
         <div class="sr_item" :class="phoneShow==2?'active':''" data-num='2' @click="choosetype">全部服务 <img src="../assets/images/icon-expand.png" alt="" ></div>
@@ -39,11 +39,11 @@
         <div class="dw_item">好评优先</div>
         <div class="dw_item">销量优先</div>
       </div>
-    </div> -->
+    </div>
     <!-- 头部搜索 -->
 
     <!-- 地址搜索 -->
-    <!-- <div class="sear_adress flexbox" :class="mapShow?'show':''">
+    <div class="sear_adress flexbox" :class="mapShow?'show':''">
       <div class="adr_input flexbox">
         <input type="text" placeholder="搜索地点">
         <div class="close_box" @click="closemapShow"><i class="el-icon-close"></i></div>
@@ -60,7 +60,7 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
     <!-- 地址搜索 -->
 
     <!-- 列表 -->
@@ -282,6 +282,7 @@ export default {
   border-radius: 3px;
   background: #f6f6f6;
   text-align: center;
+  font-size:12px;
 }
 .dw_list.on{
   background: #ff8d0a;
@@ -365,7 +366,7 @@ export default {
 
 /* 产品列表 */
 .list_box{
-  /* padding-top: 26vw; */
+  padding-top: 12vw;
 }
 .list_item{
   padding: 3%;

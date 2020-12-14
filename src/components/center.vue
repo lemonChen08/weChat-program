@@ -7,13 +7,13 @@
         <img src="../assets/images/user.jpg" alt="" class="car_header">
       </div>
       <div class="car_list">
-        <div class="car_item" @click="openPhone">
+        <!-- <div class="car_item" @click="openPhone">
           <img src="../assets/images/item_icon1.png" alt="" class="item_img">
           <div class="item_text">
             <div class="item_name">我的手机号</div>
           </div>
           <i class="item_go el-icon-arrow-right"></i>
-        </div>
+        </div> -->
         <router-link to="jyorder" class="car_item">
           <img src="../assets/images/item_icon2.png" alt="" class="item_img">
           <div class="item_text">

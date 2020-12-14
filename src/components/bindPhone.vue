@@ -9,10 +9,10 @@
               <div class="form_text">手机号码<span>*</span></div>
               <input type="text" class="phone_input" v-model="phone" placeholder="请输入手机号码">
             </div>
-            <div class="phone_item">
+            <!-- <div class="phone_item">
               <div class="form_text">邀请码</div>
               <input type="text" class="phone_input" v-model="inviteCode" placeholder="请输入邀请码">
-            </div>
+            </div> -->
             <!-- <div class="phone_item">
               <div class="form_text">验证码<span>*</span></div>
               <input type="text" class="phone_input code" placeholder="请输入验证码">

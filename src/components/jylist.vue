@@ -1,6 +1,6 @@
 <template>
     <div class="pad-gas-stations">
-        <!-- <div class="pad-banner-gasoline options" style="padding: 0;">
+        <div class="pad-banner-gasoline options" style="padding: 0;">
             <button class="btn-switch" @click="gasMode = 1">
                 <img class="icon" src="../assets/images/refuel_list_ic_preferential@2x.png" alt="">
                 <span class="text-name">优惠加油</span>
@@ -10,7 +10,7 @@
                     <span class="triangle-white"></span>
                 </div>
             </button>
-            <button class="btn-switch" @click="gasMode = 2">
+            <!-- <button class="btn-switch" @click="gasMode = 2">
                 <img class="icon" src="../assets/images//refuel_list_ic_oil@2x.png" alt="">
                 <span class="text-name">中石油石化专区</span>
                 <span class="tag">充值加油立返</span>
@@ -18,7 +18,7 @@
                     <span class="triangle"></span>
                     <span class="triangle-white"></span>
                 </div>
-            </button>
+            </button> -->
         </div>
         <div class="bar-search" v-if="(gasMode === 1 || gasMode === 2)">
             <button class="btn-item" @click="doToggleOilNumber">
@@ -27,13 +27,13 @@
             <button class="btn-item" @click="doToggleBrand">
                 全部品牌
                 <img :class="['icon', showBrand && 'revert']" src="../assets/images/icon-expand.png"/>
-            </button> -->
+            </button>
             <!-- <button class="btn-search-location" 
                 style="width: 40px;"
                 @click="showAddressSelector = true">
                 <img class="icon-search" src="../assets/images/icon-search.png"/>
             </button> -->
-            <!-- <div :class="['pad-option', showOilNumber && 'show']"  style="padding-top: 3vw;">
+            <div :class="['pad-option', showOilNumber && 'show']"  style="padding-top: 3vw;">
                 <div class="section">
                 <header class="title">
                     汽油
@@ -89,10 +89,10 @@
                 <button class="btn-search" @click="doConfirmBrand">确定</button>
                 </div>
             </div>
-        </div> -->
+        </div>
         
       <div class="list_item" v-for="(item,key) in jyzlist" :key="key" @click="routerTo(item)" v-if="jyzlist.length>0">
-        <!-- <router-link to="jylist" class="ls_go"></router-link> -->
+        <router-link to="jylist" class="ls_go"></router-link>
         <div class="ls_top flexbox">
           <div class="ls_l">
             <img :src="item.gas_logo_big" alt="" class="ls_img">

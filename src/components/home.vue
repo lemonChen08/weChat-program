@@ -65,12 +65,11 @@
     <!-- 列表 -->
     <div class="list_box">
       <div class="list_item"  v-if="xclist.length>0">
-        <router-link :to="{path:'/xcdetails',query:{shopCode: xclist[0].shop_code,latitude:xclist[0].latitude,longitude:xclist[0].longitude}}" class="ls_go"></router-link>
         <div class="listtitle">
           <h2 class="title">附近洗车店</h2>
-          <router-link to="xcdetails" class="more">更多></router-link>
+          <router-link to="xclist" class="more">更多></router-link>
         </div>
-        <div class="ls_top flexbox">
+        <div class="ls_top flexbox" @click="toxcdetail(xclist[0])">
           <div class="ls_l">
             <img :src="xclist[0].shop_img" alt="" class="ls_img">
             <!-- 如果休息中显示 -->
@@ -163,8 +162,11 @@ export default {
   },
   methods: {
     routerTo(item){
-        this.$router.push({ path: '/jydetail', query: { gasItem:JSON.stringify(item),gasId:item.id,oil_number:'92'}});
+        this.$router.push({ path: '/jydetail', query: { gasItem:JSON.stringify(item),gasId:item.gas_id,oil_number:'92'}});
     },  
+    toxcdetail(item){
+        this.$router.push({ path: '/xcdetails', query: {shopId: item.id,latitude:item.latitude,longitude:item.longitude}})
+    },
     $_toDistance (distance) {
       if (!distance) {
         return '一键导航'
