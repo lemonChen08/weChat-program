@@ -61,7 +61,7 @@ const wxShare = () => {
                 // setShareConfig(data.data.data);
                 // alert(data.data.data)
                 wx.config({
-                    debug: true,
+                    debug: false,
                     appId: 'wx2b58cb8bd7d7ceb1',
                     timestamp: data.data.timestamp,
                     nonceStr: data.data.nonceStr,

@@ -180,6 +180,7 @@
   </div>
 </template>
 <script>
+import { payorders,getPayConfig} from '@/api/wx';
 import { api } from "@/api/api"
 import { 
   GasStationSource,
@@ -497,16 +498,24 @@ export default {
         "oil_type": this.selectInfo.oilType,
         "units": parseFloat(this.amount)
       }
-      WXinvoke(data,res=>{
-        // alert('支付回调'+JSON.stringify(res))
-        if (res.err_msg == "get_brand_wcpay_request:ok") {
-          this.isProcessing = false
-          this.$layer.msg('支付成功')    
-          this.isPay = true
+      payorders(data).then(res => {
+        if(res.data.code==200){
+          getPayConfig(res.data.result.platform_orderId).then((result)=>{
+            console.log(result)
+          })
         }else{
-          this.$router.push({ path: '/jyorder', query: {payData:JSON.stringify(data)}});
+          that.$layer.msg('下单失败')
         }
       })
+      // WXinvoke(data,res=>{
+      //   if (res.err_msg == "get_brand_wcpay_request:ok") {
+      //     this.isProcessing = false
+      //     this.$layer.msg('支付成功')    
+      //     this.isPay = true
+      //   }else{
+      //     this.$router.push({ path: '/jyorder', query: {payData:JSON.stringify(data)}});
+      //   }
+      // })
         // if (res.code !== 200) {
           
         //   if (res.message === '油站返回错误![平台余额不足]') {

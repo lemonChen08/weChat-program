@@ -17,3 +17,6 @@ export function wxPayConfig(id) {
     let params = {'prepay_id':id}
     return fet('api/user/wxPayConfig',params,'get')
 }
+export function getPayConfig(params) {
+    return fet('public/wx/oil_wxpay.php',params,'post')
+}
