@@ -1,6 +1,6 @@
 <template>
     <div class="order_box">
-      <div class="order_item">
+      <div class="order_item" v-for="(item,index) in payData" :key="index">
         <div class="order_top flexbox">
           <div class="od_t">加油订单</div>
           <div class="od_t yellow_text">待支付</div>
@@ -29,24 +29,23 @@ export default {
   },
   data() {
     return {
-      payData:{}
+      payData:{},
+      userInfo:null
     };
   },
   created() {
+    let userInfo = localStorage.getItem('userInfo')
+    this.userInfo = JSON.parse(userInfo)
     this.getorders()
   },
   methods: {
     async getorders(){
       let res = await api.getorder({
-        pageNum:1,
-        pageSize:100
+        action:'order_save',
+        phone:this.userInfo.phone
       })
-      if(res.data.code==0){
-        let data = JSON.parse(res.data.data)
-        
-        this.jyzlist = this.jyzlist.concat(data.data.items)
-      }else{
-        this.getUserInfo()
+      if(res.data.code==200){
+        this.payData = res.data.result
       }
     },
     

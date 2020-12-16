@@ -15,6 +15,8 @@ import jylist from '@/components/jylist.vue' //加油列表
 import jydetail from '@/components/jydetail.vue' //加油详情
 import lacation from '@/components/lacation.vue'
 import jyorder1 from '@/components/jyorder1.vue'
+import inviteList from '@/components/inviteList.vue'
+import fanyongList from '@/components/fanyongList.vue'
 
 Vue.use(Router)
 
@@ -84,6 +86,16 @@ export default new Router({
 			path: '/jyorder1',
 			name: 'jyorder1',
 			component: jyorder1
+		},
+		{
+			path: '/inviteList',
+			name: 'inviteList',
+			component: inviteList
+		},
+		{
+			path: '/fanyongList',
+			name: 'fanyongList',
+			component: fanyongList
 		},
   ]
 })

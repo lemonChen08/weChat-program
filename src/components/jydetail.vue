@@ -263,7 +263,7 @@ export default {
   },
   created() {
     let userInfo = JSON.parse(localStorage.getItem('userInfo'))
-    this.myInfo.phone = userInfo.phone
+    this.myInfo = userInfo
     this.getGasDetail()
   },
   computed:{
@@ -500,7 +500,7 @@ export default {
       }
       payorders(data).then(res => {
         if(res.data.code==200){
-          getPayConfig(res.data.result.platform_orderId).then((result)=>{
+          getPayConfig({user_id:this.myInfo.user_id}).then((result)=>{
             console.log(result)
           })
         }else{

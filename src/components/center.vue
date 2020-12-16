@@ -14,7 +14,21 @@
           </div>
           <i class="item_go el-icon-arrow-right"></i>
         </div> -->
-        <router-link to="jyorder" class="car_item">
+        <router-link to="inviteList" class="car_item">
+          <img src="../assets/images/item_icon2.png" alt="" class="item_img">
+          <div class="item_text">
+            <div class="item_name">邀请记录</div>
+          </div>
+          <i class="item_go el-icon-arrow-right"></i>
+        </router-link>
+        <router-link to="fanyongList" class="car_item">
+          <img src="../assets/images/item_icon2.png" alt="" class="item_img">
+          <div class="item_text">
+            <div class="item_name">返佣记录</div>
+          </div>
+          <i class="item_go el-icon-arrow-right"></i>
+        </router-link>
+        <router-link to="jyorder1" class="car_item">
           <img src="../assets/images/item_icon2.png" alt="" class="item_img">
           <div class="item_text">
             <div class="item_name">加油订单</div>

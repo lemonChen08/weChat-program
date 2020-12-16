@@ -28,6 +28,9 @@ api.userinfo = params => {
   return fet('station/web_route.php',params,'post')
 }
 api.getorder = params => {
-  return fet('station/web_route.php',params,'get')
+  return fet('station/web_route.php',params,'post')
+}
+api.getinvitelist = params => {
+  return fet('station/web_route.php',params,'post')
 }
 export {api}
