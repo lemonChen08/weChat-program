@@ -19,6 +19,7 @@
     </div>
 </template>
 <script>
+import moment from 'moment'
 import { api } from "@/api/api"
 export default {
   components: {
@@ -43,6 +44,9 @@ export default {
         })
         if(res.data.code==200){
           this.inviteList = res.data.result
+          this.inviteList.forEach((item,index)=>{
+            item.ctime = moment(parseInt(item.ctime)*1000).format("YYYY-MM-DD")
+          })
         }else{
           this.$layer.msg(res.data.msg)
         }

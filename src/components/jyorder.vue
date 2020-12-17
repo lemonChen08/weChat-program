@@ -6,7 +6,7 @@
           <div class="od_t yellow_text">待支付</div>
         </div>
         <div class="order_pay flexbox">
-          支付金额： <div class="od_m">{{payData.price/100}}</div>元  <del>{{payData.originPrice/100}}元</del>
+          支付金额： <div class="od_m">{{payData.price}}</div>元  <del>{{payData.origin_price}}元</del>
         </div>
         <div class="order_adress flexbox">
           <img src="../assets/images/dz_icon.png" alt="" class="od_img">
@@ -22,6 +22,7 @@
     </div>
 </template>
 <script>
+import { payorders,getPayConfig} from '@/api/wx';
 import { api } from "@/api/api"
 import {WXinvoke} from "@/util/wxUtil"
 export default {
@@ -29,21 +30,34 @@ export default {
   },
   data() {
     return {
-      payData:{}
+      payData:{},
+      myInfo:null
     };
   },
   created() {
+    let userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    this.myInfo = userInfo
     this.payData = JSON.parse(this.$route.query.payData)
   },
   methods: {
     toPay(){
-      WXinvoke(this.payData,res=>{
-        // alert('支付回调'+JSON.stringify(res))
-        if (res.err_msg == "get_brand_wcpay_request:ok") {
-          this.$layer.msg('支付成功')    
-          this.$router.push('/home')
+      let that = this
+      payorders(this.payData).then(res => {
+        if(res.data.code==200){
+          getPayConfig({user_id:this.myInfo.user_id}).then((result)=>{
+            WXinvoke(result,response=>{
+                if (response.err_msg == "get_brand_wcpay_request:ok") {
+                  this.$layer.msg('支付成功')    
+                  this.$router.push('home')
+                }else{
+                  this.$router.push({ path: '/jyorder', query: {payData:JSON.stringify(data)}});
+                }
+            })
+          })
+        }else{
+          that.$layer.msg('下单失败')
         }
-      })  
+      }) 
     }
     
   },

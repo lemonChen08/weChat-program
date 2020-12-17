@@ -30,6 +30,9 @@ api.userinfo = params => {
 api.getorder = params => {
   return fet('station/web_route.php',params,'post')
 }
+api.getxcorder = params => {
+  return fet('carwash/web_route.php',params,'post')
+}
 api.getinvitelist = params => {
   return fet('station/web_route.php',params,'post')
 }

@@ -7,9 +7,9 @@
         <img src="../assets/images/sear_icon.png" alt="" @click="openmapShow">
       </div> -->
       <div class="sear_list flexbox">
-        <div class="sr_item" :class="phoneShow==1?'active':''" data-num='1' @click="choosetype">全城 <img src="../assets/images/icon-expand.png" alt="" ></div>
+        <!-- <div class="sr_item" :class="phoneShow==1?'active':''" data-num='1' @click="choosetype">全城 <img src="../assets/images/icon-expand.png" alt="" ></div> -->
         <div class="sr_item" :class="phoneShow==2?'active':''" data-num='2' @click="choosetype">全部服务 <img src="../assets/images/icon-expand.png" alt="" ></div>
-        <div class="sr_item" :class="phoneShow==3?'active':''" data-num='3' @click="choosetype">距离优先 <img src="../assets/images/icon-expand.png" alt="" ></div>
+        <div class="sr_item" :class="phoneShow==3?'active':''" data-num='3' @click="choosetype">{{searchInfo.orderByName}} <img src="../assets/images/icon-expand.png" alt="" ></div>
       </div>
       <div class="draw_item" v-if="phoneShow==1">
         <div class="dw_item on">宝安区</div>
@@ -23,21 +23,28 @@
       <div class="draw_item"  v-if="phoneShow==2">
         <div class="dw_titme">洗车</div>
         <div class="dw_box">
-          <div class="dw_list on">标准-五座轿车</div>
-          <div class="dw_list">标准-SUV</div>
-          <div class="dw_list">精致洗车</div>
+          <div class="dw_list" @click="changeService(81)">普通洗车(小车)</div>
+          <div class="dw_list" @click="changeService(3000)">普通洗车(大车)</div>
+          <div class="dw_list" @click="changeService(5264)">精致洗车</div>
         </div>
         <div class="dw_titme">美容</div>
         <div class="dw_box">
-          <div class="dw_list">手工打蜡（小车型）</div>
-          <div class="dw_list">手工打蜡（小车型）</div>
-          <div class="dw_list">手工打蜡（小车型）</div>
+          <div class="dw_list" @click="changeService(82)">手工打蜡（小车型）</div>
+          <div class="dw_list" @click="changeService(3020)">手工打蜡（大车型）</div>
+          <div class="dw_list" @click="changeService(3023)">抛光打蜡（小车型）</div>
+          <div class="dw_list" @click="changeService(3024)">抛光打蜡（大车型）</div>
+          <div class="dw_list" @click="changeService(5017)">全套打蜡（小车型）</div>
+          <div class="dw_list" @click="changeService(5018)">全套打蜡（大车型）</div>
+          <div class="dw_list" @click="changeService(5261)">内饰清洗</div>
+          <div class="dw_list" @click="changeService(4080)">空调清洗</div>
+          <div class="dw_list" @click="changeService(4102)">臭氧杀菌（含洗车）</div>
+          <div class="dw_list" @click="changeService(3001)">玻璃水</div>
         </div>
       </div>
       <div class="draw_item"  v-if="phoneShow==3">
-        <div class="dw_item">距离优先</div>
-        <div class="dw_item">好评优先</div>
-        <div class="dw_item">销量优先</div>
+        <div class="dw_item" @click="reloadList(1)">距离优先</div>
+        <div class="dw_item" @click="reloadList(3)">好评优先</div>
+        <div class="dw_item" @click="reloadList(2)">销量优先</div>
       </div>
     </div>
     <!-- 头部搜索 -->
@@ -118,13 +125,35 @@ export default {
       // 打开搜索地址
       mapShow:false,
       xclist:[
-      ]
+      ],
+      searchInfo:{
+        orderBy:1,
+        orderByName:'距离优先',
+        serviceCode:''
+      }
     };
   },
   created() {
     this.getxclist()
   },
   methods: {
+    changeService(num){
+      this.phoneShow = 0
+      this.searchInfo.serviceCode = num
+      this.getxclist()
+    },
+    reloadList(type){
+      this.phoneShow = 0
+      this.searchInfo.orderBy = type
+      if(type==1){
+        this.searchInfo.orderByName = '距离优先'
+      }else if(type==2){
+        this.searchInfo.orderByName = '销量优先'
+      }else if(type==3){
+        this.searchInfo.orderByName = '好评优先'
+      }
+      this.getxclist()
+    },
     async getxclist(){
       let latlon = JSON.parse(localStorage.getItem('latlon'))
       let res = await api.storesList({
@@ -134,7 +163,8 @@ export default {
         // lng:latlon.longitude,
         latitude:latlon.latitude,
         longitude:latlon.longitude,
-        orderBy:1,
+        orderBy:this.searchInfo.orderBy,
+        service_code:this.searchInfo.serviceCode,
         page:1,
         pagesize:100
       })

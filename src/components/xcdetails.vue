@@ -22,11 +22,11 @@
           </div>
           <div class="dt_cont">
             <div class="dm_name">{{item.service_name}}</div>
-            <div class="dm_text">有效期 30 天</div>
+            <div class="dm_text" v-show="false">有效期 30 天</div>
           </div>
           <div class="dt_pay">
-            <div class="f_price">￥{{item.price}}</div>
-            <del class="t_price">门店价￥{{item.final_price}}</del>
+            <div class="f_price">￥{{item.final_price}}</div>
+            <del class="t_price">门店价￥{{item.price}}</del>
           </div>
         </div>
       </div>
@@ -54,9 +54,10 @@
     </div>
 </template>
 <script>
+import { xcpayorders,getPayConfig} from '@/api/wx';
 import { api } from "@/api/api"
 import Bindphone from "./bindPhone"
-import {xcWXinvoke} from "@/util/wxUtil"
+import {WXinvoke} from "@/util/wxUtil"
 export default {
   components: {
     Bindphone
@@ -75,7 +76,7 @@ export default {
   },
   created() {
     let userInfo = JSON.parse(localStorage.getItem('userInfo'))
-    this.phone = userInfo.phone
+    this.myInfo = userInfo
     this.getXcDetail()
   },
   methods: {
@@ -91,56 +92,50 @@ export default {
     async getXcDetail(){
       let res = await api.storesDetail({
         action:'get_shopinfo',
-        phone:this.phone,
+        phone:this.myInfo.phone,
         shopId:this.$route.query.shopId
       })
       if(res.data.code==200){
         this.xcDetail = res.data.result
         this.services = res.data.result.service_list
         this.checkFuntion(this.services[0],0)
+      }else if(res.data.code==100){
+        localStorage.clear()
+        window.location.reload()
       }else{
         this.$layer.msg(res.data.message)
       }
     },
-    async doCreateOrder () {
-      if (!this.phone) {
-        this.showBindPhone = true
-        return
-      }
-      // const channel_id = session.get(session.KEY_CURRENT_CHANNEL_ID) || 0
-      // const info = JSON.stringify(Object.assign({}, this.detail, this.current))
-      // console.log('data::::::', this.myChannel)
+    doCreateOrder () {
+      let that = this
       const bundle = {
-        // channel_id: parseInt(channel_id),
-        shopCode: this.xcDetail.id, // 商店编号 
-        serviceCode: this.current.service_code, // 服务编号
-        price: this.current.final_price * 100, // 优惠价（元转分）
-        originPrice: this.current.price * 100, // 门店价（原价）（元转分）
-        status:this.xcDetail.isStatus
+        action:'order_save',
+        phone:this.myInfo.phone,
+        shop_name:this.xcDetail.shop_name,
+        shopId: this.xcDetail.id,
+        price: this.current.price,
+        final_price: this.current.final_price,
+        serviceId:this.current.id
       }
       this.isProcessing = true
-      xcWXinvoke(bundle,res=>{
-        if (res.code !== 200) {
-          this.isProcessing = false
-          this.$layer.msg('支付成功')
-          this.$router.push("/xcdetail")
-          // report('加油支付', '回调', '创建加油订单失败')
-          if (res.message === '油站返回错误![平台余额不足]') {
-            this.isProcessing = false
-            this.$layer.msg('暂不支持该油站')
-          } else {
-            this.isProcessing = false
-            this.$layer.msg(res.message)
-          }
-          return
+      xcpayorders(bundle).then(res => {
+        if(res.data.code==200){
+          getPayConfig({user_id:this.myInfo.user_id}).then((result)=>{
+            WXinvoke(result,response=>{
+                if (response.err_msg == "get_brand_wcpay_request:ok") {
+                  this.isProcessing = false
+                  this.$layer.msg('支付成功')    
+                  this.isPay = true
+                  this.$router.push({ path: '/xcorder1', query: {}});
+                }else{
+                  this.$router.push({ path: '/xcorder', query: {payData:JSON.stringify(bundle)}});
+                }
+            })
+          })
+        }else{
+          that.$layer.msg('下单失败')
         }
-        let timeout = window.setTimeout(() => {
-          this.isProcessing = false
-          window.clearTimeout(timeout)
-        }, 2500)
-      }) 
-      this.isProcessing = false
-      // this.toPay(res.data.id)
+      })  
     }
   },
   mounted() {

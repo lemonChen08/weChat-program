@@ -25,7 +25,7 @@ export default function wxAuth() {
             let param = {
                 action:'wx_user',
                 code:code,
-                invita_code:''
+                invita_code:getUrlCode().inviteCode
             }
             getOpenid(param).then(async res => {
                 // alert('获取到了openid？'+res.data.code)
@@ -44,8 +44,15 @@ export default function wxAuth() {
     });
 }
 
-function getUrlParam(key) {//获取当前页面url中的参数
-    var reg = new RegExp("(^|&)" + key + "=([^&]*)(&|$)");
-    var result = window.location.search.substr(1).match(reg);
-    return result ? decodeURIComponent(result[2]) : '';
-}
+function getUrlCode() { // 截取url中的code方法
+      var url = location.search
+      var theRequest = new Object()
+      if (url.indexOf("?") != -1) {
+          var str = url.substr(1)
+          var strs = str.split("&")
+          for(var i = 0; i < strs.length; i ++) {
+              theRequest[strs[i].split("=")[0]]=(strs[i].split("=")[1])
+          }
+      }
+      return theRequest
+    }

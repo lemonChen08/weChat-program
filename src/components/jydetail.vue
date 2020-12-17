@@ -254,7 +254,7 @@ export default {
       },
       selectInfo:{
         oilType:1,
-        oil_no:'',
+        oil_no:this.$route.query.oil_number || '',
         gunNumber:'',
         station_price:'',
         discount_price:''
@@ -273,7 +273,7 @@ export default {
         return 0
       }
       // 当用户选择的油号的优惠价等于枪价时，最终支付的订单价格即用户输入的金额数
-      truePrice = Math.round(this.price * this.selectInfo.station_price / this.selectInfo.discount_price * 100)
+      truePrice = Math.round(this.price * this.selectInfo.discount_price / this.selectInfo.station_price * 100)
       return truePrice / 100
     },
      finalPayPrice () { // 最终展示在按钮上的金额
@@ -343,6 +343,7 @@ export default {
       this.gunNumbers = item.oils_gunNo
       this.selectInfo.discount_price = item.discount_price
       this.selectInfo.station_price = item.station_price
+      this.selectInfo.official_price = item.official_price
       this.selectInfo.oil_id = item.oil_id
     },
     doSelectGunNumber (gunNo) {
@@ -386,11 +387,22 @@ export default {
         let data = res.data.result
         this.item = data
         this.$_analyseOptions()
+      }else if(res.data.code==100){
+        localStorage.clear()
+        window.location.reload()
       }else{
         this.$layer.msg(res.data.message)
       }
     },
-    
+    async userLogin(){
+      let res = await api.get_station({
+        action:'user_login',
+        phone:this.myInfo.phone
+      })
+      if(res.data.code==200){
+        this.getGasDetail()
+      }
+    },
     // 根据传入的油号获取检测站的价格信息
    getPriceByOilNumber (v, oil_numbers) {
       if (!v.prices || (v.prices && !v.prices.length)) {
@@ -423,12 +435,9 @@ export default {
             value: val[0].value
           })
         }
-        // if (oil_number) {
-        //   const oilNo = isNaN(oil_number) ? oil_number : parseInt(oil_number)
-        //   if (oilNo === price.oilNo) {
-        //     this.doSelectOilNumber(price)
-        //   }
-        // }
+        if(oliItem.oil_name==oil_number){
+          this.doSelectOilNumber(oliItem)
+        }
       }
       this.oilTypes = oilTypes // 初始化该加油站可以选的商品类型（柴油、汽油或者天然气）
       if (!oil_number && this.oilTypes && this.oilTypes.length === 1) {
@@ -501,7 +510,16 @@ export default {
       payorders(data).then(res => {
         if(res.data.code==200){
           getPayConfig({user_id:this.myInfo.user_id}).then((result)=>{
-            console.log(result)
+            WXinvoke(result,response=>{
+                if (response.err_msg == "get_brand_wcpay_request:ok") {
+                  this.isProcessing = false
+                  this.$layer.msg('支付成功')    
+                  this.isPay = true
+                  this.$router.push('jyorder1');
+                }else{
+                  this.$router.push({ path: '/jyorder', query: {payData:JSON.stringify(data)}});
+                }
+            })
           })
         }else{
           that.$layer.msg('下单失败')

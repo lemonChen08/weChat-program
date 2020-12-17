@@ -11,7 +11,7 @@ export function payorders(params) {
     return fet('station/web_route.php',params,'post')
 }
 export function xcpayorders(params) {
-    return fet('api/carWashOrder/create',params,'post',{headers:{'Content-Type':'application/json;charset=UTF-8'}})
+    return fet('carwash/web_route.php',params,'post')
 }
 export function wxPayConfig(id) {
     let params = {'prepay_id':id}

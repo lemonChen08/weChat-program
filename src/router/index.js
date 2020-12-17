@@ -7,6 +7,7 @@ import publish from '@/components/publish.vue'
 import center from '@/components/center.vue'  //个人中心
 import jyorder from '@/components/jyorder.vue' //加油订单
 import xcorder from '@/components/xcorder.vue' //洗车订单
+import xcorder1 from '@/components/xcorder1.vue' //洗车订单
 import order_details from '@/components/order_details.vue' //订单详情
 import xclist from '@/components/xclist.vue' //洗车列表
 import xcdetails from '@/components/xcdetails.vue' //洗车详情
@@ -51,6 +52,11 @@ export default new Router({
 			path: '/xcorder',
 			name: '洗车订单列表',
 			component: xcorder
+		},
+		{
+			path: '/xcorder1',
+			name: 'xcorder1',
+			component: xcorder1
 		},
 		{
 			path: '/order_details',

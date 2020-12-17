@@ -4,7 +4,6 @@ import Vue from 'vue'
 import layer from 'vue-layer'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-
 import wxShare from './util/wxShare'
 
 import App from './App'
@@ -16,7 +15,6 @@ Vue.use(ElementUI);
 Vue.config.productionTip = false
 Vue.prototype.$layer = layer(Vue);
 Vue.prototype.$wxShare = wxShare
-
 
 router.beforeEach((to, from, next) => {
   // debugger

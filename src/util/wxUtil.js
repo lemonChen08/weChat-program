@@ -12,7 +12,7 @@ const wxUtils = (jsurl) => {
         localStorage.setItem('jsSdkConfig',data.data.data)
       }
       await wx.config({
-        debug: false, // TODO: 测试阶段使用
+        debug: true, // TODO: 测试阶段使用
         appId: data.data.data.appId,
         timestamp: data.data.data.timestamp,
         nonceStr: data.data.data.nonceStr,
@@ -22,20 +22,7 @@ const wxUtils = (jsurl) => {
           'hideMenuItems',
           'chooseWXPay'
         ]
-      });
-      // wx.getLocation({
-      //   type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-      //   success: response => {
-      //     alert('地理位置获取成功',JSON.stringify(response))
-      //     localStorage.setItem('latlon',JSON.stringify(response))
-      //   },
-      //   fail: err => {
-      //     alert('获取位置失败', JSON.stringify(err))
-      //   },
-      //   cancel: err => {
-      //     alert('用户拒绝授权获取地理位置', err)
-      //   }
-      // })  
+      }); 
       wxReady(resolve)
     })
   })
@@ -58,68 +45,27 @@ const wxReady = resolve => {  //不让分享
         'menuItem:originPage' // 原网页
       ] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
     });
+    
     resolve();
   });
 };
 // 微信支付
 const WXinvoke = (data, resolve) => {  //orderId 订单ID
-  payorders(data).then(res => {
-    wxPayConfig(res.data.data.prepay_id).then(resdata=>{
       let payData = {
-        "appId": resdata.data.data.appId, // 公众号名称，由商户传入
-        "timeStamp": resdata.data.data.timestamp, // 时间戳，自1970年以来的秒数
-        "nonceStr": resdata.data.data.nonceStr, // 随机串
-        "package": resdata.data.data.package,
-        "signType": 'MD5', // 微信签名方式：
-        "paySign":resdata.data.data.paySign
+        "appId": data.data.data.appId, // 公众号名称，由商户传入
+        "timeStamp": data.data.data.timeStamp, // 时间戳，自1970年以来的秒数
+        "nonceStr": data.data.data.nonceStr, // 随机串
+        "package": data.data.data.package,
+        "signType": 'HMAC-SHA256', // 微信签名方式：
+        "paySign":data.data.data.paySign
       }
-      // payData.paySign = createSign(payData);
-        wx.invoke(
-          'getBrandWCPayRequest',payData ,
-          function (res) {
-            resolve(res)
-          }
-        )
-    });
-  })
-    
-}
-const xcWXinvoke = (data, resolve) => {  //orderId 订单ID
-  xcpayorders(data).then(res => {
-    wxPayConfig(res.data.data.prepay_id).then(resdata=>{
-      let payData = {
-        "appId": resdata.data.data.appId, // 公众号名称，由商户传入
-        "timeStamp": resdata.data.data.timestamp, // 时间戳，自1970年以来的秒数
-        "nonceStr": resdata.data.data.nonceStr, // 随机串
-        "package": resdata.data.data.package,
-        "signType": 'MD5', // 微信签名方式：
-        "paySign":resdata.data.data.paySign
-      }
-      // payData.paySign = createSign(payData);
-        wx.invoke(
-          'getBrandWCPayRequest',payData ,
-          function (res) {
-            console.log(res)
-            setTimeout(function () {
-              if (res.err_msg == "get_brand_wcpay_request:ok") {
-                resolve()
-              }
-            }, 500);
-          }
-        )
-    })
-  });
-}
-// 生成签名
-function createSign(data) {
-  var stringA;
-  var array = [];
-  for (var obj in data) {
-      array.push(obj + "=" + data[obj]);
-  }
-  stringA = array.join("&") + "&key=" + 'e3fe67e0ff6080f5272736db75ba8532';
-  let paySign = md5(stringA).toUpperCase()
-  return paySign;
+      wx.invoke(
+        'getBrandWCPayRequest',payData ,
+        function (res) {
+          console.log(res)
+          resolve(res)
+        }
+      )
 }
 const getLocation = () => {
   return new Promise((resolve, reject) => {

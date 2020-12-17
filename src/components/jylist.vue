@@ -22,7 +22,7 @@
         </div>
         <div class="bar-search" v-if="(gasMode === 1 || gasMode === 2)">
             <button class="btn-item" @click="doToggleOilNumber">
-                {{ btnOilNumber }}# <img :class="['icon', showOilNumber && 'revert']" src="../assets/images/icon-expand.png"/>
+                {{ searchInfo.oil_numbers }}# <img :class="['icon', showOilNumber && 'revert']" src="../assets/images/icon-expand.png"/>
             </button>
             <button class="btn-item" @click="doToggleBrand">
                 全部品牌
@@ -80,7 +80,8 @@
                     <button v-for="(item, idx) in gasStationBrandArray"
                     :key="idx"
                     @click="doSelectBrand(item.value)"
-                    :class="['btn-option', searchInfo.types.includes(item.value) && 'selected']">
+                    class="btn-option"
+                    :class="searchInfo.gasType==item.value?'selected':''">
                     {{ item.key }}
                     </button>
                 </div>
@@ -155,11 +156,12 @@ export default {
         lat: '',
         lng: '',
         oil_numbers: '92',
-        oil_types: '',
+        oil_types: '1',
         types: [],
         per_page: 10,
         page: 1,
-        address: ''
+        address: '',
+        gasType:''
       },
       OilTypes,
       gasolineNumbers, 
@@ -173,20 +175,10 @@ export default {
     
   },
   computed: {
-    btnOilNumber () {
-      const { oil_numbers, oil_types } = this.searchInfo
-      if (!oil_numbers) {
-        return '全部油号'
-      }
-      const oilType = oilTypeArray.filter(v => v.value === oil_types)
-      if (oil_numbers && oilType.length) {
-        return `${oil_numbers}${oil_types !== OilTypes.GAS ? '#' : ''}${oilType[0].key}`
-      }
-    },
   },
   methods: {
     routerTo(item){
-        this.$router.push({ path: '/jydetail', query: { gasItem:JSON.stringify(item),gasId:item.gas_id,oil_number: this.searchInfo.oil_numbers}});
+        this.$router.push({ path: '/jydetail', query: { gasItem:JSON.stringify(item),gasId:item.gas_id,oil_number: this.searchInfo.oil_numbers+'#'}});
     },  
     doToggleOilNumber () {
       this.showOilNumber = !this.showOilNumber
@@ -207,13 +199,7 @@ export default {
       this.getGaslist()
     },
     doSelectBrand(item){
-      for (let i = 0; i < this.searchInfo.types.length; i++) {
-        if (this.searchInfo.types[i] === item) {
-          this.searchInfo.types.splice(i, 1)
-          return
-        }
-      }
-      this.searchInfo.types.push(item)
+      this.searchInfo.gasType = item
     },
     doConfirmBrand(){
        this.doToggleBrand() 
@@ -227,7 +213,8 @@ export default {
         longitude:114.052402,
         oilName:this.searchInfo.oil_numbers+'#',
         page:1,
-        pagesize:100
+        pagesize:100,
+        gasType:this.searchInfo.gasType || ''
       })
       if(res.data.code==200){
         this.jyzlist = res.data.result

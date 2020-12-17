@@ -36,7 +36,7 @@
           </div>
           <i class="item_go el-icon-arrow-right"></i>
         </router-link>
-        <router-link to="xcorder" class="car_item">
+        <router-link to="xcorder1" class="car_item">
           <img src="../assets/images/item_icon3.png" alt="" class="item_img">
           <div class="item_text">
             <div class="item_name">洗车订单</div>

@@ -2,63 +2,75 @@
     <div class="order_box">
       <div class="order_item" v-for="(item,index) in payData" :key="index">
         <div class="order_top flexbox">
-          <div class="od_t">加油订单</div>
+          <div class="od_t">洗车订单</div>
           <div class="od_t yellow_text">{{item.statusName}}</div>
         </div>
         <div class="order_pay flexbox">
-          支付金额： <div class="od_m">{{item.amount_pay}}</div>元  <del>{{item.amount_gun}}元</del>
+          支付金额： <div class="od_m">{{item.price}}</div>元  <del>{{item.origin_price}}元</del>
         </div>
         <div class="order_adress flexbox">
           <img src="../assets/images/dz_icon.png" alt="" class="od_img">
-          <div class="od_name">加油店</div>
+          <div class="od_name">洗车店</div>
           <div class="od_line"></div>
-          <div class="od_cp">{{item.gas_name}}</div>
+          <div class="od_cp">{{item.shop_name}}</div>
         </div>
-        <div class="order_btn flexbox">
-          <!-- <div class="btn_go yellow_btn" v-if="item.status==1" @click="toPay(item)">继续支付</div> -->
-          <!-- <router-link to="order_details" class="btn_go">查看</router-link> -->
+        <div class="order_btn flexbox" v-if='item.status==1'>
+          <div class="btn_go yellow_btn" @click="toPay(item)">继续支付</div>
         </div>
       </div>
     </div>
 </template>
 <script>
-import { api } from "@/api/api"
+import { xcpayorders,getPayConfig} from '@/api/wx';
 import {WXinvoke} from "@/util/wxUtil"
+import { api } from "@/api/api"
 export default {
   components: {
   },
   data() {
     return {
       payData:[],
-      userInfo:null
+      myInfo:null
     };
   },
   created() {
-    let userInfo = localStorage.getItem('userInfo')
-    this.userInfo = JSON.parse(userInfo)
+    let userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    this.myInfo = userInfo
     this.getorders()
   },
   methods: {
     toPay(item){
-      let data = {
-        'action':'order_save',
-        'phone':this.userInfo.phone,
-        "gasId": item.gas_id,
-        "oilId": this.selectInfo.oil_id,
-        "oilName": item.oil_no,
-        "oilNo": item.gun_no,
-        "price":item.amount_pay,
-        "origin_price": item.amount_gun,
-        "discount_price": item.amount_discounts,
-        "station_price": this.selectInfo.discount_price,
-        "oil_type": this.selectInfo.oilType,
-        "units": parseFloat(this.amount)
+      let that = this
+      const bundle = {
+        action:'order_save',
+        phone:this.myInfo.phone,
+        shop_name:item.shop_name,
+        shopId: item.shop_id,
+        price: item.origin_price,
+        final_price: item.price,
+        serviceId:item.service_id
       }
+      xcpayorders(bundle).then(res => {
+        if(res.data.code==200){
+          getPayConfig({user_id:this.myInfo.user_id}).then((result)=>{
+            WXinvoke(result,response=>{
+                if (response.err_msg == "get_brand_wcpay_request:ok") {
+                  that.$layer.msg('支付成功')  
+                  that.getorders()  
+                }else{
+                  that.$router.push({ path: '/xcorder', query: {payData:JSON.stringify(data)}});
+                }
+            })
+          })
+        }else{
+          that.$layer.msg('下单失败')
+        }
+      }) 
     },
     async getorders(){
-      let res = await api.getorder({
+      let res = await api.getxcorder({
         action:'order_list',
-        phone:this.userInfo.phone
+        phone:this.myInfo.phone
       })
       if(res.data.code==200){
         this.payData = res.data.result
@@ -77,7 +89,6 @@ export default {
         })
       }
     },
-    
   },
   mounted() {
     
@@ -89,10 +100,10 @@ export default {
   display: flex;
 }
 .order_box{
-  padding: 4% 3%;
+  padding: 0 3%;
 }
 .order_item{
-  margin-bottom: 15px;
+  margin-top: 15px;
   border-radius: 8px;
   box-shadow:0 0 15px rgba(0, 0, 0, 0.1);
   padding: 4% 3%;

@@ -16,6 +16,7 @@
     "js-sha256": "^0.9.0",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
+    "moment": "^2.29.1",
     "vue": "^2.5.2",
     "vue-country-code-selector": "^1.0.5",
     "vue-layer": "^1.2.1",
