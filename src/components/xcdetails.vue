@@ -54,7 +54,7 @@
     </div>
 </template>
 <script>
-import { xcpayorders,getPayConfig} from '@/api/wx';
+import { xcpayorders,getxcPayConfig} from '@/api/wx';
 import { api } from "@/api/api"
 import Bindphone from "./bindPhone"
 import {WXinvoke} from "@/util/wxUtil"
@@ -120,7 +120,11 @@ export default {
       this.isProcessing = true
       xcpayorders(bundle).then(res => {
         if(res.data.code==200){
-          getPayConfig({user_id:this.myInfo.user_id}).then((result)=>{
+          let configdata = {
+            order_id:res.data.result.order_id,
+            user_id:this.myInfo.user_id
+          }
+          getxcPayConfig(configdata).then((result)=>{
             WXinvoke(result,response=>{
                 if (response.err_msg == "get_brand_wcpay_request:ok") {
                   this.isProcessing = false

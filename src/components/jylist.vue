@@ -105,7 +105,7 @@
             </div>
           </div>
           <div class="ls_m">
-            <div class="p_name">{{item.name}}</div>
+            <div class="p_name">{{item.gas_name}}</div>
             <p class="price">VIP特权价 ￥<span class="bold" v-if="item">{{item.discount_price}}</span><a class="oldprice">国标价 ￥ {{item.official_price}}</a></p>
           </div>
           <div class="ls_r" style="display:none;">
@@ -178,7 +178,7 @@ export default {
   },
   methods: {
     routerTo(item){
-        this.$router.push({ path: '/jydetail', query: { gasItem:JSON.stringify(item),gasId:item.gas_id,oil_number: this.searchInfo.oil_numbers+'#'}});
+        this.$router.push({ path: '/jydetail', query: { gasItem:JSON.stringify(item),gasId:item.gas_id,oil_number: this.searchInfo.oil_numbers+'#',platform_type:item.platform_type}});
     },  
     doToggleOilNumber () {
       this.showOilNumber = !this.showOilNumber

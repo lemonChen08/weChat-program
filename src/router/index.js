@@ -18,6 +18,7 @@ import lacation from '@/components/lacation.vue'
 import jyorder1 from '@/components/jyorder1.vue'
 import inviteList from '@/components/inviteList.vue'
 import fanyongList from '@/components/fanyongList.vue'
+import tuig from '@/components/tuig.vue'
 
 Vue.use(Router)
 
@@ -102,6 +103,11 @@ export default new Router({
 			path: '/fanyongList',
 			name: 'fanyongList',
 			component: fanyongList
+		},
+		{
+			path: '/tuig',
+			name: 'tuig',
+			component: tuig
 		},
   ]
 })

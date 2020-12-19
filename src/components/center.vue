@@ -4,7 +4,13 @@
         <div class="center_box">
       <div class="car_box">
         <img src="../assets/images/w_car.jpg" alt="" class="car_img">
-        <img src="../assets/images/user.jpg" alt="" class="car_header">
+        <img :src="userInfo.headimgurl" alt="" class="car_header">
+      </div>
+      <div class="car_item">
+          <div class="item_text">
+            <div class="item_name">我的邀请码</div>
+            <p style="position:absolute;right:50px;font-size:18px;">{{inviteCode}}</p>
+          </div>
       </div>
       <div class="car_list">
         <!-- <div class="car_item" @click="openPhone">
@@ -14,17 +20,10 @@
           </div>
           <i class="item_go el-icon-arrow-right"></i>
         </div> -->
-        <router-link to="inviteList" class="car_item">
-          <img src="../assets/images/item_icon2.png" alt="" class="item_img">
+        <router-link to="tuig" class="car_item">
+          <img src="../assets/images/my_list_ic_promote.png" alt="" class="item_img">
           <div class="item_text">
-            <div class="item_name">邀请记录</div>
-          </div>
-          <i class="item_go el-icon-arrow-right"></i>
-        </router-link>
-        <router-link to="fanyongList" class="car_item">
-          <img src="../assets/images/item_icon2.png" alt="" class="item_img">
-          <div class="item_text">
-            <div class="item_name">返佣记录</div>
+            <div class="item_name">我的推广</div>
           </div>
           <i class="item_go el-icon-arrow-right"></i>
         </router-link>
@@ -63,10 +62,14 @@ export default {
   },
   data() {
     return {
-      phoneShow:false
+      phoneShow:false,
+      inviteCode:'',
+      userInfo:{}
     };
   },
   created() {
+    this.userInfo = JSON.parse(localStorage.getItem('userInfo'))
+    this.inviteCode = this.userInfo.invite_code
     
   },
   methods: {
@@ -125,6 +128,7 @@ export default {
   width: 5vh;
 }
 .item_text{
+  position:relative;
   display: -webkit-flex;
   display: flex;
   height: 60px;

@@ -43,7 +43,11 @@ export default function wxAuth() {
         }
     });
 }
-
+function getUrlParam(key) {//获取当前页面url中的参数
+    var reg = new RegExp("(^|&)" + key + "=([^&]*)(&|$)");
+    var result = window.location.search.substr(1).match(reg);
+    return result ? decodeURIComponent(result[2]) : '';
+}
 function getUrlCode() { // 截取url中的code方法
       var url = location.search
       var theRequest = new Object()

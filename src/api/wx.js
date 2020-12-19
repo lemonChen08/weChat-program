@@ -20,3 +20,6 @@ export function wxPayConfig(id) {
 export function getPayConfig(params) {
     return fet('public/wx/oil_wxpay.php',params,'post')
 }
+export function getxcPayConfig(params) {
+    return fet('public/wx/car_wxpay.php',params,'post')
+}

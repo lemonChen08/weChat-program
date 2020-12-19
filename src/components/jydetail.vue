@@ -384,6 +384,9 @@ export default {
         gasId:this.$route.query.gasId
       })
       if(res.data.code==200){
+        if(this.$route.query.platform_type==2){
+          window.location.href = res.data.url
+        }
         let data = res.data.result
         this.item = data
         this.$_analyseOptions()
@@ -453,63 +456,43 @@ export default {
     },
     toPay () {
       this.isProcessing = true
-      // const channel_id = session.get(session.KEY_CURRENT_CHANNEL_ID) || 0
-      // let price
-      // const { channel_config } = this.channelInfo
-      // if (channel_config && channel_config.equity_points_switch) {
-      //   if (this.equity_points) {
-      //     price = this.price - this.equity_points
-      //   } else {
-      //     price = this.price
-      //   }
-      // } else {
-      //   price = this.truePrice
-      // }
-      // let bundle = {
-      //   channel_id: parseInt(channel_id),
-      //   gas_id: this.id,
-      //   gun_id: this.gunNumber,
-      //   price: parseFloat(price) * 100,
-      //   unit_price: Math.round(parseFloat(this.oilNumber.priceYfq) * 100),
-      //   origin_price: Math.round(this.price * 100),
-      //   origin_unit_price: Math.round(this.oilNumber.priceGun * 100),
-      //   oil_name: this.oilNumber.oilName,
-      //   oil_type: this.oilNumber.oilType,
-      //   units: parseFloat(this.amount),
-      //   gas_from: this.oilNumber.from
-      // } 
-      // if (this.$route.query.extra) { // 第三方附加参数【省心×方诺科技】
-      //   bundle.extra = this.$route.query.extra
-      // }
-      // if (this.usePoint) { // 第三方积分必须为整数【省心×一点停】
-      //   bundle.point = Math.floor(this.usePoint) * this.channelInfo.point_integer_ratio
-      // }
-      // if (this.discountBundle.id) { // 使用线上加油优惠券【省心×银商加油站】
-      //   bundle.coupon_id = this.discountBundle.id
-      // }
-      // if (channel_config && channel_config.equity_points_switch) {
-      //   bundle.equity_points = this.equity_points * 100
-      // }
-      // let res = await czbOrderApis.create(bundle)
-      // report('加油支付', '点击', '创建加油订单')
       let price = this.truePrice
-      let data = {
-        'action':'order_save',
-        'phone':this.myInfo.phone,
-        "gasId": this.$route.query.gasId,
-        "oilId": this.selectInfo.oil_id,
-        "oilName": this.selectInfo.oil_no,
-        "oilNo": this.selectInfo.gunNumber,
-        "price":price,
-        "origin_price": this.price,
-        "discount_price": this.selectInfo.station_price,
-        "station_price": this.selectInfo.discount_price,
-        "oil_type": this.selectInfo.oilType,
-        "units": parseFloat(this.amount)
+      let data = {}
+      debugger
+      if(this.$route.query.platform_type==1){
+        data = {
+          'action':'order_save',
+          'phone':this.myInfo.phone,
+          "gasId": this.$route.query.gasId,
+          "oilId": this.selectInfo.oil_id,
+          "oilNo": this.selectInfo.gunNumber
+        }
+      }else if(this.$route.query.platform_type==3){
+        data = {
+          'action':'order_save',
+          'phone':this.myInfo.phone,
+          "gasId": this.$route.query.gasId,
+          "oilId": this.selectInfo.oil_id,
+          "oilName": this.selectInfo.oil_no,
+          "oilNo": this.selectInfo.gunNumber,
+          "price":price,
+          "origin_price": this.price,
+          "discount_price": this.selectInfo.station_price,
+          "station_price": this.selectInfo.discount_price,
+          "oil_type": this.selectInfo.oilType,
+          "units": parseFloat(this.amount)
+        }
       }
       payorders(data).then(res => {
         if(res.data.code==200){
-          getPayConfig({user_id:this.myInfo.user_id}).then((result)=>{
+          if(this.$route.query.platform_type==1){
+            window.location.href = res.data.url
+          }
+          let configdata = {
+            order_id:res.data.result.order_id,
+            user_id:this.myInfo.user_id
+          }
+          getPayConfig(configdata).then((result)=>{
             WXinvoke(result,response=>{
                 if (response.err_msg == "get_brand_wcpay_request:ok") {
                   this.isProcessing = false
@@ -525,40 +508,6 @@ export default {
           that.$layer.msg('下单失败')
         }
       })
-      // WXinvoke(data,res=>{
-      //   if (res.err_msg == "get_brand_wcpay_request:ok") {
-      //     this.isProcessing = false
-      //     this.$layer.msg('支付成功')    
-      //     this.isPay = true
-      //   }else{
-      //     this.$router.push({ path: '/jyorder', query: {payData:JSON.stringify(data)}});
-      //   }
-      // })
-        // if (res.code !== 200) {
-          
-        //   if (res.message === '油站返回错误![平台余额不足]') {
-        //     this.isProcessing = false
-        //     this.$layer.msg('暂不支持该油站')
-        //   } else {
-        //     this.isProcessing = false
-        //     this.$layer.msg(res.message)
-        //   }
-        //   return
-        // }
-        
-      // const { id } = res.data
-      // toUnitePay(id, `/czbOrder/${id}?success=1`, { isYsPay: this.oilNumber.from === GasStationSource.SHENGXIN })
-      // session.save('myBankInfo', {rebate: this.bank.rebate, availableAmount: this.remain.availableAmount, isPay: this.isPay})
-      // 
-      // report('加油支付', '回调', '创建加油订单成功')
-      // if (this.CouponDetail.is_receive !== 0) {
-      //   toUnitePay(id, `/czbOrder/${id}?success=1`, { isYsPay: this.oilNumber.from === GasStationSource.SHENGXIN })
-      // } else {
-      //   this.showBanner = true
-      //   setTimeout(() => {
-      //     toUnitePay(id, `/czbOrder/${id}?success=1`, { isYsPay: this.oilNumber.from === GasStationSource.SHENGXIN })
-      //   }, 3000)
-      // }
     },
   },
   mounted() {

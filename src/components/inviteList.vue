@@ -2,7 +2,7 @@
     <div class="tableBox">
       <el-table
         :data="inviteList"
-        style="width: 100%">
+        style="width: 100%;padding-left:15px;">
         <el-table-column
           prop="phone"
           label="用户">

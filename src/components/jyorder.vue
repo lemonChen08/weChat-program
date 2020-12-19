@@ -44,7 +44,11 @@ export default {
       let that = this
       payorders(this.payData).then(res => {
         if(res.data.code==200){
-          getPayConfig({user_id:this.myInfo.user_id}).then((result)=>{
+          let configdata = {
+            order_id:res.data.result.order_id,
+            user_id:this.myInfo.user_id
+          }
+          getPayConfig(configdata).then((result)=>{
             WXinvoke(result,response=>{
                 if (response.err_msg == "get_brand_wcpay_request:ok") {
                   this.$layer.msg('支付成功')    

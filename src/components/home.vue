@@ -44,7 +44,7 @@
             </div>
           </div>
           <div class="ls_m">
-            <div class="p_name">{{jyzlist[0].name}}</div>
+            <div class="p_name">{{jyzlist[0].gas_name}}</div>
             <p class="price">VIP特权价 ￥<span class="bold">{{jyzlist[0].discount_price || 0}}</span><a class="oldprice">国标价 ￥ {{jyzlist[0].official_price}}</a></p>
           </div>
           <div class="ls_r" style="display:none;">
@@ -162,7 +162,7 @@ export default {
   },
   methods: {
     routerTo(item){
-        this.$router.push({ path: '/jydetail', query: { gasItem:JSON.stringify(item),gasId:item.gas_id,oil_number:'92'}});
+        this.$router.push({ path: '/jydetail', query: { gasItem:JSON.stringify(item),gasId:item.gas_id,oil_number:'92',platform_type:item.platform_type}});
     },  
     toxcdetail(item){
         this.$router.push({ path: '/xcdetails', query: {shopId: item.id,latitude:item.latitude,longitude:item.longitude}})
