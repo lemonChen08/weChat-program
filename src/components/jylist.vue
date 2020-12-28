@@ -141,7 +141,7 @@ import {
   gasolineNumbers, 
   dieselNumbers,
   gasStationBrandArray  
-} from '../util/const'
+} from '@/util/const'
 import { api } from "@/api/api"
 export default {
   components: {

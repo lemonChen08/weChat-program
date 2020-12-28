@@ -1,17 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// import HelloWorld from '@/components/HelloWorld'
 
 import register from '@/components/register.vue'
 import publish from '@/components/publish.vue'
-import center from '@/components/center.vue'  //个人中心
 import jyorder from '@/components/jyorder.vue' //加油订单
 import xcorder from '@/components/xcorder.vue' //洗车订单
 import xcorder1 from '@/components/xcorder1.vue' //洗车订单
 import order_details from '@/components/order_details.vue' //订单详情
 import xclist from '@/components/xclist.vue' //洗车列表
 import xcdetails from '@/components/xcdetails.vue' //洗车详情
-import home from '@/components/home.vue' //洗车详情
 import jylist from '@/components/jylist.vue' //加油列表
 import jydetail from '@/components/jydetail.vue' //加油详情
 import lacation from '@/components/lacation.vue'
@@ -26,8 +23,13 @@ export default new Router({
   routes: [
 		{
 		  path: '/',
-		  name: 'home',
-		  component: home
+		  name: 'index',
+		  component:()=>import('@/view/index/index.vue')
+		},
+		{
+			path: '/mine',
+			name: '个人中心',
+			component: ()=>import('@/view/mine/index.vue')
 		},
 		{
 			path: '/register',
@@ -38,11 +40,6 @@ export default new Router({
 			path: '/publish',
 			name: 'publish',
 			component: publish
-		},
-		{
-			path: '/center',
-			name: '个人中心',
-			component: center
 		},
 		{
 			path: '/jyorder',

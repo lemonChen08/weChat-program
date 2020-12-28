@@ -47,8 +47,8 @@
 </template>
 
 <script>
-import inviteList from './inviteList'
-import fanyongList from './fanyongList'
+import inviteList from '@/components/inviteList'
+import fanyongList from '@/components/fanyongList'
 export default {
   components: {
     inviteList,

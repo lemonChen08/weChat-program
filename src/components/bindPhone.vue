@@ -26,11 +26,7 @@
 </template>
 <script>
 import { api } from "@/api/api"
-import Bindphone from "./bindPhone"
 export default {
-  components: {
-    Bindphone
-  },
   props:[],
   data() {
     return {

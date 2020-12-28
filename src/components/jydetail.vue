@@ -187,11 +187,9 @@ import {
   // OilTypes,
   GhyyOrderStatuses,
   oilTypeArray
-} from '../util/const'
+} from '@/util/const'
 import {WXinvoke} from "@/util/wxUtil"
 export default {
-  components: {
-  },
   data() {
     return {
       showAuth: false,

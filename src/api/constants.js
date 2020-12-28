@@ -1,7 +1,5 @@
-import vm from '../main.js'
 import axios from 'axios'
 const qs = require('qs')
-let that = vm;
 const server = {
   development: 'http://car.welaipay.com/',
   production: 'http://car.welaipay.com/'
@@ -18,12 +16,7 @@ const jsonUrl = (json) => {
 }
 
 //写一个拦截器
-
 export const fet = (url,data,method,postHeaders) => {
-  // var oneToken = localStorage.getItem("oneToken");
-  // if (oneToken && url!=='api/user/getOpenId') {
-  //     axios.defaults.headers.common['authorization'] = oneToken
-  // }
   let realUrl = server['development'] + url
   let type = method.toLowerCase()
   let res = {}

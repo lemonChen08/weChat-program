@@ -1,21 +1,20 @@
 <template>
   <div id="app">
-		<router-view/>
+    <router-view/>
+    <Tab></Tab>
   </div>
 </template>
 
 <script>
-		
+import Tab from "@/components/tabs";
 export default {
-  name: 'App',
-	data(){
-		return {
-			// formView
-		}
-	}
-}
+  name: "App",
+  components: {
+    Tab
+  }
+};
 </script>
 
 <style lang= "less">
-   @import './assets/css/reset.css';
+@import "@/assets/css/reset.css";
 </style>

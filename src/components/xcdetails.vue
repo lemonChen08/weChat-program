@@ -56,7 +56,7 @@
 <script>
 import { xcpayorders,getxcPayConfig} from '@/api/wx';
 import { api } from "@/api/api"
-import Bindphone from "./bindPhone"
+import Bindphone from "@/components/bindPhone"
 import {WXinvoke} from "@/util/wxUtil"
 export default {
   components: {

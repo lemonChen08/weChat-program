@@ -1,4 +1,4 @@
-import  {fet} from './constants.js'
+import {fet} from '@/api/constants.js'
 
 const api = {}
 

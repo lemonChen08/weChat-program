@@ -1,6 +1,6 @@
 // import wx from "weixin-jsapi";
 const wx = window.wx
-import router from '../router'
+import router from '@/router'
  
 import { getJSSDK,payorders,xcpayorders,wxPayConfig } from '@/api/wx';//获取appid信息的接口,以后台人员接口为准
 // import { payorders } from "@/api/appointment";//一个更具订单id获取appid的接口
@@ -83,5 +83,5 @@ const getLocation = () => {
     });
   });
 };
-export { getLocation,WXinvoke,xcWXinvoke };
+export { getLocation,WXinvoke};
 export default wxUtils;

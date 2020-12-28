@@ -3,7 +3,7 @@
       <div class="main">
         <div class="center_box">
       <div class="car_box">
-        <img src="../assets/images/w_car.jpg" alt="" class="car_img">
+        <img src="@/assets/images/w_car.jpg" alt="" class="car_img">
         <img :src="userInfo.headimgurl" alt="" class="car_header">
       </div>
       <div class="car_item">
@@ -13,22 +13,15 @@
           </div>
       </div>
       <div class="car_list">
-        <!-- <div class="car_item" @click="openPhone">
-          <img src="../assets/images/item_icon1.png" alt="" class="item_img">
-          <div class="item_text">
-            <div class="item_name">我的手机号</div>
-          </div>
-          <i class="item_go el-icon-arrow-right"></i>
-        </div> -->
         <router-link to="tuig" class="car_item">
-          <img src="../assets/images/my_list_ic_promote.png" alt="" class="item_img">
+          <img src="@/assets/images/my_list_ic_promote.png" alt="" class="item_img">
           <div class="item_text">
             <div class="item_name">我的推广</div>
           </div>
           <i class="item_go el-icon-arrow-right"></i>
         </router-link>
         <router-link to="jyorder1" class="car_item">
-          <img src="../assets/images/item_icon2.png" alt="" class="item_img">
+          <img src="@/assets/images/item_icon2.png" alt="" class="item_img">
           <div class="item_text">
             <div class="item_name">加油订单</div>
             <div class="item_tips">9折加油，全国10000+合作加油站</div>
@@ -36,7 +29,7 @@
           <i class="item_go el-icon-arrow-right"></i>
         </router-link>
         <router-link to="xcorder1" class="car_item">
-          <img src="../assets/images/item_icon3.png" alt="" class="item_img">
+          <img src="@/assets/images/item_icon3.png" alt="" class="item_img">
           <div class="item_text">
             <div class="item_name">洗车订单</div>
             <div class="item_tips">全国60000+门店通用</div>
@@ -52,9 +45,9 @@
     </div>
 </template>
 <script>
-import Tabs from './tabs'
+import Tabs from '@/components/tabs'
 import { api } from "@/api/api"
-import Bindphone from "./bindPhone"
+import Bindphone from "@/components/bindPhone"
 export default {
   components: {
     Bindphone,
@@ -152,14 +145,5 @@ export default {
 }
 .item_go{
    font-size:20px;
-}
-
-
-
-</style>
-
-<style lang="less">
-body{
-  background-color: #fafafa;
 }
 </style>
