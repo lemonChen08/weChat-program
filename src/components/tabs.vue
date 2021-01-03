@@ -15,41 +15,30 @@
 <script>
 import { api } from "@/api/api"
 export default {
-  components: {
-    
-  },
-  data() {
-    return {
-      
-    };
-  },
-  created() {
-    
-  },
   methods: {
     toHome(){
         this.$router.push('/')
     },
     toMe(){
-        this.$router.push('/center')
+        this.$router.push('/mine')
     }
-  },
-  mounted() {
-    
   }
 };
 </script>
 <style lang="less">
 .pad-tabbar{
-    height: 10vh;
+    height:50px;
     border-top: 1px solid #f6f6f6;
     z-index: 99;
-    position:relative;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    position:fixed;
+    background: #fff;
 }
 .main-tabbar {
   height: 100%;
   width: 100%;
-  display: block;
   position: absolute;
   top: 0;
   left: 0;

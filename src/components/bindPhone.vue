@@ -9,16 +9,6 @@
               <div class="form_text">手机号码<span>*</span></div>
               <input type="text" class="phone_input" v-model="phone" placeholder="请输入手机号码">
             </div>
-            <!-- <div class="phone_item">
-              <div class="form_text">邀请码</div>
-              <input type="text" class="phone_input" v-model="inviteCode" placeholder="请输入邀请码">
-            </div> -->
-            <!-- <div class="phone_item">
-              <div class="form_text">验证码<span>*</span></div>
-              <input type="text" class="phone_input code" placeholder="请输入验证码">
-              <div class="line"></div>
-              <button type="button" class="form_code">发送验证码</button>
-            </div> -->
             <button type="button" class="form_btn" @click="login">立即登录</button>
           </div>
         </div>

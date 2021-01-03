@@ -7,14 +7,14 @@
           <img v-lazy="item.url" />
         </van-swipe-item>
       </van-swipe>
-      <!-- 首页两个项目 -->
+      <!-- 首页两个项目 加油和洗车 -->
       <div class="index-box flexbox">
         <div class="f-item flexbox" @click="toXclist">
           <div class="f_col">
             <div class="f-bold">汽车养护</div>
             <div>折扣低至8折</div>
           </div>
-          <img src="@/assets/images/jiayou.png" class="icon" />
+          <img src="@/assets/images/xiche.png" class="icon" />
         </div>
         <div class="f-item flexbox" @click="toJylist">
           <div class="f_col">
@@ -24,111 +24,66 @@
           <img src="@/assets/images/jiayou.png" class="icon" />
         </div>
       </div>
-      <div class="pad-functions">
-        <div class="item-normal">
-          <div class="card-navigator">
-            <img src="@/assets/images/jiayou.png" class="icon" />
-            <div class="row-info">
-              <span class="name">折扣加油</span>
-            </div>
+      <!-- 列表 -->
+      <div class="list-box">
+        <div class="list-item" v-if="jyzlist.length>0">
+          <div class="listtitle">
+            <div class="title">附近加油站</div>
+            <router-link to="jylist" class="more">更多 >></router-link>
           </div>
-        </div>
-        <div class="item-normal">
-          <div class="card-navigator">
-            <img src="@/assets/images/xiche.png" class="icon" />
-            <span class="tag">8折</span>
-            <div class="row-info">
-              <span class="name">洗车保养</span>
-            </div>
+          <div class="ls-top flexbox" @click="routerTo(jyzlist[0])">
+             <jyModel :item='jyzlist[0]'></jyModel>
           </div>
         </div>
       </div>
       <!-- 列表 -->
-      <div class="list_box">
-        <div class="list_item" v-if="jyzlist.length>0">
+      <div class="list-box">
+        <div class="list-item" v-if="xclist.length>0">
           <div class="listtitle">
-            <h2 class="title">附近加油站</h2>
-            <router-link to="jylist" class="more">更多></router-link>
+            <div class="title">附近洗车保养</div>
+            <router-link to="xclist" class="more">更多 >></router-link>
           </div>
-          <div class="ls_top flexbox" @click="routerTo(jyzlist[0])">
-            <div class="ls_l">
-              <img :src="jyzlist[0].gas_logo_big" alt class="ls_img" />
-              <!-- 如果休息中显示 -->
-              <div class="if_stop" style="display:none;">
-                <span>休息中</span>
-                <span>营业时间</span>
-                <span>{{jyzlist[0].time}}</span>
+          <div class="ls-top" @click="toxcdetail(xclist[0])">
+            <div class="flexbox">
+              <img :src="xclist[0].shop_img" alt class="ls-img" />
+              <div class="ls-r">
+                <div class="l-name">{{xclist[0].shop_name}}</div>
+                <div class="l-add">
+                  <van-icon name="location-o" />
+                  <span>{{xclist[0].shop_address}}</span>
+                </div>
+                <div class="l-distance">驾车全程约{{$_toDistance(xclist[0].juli)}}公里</div>
               </div>
+              <img src='@/assets/images/icon-add.png' class="add-i" />
             </div>
-            <div class="ls_m">
-              <div class="p_name">{{jyzlist[0].gas_name}}</div>
-              <p class="price">
-                VIP特权价 ￥
-                <span class="bold">{{jyzlist[0].discount_price || 0}}</span>
-                <a class="oldprice">国标价 ￥ {{jyzlist[0].official_price}}</a>
-              </p>
+            <div class="xc-item">
+              <span>标准洗车-SUV/MPV</span>
+              <span class="x-o">￥45</span>
+              <span class="x-n">
+                <span class="fs-14">￥</span>35
+              </span>
+              <span class="buy-btn">购买</span>
             </div>
-            <div class="ls_r" style="display:none;">
-              <div class="dz">{{jyzlist[0].dazhe}}</div>
-              <div class="pay_num">￥{{jyzlist[0].pay}}</div>
+            <div class="xc-item">
+              <span>手工打蜡-SUV/MPV</span>
+              <span class="x-o">￥189</span>
+              <span class="x-n">
+                <span class="fs-14">￥</span>177
+              </span>
+              <span class="buy-btn">购买</span>
             </div>
-          </div>
-          <div class="ls_bot flexbox">
-            <img src="@/assets/images/icon-address.png" alt class="d_img" />
-            <div class="d_name">{{jyzlist[0].gas_address}}</div>
-            <button class="d_map flexbox">
-              <img src="@/assets/images/icon-nav-white.png" alt class="map_img" />
-              {{jyzlist[0].juli/100}}
-            </button>
           </div>
         </div>
       </div>
-      <!-- 列表 -->
-      <div class="list_box">
-        <div class="list_item" v-if="xclist.length>0">
-          <div class="listtitle">
-            <h2 class="title">附近洗车店</h2>
-            <router-link to="xclist" class="more">更多></router-link>
-          </div>
-          <div class="ls_top flexbox" @click="toxcdetail(xclist[0])">
-            <div class="ls_l">
-              <img :src="xclist[0].shop_img" alt class="ls_img" />
-              <!-- 如果休息中显示 -->
-              <div class="if_stop" v-show="!xclist[0].is_open">
-                <span>休息中</span>
-                <span>营业时间</span>
-                <span>{{xclist[0].start_opentime}}--{{xclist[0].end_opentime}}</span>
-              </div>
-            </div>
-            <div class="ls_m">
-              <div class="p_name">{{xclist[0].shop_name}}</div>
-              <div class="p_cord flexbox">
-                <div class="rank">{{xclist[0].score}}</div>
-                <div class="sale">已售 {{xclist[0].total_num}}</div>
-              </div>
-            </div>
-            <div class="ls_r" v-show="false">
-              <div class="dz">{{xclist[0].Tdiscount}}</div>
-              <div class="pay_num">￥{{xclist[0].Tprice}}</div>
-            </div>
-          </div>
-          <div class="ls_bot flexbox">
-            <img src="@/assets/images/icon-address.png" alt class="d_img" />
-            <div class="d_name">{{xclist[0].shop_address}}</div>
-            <button class="d_map flexbox">
-              <img src="@/assets/images/icon-nav-white.png" alt class="map_img" />
-              {{$_toDistance(xclist[0].juli)}}
-            </button>
-          </div>
-        </div>
-      </div>
+      <Tab></Tab>
       <Bindphone @closepop="closePhone" v-show="popShow"></Bindphone>
     </div>
   </div>
 </template>
 <script>
-import axios from "axios";
 import Bindphone from "@/components/bindPhone";
+import Tab from "@/components/tabs"
+import jyModel from '@/components/jyModel';
 import { api } from "@/api/api";
 import { getLocation } from "@/util/wxUtil";
 import wxShare from "@/util/wxShare";
@@ -137,7 +92,9 @@ import img2 from "@/assets/images/banner1.png";
 const qs = require("qs");
 export default {
   components: {
-    Bindphone
+    Bindphone,
+    jyModel,
+    Tab
   },
   data() {
     return {
@@ -266,8 +223,6 @@ export default {
       let res = await api.storesList({
         action: "get_shoplist",
         cityName: "深圳市",
-        // lat:latlon.latitude,
-        // lng:latlon.longitude,
         latitude: latlon.latitude,
         longitude: latlon.longitude,
         orderBy: 1,
@@ -300,12 +255,6 @@ export default {
         // alert(44)
         this.fadePop = false;
         this.jyzlist = res.data.result;
-        // this.jyzlist = data.data.items
-        // data.data.items = data.map(v => {
-        //   v.price = this.getPriceByOilNumber(v, 92)
-        //   v.price = v.discount_price
-        //   return v
-        // })
       } else if (res.data.code == 401) {
         localStorage.clear();
         sessionStorage.clear();
@@ -334,7 +283,6 @@ export default {
     openPhone() {
       this.popShow = true;
     },
-
     // 关闭手机绑定
     closePhone() {
       this.popShow = false;
@@ -363,8 +311,32 @@ export default {
 };
 </script>
 <style scoped>
-.pro_box {
+.pro-box {
   padding: 0 15px;
+  font-size: 13px;
+  margin-bottom: 60px;
+}
+
+.add-i{
+  width:16px;
+  height:16px;
+  position:absolute;
+  bottom: 10px;
+  right: 20px;
+}
+
+.l-add {
+  color: #666;
+  font-size: 11px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.l-distance {
+  font-size: 11px;
+  color: #333;
+  font-weight: bold;
+  margin-top: 8px;
 }
 
 .my-swipe {
@@ -376,6 +348,29 @@ export default {
   text-align: center;
   border-radius: 16px;
 }
+
+.index-box {
+  margin: 16px 0;
+  justify-content: space-between;
+}
+
+.f-item {
+  width: 165px;
+  color: #666;
+  height: 86px;
+  border-radius: 10px;
+  box-shadow: 0 1.5px 4.5px 0 rgba(107, 215, 241, 0.19);
+  justify-content: center;
+  align-items: center;
+}
+
+.f-bold {
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
 .fadePop {
   position: absolute;
   top: 0;
@@ -386,49 +381,14 @@ export default {
   background: rgba(0, 0, 0, 0.5);
   z-index: 999;
 }
-.pad-functions {
-  padding: 3vw 0;
-  background: #fff;
-}
-.item-normal {
-  flex: 1;
-  display: inline-block;
-  position: relative;
-  width: 25%;
-}
-.card-navigator {
-  padding: 3vw;
-}
 .icon {
   height: 46px;
   width: 46px;
   margin-left: 20px;
 }
-.card-navigator .tag {
-  font-size: 2.6vw;
-  position: absolute;
-  top: 1vw;
-  right: 3vw;
-  background-color: #ff5a50;
-  padding: 0.2vw 1vw;
-  display: block;
-  color: #fff;
-  border-radius: 5vw;
-  border-bottom-left-radius: 0;
-}
-.card-navigator .row-info {
-  text-align: center;
-  margin-top: 1vw;
-}
-.card-navigator .row-info .name {
-  font-size: 3.8vw;
-  color: #2a2a2a;
-  display: block;
-  width: 100%;
-  text-align: center;
-}
 .flexbox {
   display: flex;
+  position: relative;
 }
 
 .sear_list {
@@ -493,47 +453,105 @@ export default {
 }
 
 /* 产品列表 */
-.list_box {
-  margin-top: 3vw;
-  background: #fff;
+.list-box {
+  margin-bottom: 10px;
 }
-.list_item {
-  padding: 3%;
-  border-bottom: 1px solid #ececec;
+.list-item {
   position: relative;
 }
-.list_item .listtitle {
-  overflow: hidden;
-  line-height: 24px;
-  padding-bottom: 10px;
+
+.add-y {
+  width: 75px;
+  height: 23px;
+  border-radius: 24px;
+  line-height: 23px;
+  text-align: center;
+  color: #fff;
+  background: #46b2ff;
+  position: absolute;
+  right: 22px;
+  top: 13px;
+  color: #fff;
 }
-.list_item .listtitle .title {
-  float: left;
-  font-weight: 500;
-  font-size: 16px;
+
+.buy-btn {
+  width: 49px;
+  height: 22.5px;
+  background: #46b2ff;
+  border-radius: 12px;
+  line-height: 22.5px;
+  text-align: center;
+  font-size: 12px;
+  color: #fff;
 }
-.list_item .listtitle .more {
-  float: right;
+
+.listtitle {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.title {
+  font-size: 15px;
+  color: #333;
+  font-weight: bold;
+}
+
+.fs-14 {
   font-size: 14px;
 }
-.ls_go {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
+
+.more {
+  font-size: 13px;
+
+  color: #666;
 }
-.ls_l {
-  width: 22vw;
-  height: 16vw;
+
+.ls-top {
+  border-radius: 10px;
+  padding: 15px;
   position: relative;
-  border-radius: 5px;
-  overflow: hidden;
+  box-shadow: 0 1.5px 4.5px 0 rgba(107, 215, 241, 0.19);
 }
-.ls_img {
-  display: block;
-  width: 100%;
-  height: 100%;
+
+.l-name {
+  color: #333;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.i-icon {
+  width: 22px;
+  height: 26px;
+}
+
+.l-price {
+  align-items: center;
+}
+.o-price {
+  color: #666;
+  font-size: 11px;
+  text-decoration: line-through;
+}
+
+.n-price {
+  color: #fa4c42;
+  font-size: 18px;
+  margin-left: 6px;
+}
+
+.ls-img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.f_col {
+  display: flex;
+  flex-direction: column;
 }
 .if_stop {
   position: absolute;
@@ -632,8 +650,27 @@ export default {
 .map_img {
   height: 4.2vw;
 }
-/* 产品列表 */
-</style>
 
-<style lang="less">
+.xc-item {
+  height: 48px;
+  background: #f1fcff;
+  border-radius: 10px;
+  display: flex;
+  border-radius: 10px;
+  align-items: center;
+  padding: 0 10px;
+  margin-top: 12px;
+  justify-content: space-around;
+}
+
+.x-o {
+  font-size: 13px;
+  text-decoration: line-through;
+}
+
+.x-n {
+  font-size: 18px;
+  color: #fa4c42;
+}
+/* 产品列表 */
 </style>

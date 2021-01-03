@@ -10,14 +10,18 @@ import App from '@/App'
 import store from '@/store'
 import router from '@/router'
 import wxAuth from '@/util/wxAuth'
-import {Swipe,Lazyload,SwipeItem} from 'vant'
+import {Swipe,Lazyload,SwipeItem,Icon,RadioGroup, Radio, Tab, Tabs } from 'vant'
 const qs = require('qs')
 Vue.use(ElementUI)
 Vue.use(Vuex)
 Vue.use(Swipe)
 Vue.use(SwipeItem)
 Vue.use(Lazyload)
-
+Vue.use(Icon)
+Vue.use(RadioGroup)
+Vue.use(Radio)
+Vue.use(Tab)
+Vue.use(Tabs)
 
 Vue.config.productionTip = false
 Vue.prototype.$layer = layer(Vue);

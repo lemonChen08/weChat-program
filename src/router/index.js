@@ -1,40 +1,72 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import register from '@/components/register.vue'
 import publish from '@/components/publish.vue'
 import jyorder from '@/components/jyorder.vue' //加油订单
 import xcorder from '@/components/xcorder.vue' //洗车订单
 import xcorder1 from '@/components/xcorder1.vue' //洗车订单
 import order_details from '@/components/order_details.vue' //订单详情
-import xclist from '@/components/xclist.vue' //洗车列表
-import xcdetails from '@/components/xcdetails.vue' //洗车详情
-import jylist from '@/components/jylist.vue' //加油列表
-import jydetail from '@/components/jydetail.vue' //加油详情
 import lacation from '@/components/lacation.vue'
 import jyorder1 from '@/components/jyorder1.vue'
-import inviteList from '@/components/inviteList.vue'
-import fanyongList from '@/components/fanyongList.vue'
-import tuig from '@/components/tuig.vue'
 
 Vue.use(Router)
 
 export default new Router({
-  routes: [
+	routes: [
 		{
-		  path: '/',
-		  name: 'index',
-		  component:()=>import('@/view/index/index.vue')
+			path: '/',
+			name: 'index',
+			component: () => import('@/view/index/index.vue')
 		},
 		{
 			path: '/mine',
 			name: '个人中心',
-			component: ()=>import('@/view/mine/index.vue')
+			component: () => import('@/view/mine/index.vue')
 		},
 		{
-			path: '/register',
-			name: 'register',
-			component: register
+			path: '/xufei',
+			name: '会员续费',
+			component: () => import('@/view/member/xufei/index.vue')
+		},
+		{
+			path: '/info',
+			name: '会员信息',
+			component: () => import('@/view/member/info/index.vue')
+		},
+		{
+			path: '/jylist',
+			name: '加油',
+			component: () => import('@/view/jiayou/list/index.vue')
+		},
+		{
+			path: '/jyDetail',
+			name: '加油',
+			component: () => import('@/view/jiayou/detail/index.vue')
+		},
+		{
+			path: '/promote',
+			name: '我的推广',
+			component: () => import('@/view/mine/promote/index.vue')
+		},
+		{
+			path: '/teamStats',
+			name: '我的推广',
+			component: () => import('@/view/mine/teamStats/index.vue')
+		},
+		{
+			path: '/nextMember',
+			name: '下级会员',
+			component: () => import('@/view/mine/nextMember/index.vue')
+		},
+		{
+			path: '/xcList',
+			name: '洗车保养',
+			component: () => import('@/view/xiche/list/index.vue')
+		},
+		{
+			path: '/xcdetails',
+			name: '洗车保养',
+			component: () => import('@/view/xiche/detail/index.vue')
 		},
 		{
 			path: '/publish',
@@ -62,26 +94,6 @@ export default new Router({
 			component: order_details
 		},
 		{
-			path: '/xclist',
-			name: '洗车列表',
-			component: xclist
-		},
-		{
-			path: '/xcdetails',
-			name: '洗车详情',
-			component: xcdetails
-		},
-		{
-			path: '/jylist',
-			name: 'jylist',
-			component: jylist
-		},
-		{
-			path: '/jydetail',
-			name: 'jydetail',
-			component: jydetail
-		},
-		{
 			path: '/lacation',
 			name: 'lacation',
 			component: lacation
@@ -90,21 +102,6 @@ export default new Router({
 			path: '/jyorder1',
 			name: 'jyorder1',
 			component: jyorder1
-		},
-		{
-			path: '/inviteList',
-			name: 'inviteList',
-			component: inviteList
-		},
-		{
-			path: '/fanyongList',
-			name: 'fanyongList',
-			component: fanyongList
-		},
-		{
-			path: '/tuig',
-			name: 'tuig',
-			component: tuig
-		},
-  ]
+		}
+	]
 })

@@ -1,10 +1,12 @@
 const path = require('path');
+const glob = require('glob')
 const VueloaderPlugin = require('vue-loader/lib/plugin');
 const NODE_ENV = process.env.NODE_ENV;
 //将css文件抽出来生成一个单独的文件
-const miniCssPlugin = require("mini-css-extract-plugin")
+const miniCssPlugin = require("mini-css-extract-plugin");
 //动态引入相应的js文件
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 const isProd = NODE_ENV === 'production'; //生产环境
 
 module.exports = {
@@ -37,28 +39,12 @@ module.exports = {
             // CSS, and Sass
             {
                 test: /\.(scss|css)$/,
-                use: [{
-                    loader: miniCssPlugin.loader,
-                    options:{
-                        publicPath: './'
-                    }
-                },
-                {
-                    loader: 'css-loader',
-                    options: {
-                        sourceMap: true
-                    }
-                }, {
-                    loader: 'sass-loader',
-                    options: {
-                        sourceMap: true
-                    }
-                }]
+                use: [isProd ? miniCssPlugin.loader : 'style-loader', 'css-loader','postcss-loader', 'sass-loader']
             },
             // less
             {
                 test: /\.less$/,
-                use: [miniCssPlugin.loader, 'css-loader', 'less-loader']
+                use: [ isProd ? miniCssPlugin.loader : 'style-loader', 'css-loader', 'less-loader']
             },
             // Images
             {
@@ -89,7 +75,6 @@ module.exports = {
     //开发环境设置
     devServer: {
         port: 8080,
-        open: true,
         host: '127.0.0.1',
         compress: true,
         allowedHosts: [
@@ -109,7 +94,7 @@ module.exports = {
     optimization: {
         //代码分块，减少重复模块打包
         splitChunks: {
-            chunks: 'all',    //对所有的chunk生效
+             chunks: 'all'   //对所有的chunk生效
         }
     }
 }
