@@ -1,10 +1,10 @@
 <template>
   <div class="tableBox">
     <div class="s-list">
-      <div class="s-item">
-        <span>2020/12/23</span>
-        <span style="text-align:center;">6人</span>
-        <span style="text-align:right;">￥3.01</span>
+      <div class="s-item" v-for="item in inviteList" :key="item.id">
+        <span>{{item.ctime}}</span>
+        <span style="text-align:center;">{{item.user_num}}人</span>
+        <span style="text-align:right;">￥{{item.price}}</span>
       </div>
     </div>
   </div>
@@ -13,12 +13,9 @@
 import moment from "moment";
 import { api } from "@/api/api";
 export default {
-  components: {},
   data() {
     return {
-      payData: {},
-      inviteList: [],
-      userInfo: null
+      inviteList: []
     };
   },
   created() {

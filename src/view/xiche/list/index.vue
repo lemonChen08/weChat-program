@@ -4,27 +4,14 @@
     <div class="sear_head">
       <img src="@/assets/images/xc-banner.png" class="xc-index" />
       <div class="sear_list flexbox">
-        <div class="sr_item" :class="phoneShow==2?'active':''" data-num="2" @click="choosetype">
+        <div class="sr_item" :class="phoneShow==2?'active':''" @click="choosetype(2)">
           <span>全部服务</span>
           <van-icon name="play" />
         </div>
-        <div class="sr_item" :class="phoneShow==3?'active':''" data-num="1" @click="choosetype">
+        <div class="sr_item" :class="phoneShow==3?'active':''" @click="choosetype(3)">
           <span>{{searchInfo.orderByName}}</span>
           <van-icon name="play" />
         </div>
-        <div class="sr_item" :class="phoneShow==3?'active':''" data-num="3" @click="choosetype">
-          <span>{{searchInfo.orderByName}}</span>
-          <van-icon name="play" />
-        </div>
-      </div>
-      <div class="draw_item" v-if="phoneShow==1">
-        <div class="dw_item on">宝安区</div>
-        <div class="dw_item">福田区</div>
-        <div class="dw_item">光明新区</div>
-        <div class="dw_item">罗湖区</div>
-        <div class="dw_item">龙岗区</div>
-        <div class="dw_item">龙华新区</div>
-        <div class="dw_item">南山区</div>
       </div>
       <div class="draw_item" v-if="phoneShow==2">
         <div class="dw_titme">洗车</div>
@@ -186,16 +173,12 @@ export default {
     },
     // 下拉筛选
     choosetype(e) {
-      if (this.phoneShow == e.target.dataset.num) {
+      if (this.phoneShow == e) {
         this.phoneShow = 0;
       } else {
-        this.phoneShow = e.target.dataset.num;
+        this.phoneShow = e;
       }
-    },
-
-    // 打开搜索地址
-    openmapShow() {
-      this.mapShow = true;
+      console.log(this.phoneShow)
     },
 
     // 关闭搜索地址

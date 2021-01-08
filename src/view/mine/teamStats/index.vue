@@ -2,19 +2,19 @@
   <div>
     <div class="stats-box">
       <div class="s-item">
-        <div class="c-num c-red">89</div>
+        <div class="c-num c-red">{{teamInfo.total}}</div>
         <div>用户总数</div>
       </div>
       <div class="s-item">
-        <div class="c-num c-green">89</div>
+        <div class="c-num c-green">{{teamInfo.yesterday_total}}</div>
         <div>昨日新增用户</div>
       </div>
       <div class="s-item">
-        <div class="c-num c-yellow">89</div>
+        <div class="c-num c-yellow">{{teamInfo.zhi_total}}</div>
         <div>直接用户</div>
       </div>
       <div class="s-item">
-        <div class="c-num c-blue">89</div>
+        <div class="c-num c-blue">{{teamInfo.jian_total}}</div>
         <div>间接用户</div>
       </div>
     </div>
@@ -22,18 +22,43 @@
       <p class="tit">选择类型</p>
       <div class="c-item">
         <span>总交易量(元)：</span>
-        <span class="c-money">1954369.23</span>
+        <span class="c-money">{{teamInfo.all_price}}</span>
       </div>
       <div class="c-item">
         <span>昨天交易(元)：</span>
-        <span class="c-money">189.23</span>
+        <span class="c-money">{{teamInfo.yesterday_price}}</span>
       </div>
     </div>
-    <div class="s-btn">查看下级会员</div>
+    <!-- <router-link to="/nextMember" class="s-btn">查看下级会员</router-link> -->
   </div>
 </template>
 <script>
-export default {};
+import { api } from "@/api/api";
+export default {
+  data() {
+    return {
+      teamInfo: {}
+    };
+  },
+  created() {
+    let userInfo = localStorage.getItem("userInfo");
+    this.userInfo = JSON.parse(userInfo);
+    this.getInviteList();
+  },
+  methods: {
+    async getInviteList() {
+      let res = await api.getinvitelist({
+        action: "team_statistics",
+        user_id: this.userInfo.user_id
+      })
+      if (res.data.code == 200) {
+        this.teamInfo = res.data.result;
+      } else {
+        this.$layer.msg(res.data.msg);
+      }
+    }
+  }
+};
 </script>
 <style lang="less" scoped>
 .stats-box {
@@ -95,15 +120,16 @@ export default {};
     font-weight: bold;
   }
 }
-.s-btn{
-    color:#fff;
-    font-size: 14px;
-    height: 50px;
-    text-align: center;
-    line-height: 50px;
-    width: 320px;
-    background: #ffbd3e;
-    border-radius: 28px;
-    margin: 100px auto 0;
+.s-btn {
+  color: #fff;
+  font-size: 14px;
+  height: 50px;
+  text-align: center;
+  line-height: 50px;
+  width: 320px;
+  background-image: linear-gradient(to right, #eacda3, #d6ae7b);
+  border-radius: 28px;
+  margin: 100px auto 0;
+  display: block;
 }
 </style>

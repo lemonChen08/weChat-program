@@ -4,8 +4,20 @@
       <div class="bg-blue"></div>
       <div class="center_box">
         <div class="car_box">
-          <img src="@/assets/images/w_car.jpg" alt class="car_img" />
-          <img :src="userInfo.headimgurl" alt class="car_header" />
+          <img :src='"@/assets/images/bg_" + userData.user_level + ".png"' alt class="car_img" />
+          <div class="user-box">
+            <img :src="userData.headimgurl" class="car_header" v-if="userData.headimgurl" />
+            <img src="@/assets/images/headImg.jpg" class="car_header" v-else />
+            <span class="c-name">{{userData.nickname}}</span>
+            <img :src='"@/assets/images/V" + userData.user_level + "-s.png"' class="l-img" />
+            <span class="l-txt">
+              <span v-if="userData.user_level == 1">普通会员</span>
+              <span v-else-if="userData.user_level == 2">VIP会员</span>
+              <span v-else-if="userData.user_level == 3">服务商</span>
+              <span v-else-if="userData.user_level == 4">金牌服务商</span>
+              <span v-else-if="userData.user_level == 5">分公司服务商</span>
+            </span>
+          </div>
         </div>
         <!-- 会员基本信息 -->
         <div class="i-box">
@@ -13,24 +25,21 @@
             <div class="i-item">
               <div class="c-green">
                 <span class="fs-12">￥</span>
-                <span class="fs-18">99.99</span>
+                <span class="fs-18">{{userData.oil_money}}</span>
               </div>
               <div class="mt-6">加油金</div>
             </div>
             <div class="i-item">
-              <div class="c-red">
-                <span class="fs-12">￥</span>
-                <span class="fs-18">1990.99</span>
-              </div>
-              <div class="mt-6">余额</div>
-            </div>
-            <div class="i-item">
-              <div class="c-yellow fs-18">10</div>
+              <div class="c-yellow fs-18">{{userData.coupon_total}}</div>
               <div class="mt-6">优惠券(张)</div>
             </div>
           </div>
-          <div class="i-mem">
-            <div>会员卡有效期至 2021/10/20</div>
+          <div class="i-mem mt-10">
+            <div>余额 {{userData.balance}}</div>
+            <div class="add-mem" @click="doShowConfirm" :disabled="!userData.balance">提现</div>
+          </div>
+          <div class="i-mem" v-if='userData.user_level == 2'>
+            <div>会员卡有效期至 {{userData.member_time}}</div>
             <div class="add-mem">续费</div>
           </div>
         </div>
@@ -44,7 +53,11 @@
               <img src="@/assets/images/mine-03.png" class="m-i1" />
               <span class="ml_20">我的手机号</span>
             </div>
-            <van-icon name="arrow" />
+            <div v-if="userInfo.phone">{{userInfo.phone | phoneFilter}}</div>
+            <div @click="openPhone" v-else>
+              <span>绑定手机号</span>
+              <van-icon name="arrow"/>
+            </div>
           </div>
           <div class="m-item f_row">
             <div class="m-l">
@@ -92,7 +105,7 @@
   </div>
 </template>
 <script>
-import { api } from "@/api/api";
+import { getUserInfo } from "@/api/mine";
 import Bindphone from "@/components/bindPhone";
 import Tab from "@/components/tabs"
 export default {
@@ -104,26 +117,70 @@ export default {
     return {
       phoneShow: false,
       inviteCode: "",
-      userInfo: {}
+      userInfo: {},
+      userData:{},
+      showWithdraw:false,
+      isLoadingFinance:false,
+      channelAgentApis:''
     };
+  },
+  filters:{
+    phoneFilter(val){
+      let reg = /^(.{3}).*(.{4})$/
+      return val.replace(reg,'$1****$2')
+    }
   },
   created() {
     this.userInfo = JSON.parse(localStorage.getItem("userInfo"));
     this.inviteCode = this.userInfo.invite_code;
+    this.getUserInfo()
   },
   methods: {
     // 打开手机绑定
     openPhone() {
       this.phoneShow = true;
     },
+    //获取用户基本信息
+    async getUserInfo(){
+      let res = await getUserInfo({action:'get_userinfo',user_id:this.userInfo.user_id})
+      let data = res.data.data
+      this.userData = data
+    },
     // 关闭手机绑定
     closePhone() {
       this.phoneShow = false;
+    },
+     doShowConfirm() {
+      this.getMyFinance();
+      this.showWithdraw = true;
+    },
+    async getMyFinance() {
+      this.isLoadingFinance = true;
+      let res = await this.channelAgentApis.finance();
+      this.isLoadingFinance = false;
+      if (res.code === 200) {
+        const { remain: balance } = res.data;
+        this.balance = balance ? balance / 100 : 0;
+      }
+    },
+     async doWithdraw() {
+      const money = this.balance * 100;
+      this.isWithdrawing = true;
+      let res = await this.channelAgentApis.withdraw({ money });
+      this.isWithdrawing = false;
+      if (res.code === 200) {
+        this.$hxui.toast.success(`已成功提现 ${money / 100}元`);
+        this.showWithdraw = false;
+        this.getMyFinance();
+      }
     }
   }
 };
 </script>
 <style scoped>
+.mt-10{
+  margin-bottom: 10px;
+}
 .bg-blue {
   position: absolute;
   left: 0;
@@ -252,17 +309,40 @@ export default {
 }
 
 .car_img {
-  display: block;
-  width: 100%;
+  width: 345px;
+  height: 190px;
   border-radius: 10px;
 }
-.car_header {
+.user-box{
   position: absolute;
-  width: 10vh;
-  height: 10vh;
-  border-radius: 50%;
-  right: 10%;
-  top: 15%;
+  top:0;
+  left: 0;
+  padding: 10px;
+  z-index:10;
+  display: flex;
+  align-items: center;
+  color: #000;
+}
+
+ .c-name {
+    color: #333;
+    font-size: 19px;
+    font-weight: 500;
+  }
+  .l-img {
+    width: 18px;
+    height: 18px;
+    margin-right: 6px;
+  }
+  .l-txt {
+    color: #666;
+    font-size: 14px;
+  }
+.car_header {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  border-radius: 40px;
 }
 .car_list {
   margin-top: 9px;

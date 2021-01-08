@@ -2,7 +2,7 @@ import { getOpenid } from '@/api/wx';
 const APPID = 'wx2b58cb8bd7d7ceb1';
 // const APPID = 'wx584974b760e64957';
 const WX_AUTH_URL = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + APPID
-    + '&redirect_uri=REDIRECT_URI&response_type=code&scope=snsapi_base&state=0#wechat_redirect';
+    + '&redirect_uri=REDIRECT_URI&response_type=code&scope=snsapi_userinfo&state=0#wechat_redirect';
 /**
  * 微信授权
  */
@@ -20,6 +20,7 @@ export default function wxAuth() {
             }
             getOpenid(param).then(async res => {
                 // alert('获取到了openid？'+res.data.code)
+                console.log(res)
                 if (res.data.code == 200) {
                     console.log("微信授权完成");
                     resolve(res.data.data);

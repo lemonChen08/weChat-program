@@ -1,11 +1,12 @@
 const path = require('path');
-const glob = require('glob')
 const VueloaderPlugin = require('vue-loader/lib/plugin');
 const NODE_ENV = process.env.NODE_ENV;
 //将css文件抽出来生成一个单独的文件
 const miniCssPlugin = require("mini-css-extract-plugin");
 //动态引入相应的js文件
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+//css文件压缩
+const cssMinimizerPlugin  = require('css-minimizer-webpack-plugin')
 
 const isProd = NODE_ENV === 'production'; //生产环境
 
@@ -13,7 +14,7 @@ module.exports = {
     mode: NODE_ENV,
     entry: './src/main.js',
     output: {
-        filename: 'bundle@[chunkhash].js'
+        filename: 'js/bundle@[chunkhash].js',
     },
     resolve: {
         modules: [
@@ -24,7 +25,7 @@ module.exports = {
         alias: {
             '@': path.resolve(__dirname, 'src')
         }
-    }, 
+    },
     module: {
         rules: [
             {
@@ -39,12 +40,31 @@ module.exports = {
             // CSS, and Sass
             {
                 test: /\.(scss|css)$/,
-                use: [isProd ? miniCssPlugin.loader : 'style-loader', 'css-loader','postcss-loader', 'sass-loader']
+                use: [
+                    {
+                        loader: miniCssPlugin.loader,
+                        options: {
+                            publicPath: '/css/'
+                        }
+                    },
+                    'css-loader',
+                    'postcss-loader',
+                    'sass-loader'
+                ]
             },
             // less
             {
                 test: /\.less$/,
-                use: [ isProd ? miniCssPlugin.loader : 'style-loader', 'css-loader', 'less-loader']
+                use: [
+                    {
+                        loader: miniCssPlugin.loader,
+                        options: {
+                            publicPath: '/css/'
+                        }
+                    },
+                    'css-loader',
+                    'less-loader',
+                ]
             },
             // Images
             {
@@ -68,8 +88,7 @@ module.exports = {
             template: './index.html'
         }),
         new miniCssPlugin({
-            filename: '[name].css',
-            chunkFilename: '[id].css'
+            filename: 'css/[name].css'
         })
     ],
     //开发环境设置
@@ -85,7 +104,7 @@ module.exports = {
                 target: `127.0.0.1`,
                 changeOrigin: true, // needed for virtual hosted sites
                 pathRewrite: {
-                    '^api':''
+                    '^api': ''
                 }
             }
         }
@@ -94,7 +113,19 @@ module.exports = {
     optimization: {
         //代码分块，减少重复模块打包
         splitChunks: {
-             chunks: 'all'   //对所有的chunk生效
-        }
+            chunks: 'all',  //对所有的chunk生效
+            cacheGroups: {
+                // Extracting all CSS/less/sass in a single file
+                styles: {
+                    name: 'styles',
+                    test: /\.(c|le|sa)ss$/,
+                    chunks: 'all',
+                    enforce: true
+                }
+            }
+        },
+        minimizer: [
+            new cssMinimizerPlugin()
+        ]
     }
 }

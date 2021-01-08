@@ -55,63 +55,47 @@
           >{{gunNo}}号</span>
         </div>
       </section>
-      <section class="s-item">
+      <section class="s-item" v-if="selectInfo.gunNumber">
         <label class="l-tit">输入金额</label>
-        <div class="s-i"></div>
+        <input
+          class="ipt_num"
+          type="number"
+          v-model="price"
+          @focus="doScrollBottom"
+          @input="onInput"
+          placeholder-style="color:#FA4C42;"
+          placeholder="请输入金额"
+        />
+        <div class="pad-default-options">
+          <div
+            class="pad-default-option"
+            :class="{selected : price === opt }"
+            v-for="(opt, idx) in options"
+            :key="idx"
+            @click="doInput(opt)"
+          >
+            ￥
+            {{ opt }}
+          </div>
+        </div>
       </section>
     </div>
-    <div class="pad-select-zone">
-      <div class="item-select special" v-if="selectInfo.gunNumber">
-        <header class="title">
-          <strong>油价</strong>
-          <span class="right">
-            <span class="line-through">油站价 {{ selectInfo.discount_price }}元/升</span>
-            <span class="priceYfq">{{ selectInfo.station_price }}元/升</span>
+    <div class="fix-btn" v-if="selectInfo.gunNumber">
+      <div class="l-box">
+        <span>￥{{price}}</span>
+        <span v-if="benefit" class="b-txt">按油价已优惠{{benefit}}元</span>
+      </div>
+      <div class="r-box">
+        <div class="g-button" :disabled="!price || isProcessing">
+          <div v-if="!isProcessing && price && myInfo.phone && !isPay" @click="checkPhone">
+            确认支付
+            <span style="font-size: 5vw;">{{ finalPayPrice }}</span> 元
+          </div>
+          <span v-if="!price">请先输入加油金额</span>
+          <span v-if="isProcessing">正在支付中</span>
+          <span v-if="isPay">
+            <router-link to="home">返回首页</router-link>
           </span>
-        </header>
-        <div class="pad-options" style="padding: 0;">
-          <div class="options-label hx-row md">
-            <label class="label" style="font-weight: bold; font-size: 4.18vw;">
-              <span>输入价格</span>
-            </label>
-            <div class="content">
-              <input
-                type="number"
-                v-model="price"
-                @focus="doScrollBottom"
-                @input="onInput"
-                placeholder="请输入金额"
-                style="margin-right: 3vw;"
-              />
-              <span class="unit">元</span>
-            </div>
-          </div>
-          <div class="pad-default-options">
-            <div class="pad-default-option" v-for="(opt, idx) in options" :key="idx">
-              <button :class="['btn', (price === opt && 'selected')]" @click="doInput(opt)">
-                <small>￥</small>
-                {{ opt }}
-              </button>
-            </div>
-          </div>
-          <div class="pad-benefit" v-if="benefit">
-            约{{amount}}L，加油直降
-            <strong
-              class="color-red"
-              style="font-size: 4.5vw; margin: 0.5vw;"
-            >{{ benefit }}</strong>元
-          </div>
-          <button class="g-button black" :disabled="!price || isProcessing">
-            <div v-if="!isProcessing && price && myInfo.phone && !isPay" @click="checkPhone">
-              确认支付
-              <span style="font-size: 5vw;">{{ finalPayPrice }}</span> 元
-            </div>
-            <span v-if="!price">请先输入加油金额</span>
-            <span v-if="isProcessing">正在支付中</span>
-            <span v-if="isPay">
-              <router-link to="home">返回首页</router-link>
-            </span>
-          </button>
         </div>
       </div>
     </div>
@@ -389,7 +373,6 @@ export default {
       this.isProcessing = true;
       let price = this.truePrice;
       let data = {};
-      debugger;
       if (this.$route.query.platform_type == 1) {
         data = {
           action: "order_save",
@@ -425,6 +408,7 @@ export default {
           };
           getPayConfig(configdata).then(result => {
             WXinvoke(result, response => {
+              debugger
               if (response.err_msg == "get_brand_wcpay_request:ok") {
                 this.isProcessing = false;
                 this.$layer.msg("支付成功");
@@ -439,7 +423,7 @@ export default {
             });
           });
         } else {
-          that.$layer.msg("下单失败");
+          this.$layer.msg("下单失败");
         }
       });
     }
@@ -492,7 +476,7 @@ export default {
   }
 }
 .s-box {
-  margin: 0 15px;
+  margin: 0 15px 80px;
   .l-tit {
     height: 48px;
     color: #333;
@@ -523,5 +507,76 @@ export default {
     color: #46b2ff;
     border-color: #46b2ff;
   }
+}
+.pad-default-options {
+  display: flex;
+  justify-content: space-between;
+}
+.ipt_num {
+  height: 48px;
+  border: 1px solid #46b2ff;
+  background: #f1fcff;
+  color: #fa4c42;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 15px;
+  margin-bottom: 15px;
+}
+.ipt_num::placeholder {
+  color: #fa4c42;
+}
+.pad-default-option {
+  width: 65px;
+  height: 33px;
+  line-height: 33px;
+  text-align: center;
+  border: 1px solid #aaa;
+  border-radius: 2.5px;
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+.selected {
+  background: #f1fcff;
+  border-color: #46b2ff;
+}
+.fix-btn {
+  height: 72px;
+  display: flex;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid #cacacb;
+  align-items: center;
+  background: #fff;
+  z-index: 10;
+  justify-content: space-between;
+  padding:0 24px;
+  box-sizing: border-box;
+}
+.g-button {
+  width: 220px;
+  height: 33px;
+  background: #46b2ff;
+  border: 1px solid #46b2ff;
+  border-radius: 32px;
+  text-align: center;
+  line-height: 33px;
+  color: #fff;
+  font-weight: 500;
+  font-size: 15px;
+}
+.l-box {
+  display: flex;
+  flex-direction: column;
+  color: #fa4c42;
+  font-size: 20px;
+  font-weight: 500;
+}
+.b-txt {
+  color: #666;
+  font-size: 11px;
+  margin-top: 4px;
 }
 </style>

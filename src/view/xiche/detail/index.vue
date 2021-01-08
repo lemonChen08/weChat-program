@@ -55,8 +55,7 @@
           :key="key"
         >
           <div class="dt_check">
-            <div class="no_chek"></div>
-            <img src="@/assets/images/check.png" alt v-if="key==n" />
+            <div class="no_chek" :class="{checked: key==n}"></div>
           </div>
           <div class="dt_cont">
             <div class="dm_name">{{item.service_name}}</div>
@@ -371,10 +370,26 @@ export default {
   align-items: center;
 }
 .no_chek {
-  width: 5vw;
-  height: 5vw;
-  border: 1px solid #f0c13d;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #666;
   border-radius: 50%;
+}
+.checked{
+  border-color: #46b2ff;
+  background: #46b2ff;
+  position: relative;
+}
+.checked::after{
+  position: absolute;
+  content: '';
+  width: 8px;
+  height: 4px;
+  border:2px solid #fff;
+  border-width: 0 0 2px 2px;
+  left: 3px;
+  top:3px;
+  transform: rotate(-45deg);
 }
 .dt_cont {
   margin-left: 3vw;
@@ -415,13 +430,17 @@ export default {
   -webkit-justify-content: space-between;
   justify-content: space-between;
 }
+.bot_t{
+  align-items: center;
+}
 .b_price {
-  font-size: 2.2vh;
-  color: #ff8d0a;
+  font-size:20px;
+  color: #FA4C42;
 }
 .t_price {
-  font-size: 1.8vh;
-  color: #aaa;
+  font-size:11px;
+  color: #666;
+  margin-left: 4px;
 }
 .bot_f {
   font-size: 1.8vh;
@@ -432,26 +451,17 @@ export default {
   -webkit-align-items: center;
   align-items: center;
 }
-.bot_right a {
-  margin-right: 1vw;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-flex-direction: column;
-  flex-direction: column;
-}
-.bot_right a img {
-  width: 6vw;
-  height: 6vw;
-}
-.bot_right a small {
-  font-size: 1.8vw;
-}
+
 .bot_right button {
-  height: 10vw;
-  padding: 0 5vw;
-  font-size: 2.5vh;
+  width: 220px;
+  height: 33px;
+  background: #46b2ff;
+  border: 1px solid #46b2ff;
+  border-radius: 32px;
+  text-align: center;
+  line-height: 33px;
   color: #fff;
-  background-color: #ff8d0a;
-  border-radius: 8px;
+  font-weight: 500;
+  font-size: 15px;
 }
 </style>

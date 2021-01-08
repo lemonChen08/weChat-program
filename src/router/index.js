@@ -16,57 +16,90 @@ export default new Router({
 		{
 			path: '/',
 			name: 'index',
-			component: () => import('@/view/index/index.vue')
+			component: () => import('@/view/index/index.vue'),
+			meta:{
+				title:'联合权益'
+			}
 		},
 		{
 			path: '/mine',
-			name: '个人中心',
-			component: () => import('@/view/mine/index.vue')
+			name: 'mine',
+			component: () => import('@/view/mine/index.vue'),
+			meta:{
+				title:'个人中心'
+			}
 		},
 		{
 			path: '/xufei',
-			name: '会员续费',
-			component: () => import('@/view/member/xufei/index.vue')
+			name: 'xufei',
+			component: () => import('@/view/member/xufei/index.vue'),
+			meta:{
+				title:'会员续费'
+			}
 		},
 		{
 			path: '/info',
-			name: '会员信息',
-			component: () => import('@/view/member/info/index.vue')
+			name: 'info',
+			component: () => import('@/view/member/info/index.vue'),
+			meta:{
+				title:'会员信息'
+			}
 		},
 		{
 			path: '/jylist',
-			name: '加油',
-			component: () => import('@/view/jiayou/list/index.vue')
+			name: 'jylist',
+			component: () => import('@/view/jiayou/list/index.vue'),
+			meta:{
+				title:'加油'
+			}
 		},
 		{
 			path: '/jyDetail',
-			name: '加油',
-			component: () => import('@/view/jiayou/detail/index.vue')
+			name: 'jyDetail',
+			component: () => import('@/view/jiayou/detail/index.vue'),
+			meta:{
+				title:'加油详情'
+			}
 		},
 		{
 			path: '/promote',
-			name: '我的推广',
-			component: () => import('@/view/mine/promote/index.vue')
+			name: 'promote',
+			component: () => import('@/view/mine/promote/index.vue'),
+			meta:{
+				title:'我的推广'
+			}
 		},
 		{
 			path: '/teamStats',
-			name: '我的推广',
-			component: () => import('@/view/mine/teamStats/index.vue')
+			name: 'teamStats',
+			component: () => import('@/view/mine/teamStats/index.vue'),
+			meta:{
+				title:'团队统计'
+			}
 		},
 		{
 			path: '/nextMember',
-			name: '下级会员',
-			component: () => import('@/view/mine/nextMember/index.vue')
+			name: 'nextMember',
+			component: () => import('@/view/mine/nextMember/index.vue'),
+			meta:{
+				title:'下级会员'
+			}
 		},
 		{
 			path: '/xcList',
-			name: '洗车保养',
-			component: () => import('@/view/xiche/list/index.vue')
+			name: 'xcList',
+			component: () => import('@/view/xiche/list/index.vue'),
+			meta:{
+				title:'洗车保养'
+			}
 		},
 		{
 			path: '/xcdetails',
-			name: '洗车保养',
-			component: () => import('@/view/xiche/detail/index.vue')
+			name: 'xcdetails',
+			component: () => import('@/view/xiche/detail/index.vue'),
+			meta:{
+				title:'洗车保养'
+			}
 		},
 		{
 			path: '/publish',

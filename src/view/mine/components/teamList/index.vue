@@ -1,17 +1,18 @@
 <template>
   <div class="tableBox">
-    <div class="stats">
+    <div class="stats" @click="toStats">
       <span>查看团队统计</span>
       <van-icon name="arrow" />
     </div>
     <div class="list">
-      <div class="l-item">
+      <div class="l-item" v-for="item in teamList" :key="item.id">
         <div class="l-i">
-          <img src="" class="h-img"/>
-          <img src="" class="l-img" />
-          <span>3个客户啊</span>
+          <img :src="item.headimgurl" class="h-img" v-if="item.headimgurl" />
+          <img src="@/assets/images/headImg.jpg" class="h-img" v-else />
+          <img :src='"@/assets/images/V" + item.user_level + "-s.png"' class="l-img" />
+          <span>{{item.nickname}}</span>
         </div>
-        <div>2020/12/22</div>
+        <div>{{item.member_time}}</div>
       </div>
     </div>
   </div>
@@ -21,9 +22,8 @@ import { api } from "@/api/api";
 export default {
   data() {
     return {
-      payData: {},
-      inviteList: [],
-      userInfo: null
+      teamList: [],
+      userInfo:{}
     };
   },
   created() {
@@ -34,14 +34,20 @@ export default {
   methods: {
     async getInviteList() {
       let res = await api.getinvitelist({
-        action: "recommend_user",
+        action: "team_user",
         user_id: this.userInfo.user_id
       });
       if (res.data.code == 200) {
-        this.inviteList = res.data.result;
+        this.teamList = res.data.result;
       } else {
         this.$layer.msg(res.data.msg);
       }
+    },
+    //查看团队统计
+    toStats(){
+      this.$router.push({
+        path:'/teamStats'
+      })
     }
   }
 };

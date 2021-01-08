@@ -2,23 +2,21 @@
   <div class="container">
     <div class="info-box">
       <div class="t-b">
-        <img :src="myInfo.headimgurl" class="u-img" />
+        <img :src="userData.headimgurl" class="u-img" v-if="userData.headimgurl" />
+          <img src="@/assets/images/headImg.jpg" class="u-img" v-else />
         <div class="t-r">
-          <div class="c-name">{{myInfo.nickname}}</div>
+          <div class="c-name">{{userData.nickname}}</div>
           <div class="o-info">
-            <img src="@/assets/images/V0-s.png" class="l-img" />
-            <span class="l-txt">黑金会员</span>
+            <img :src='"@/assets/images/V" + userData.user_level + "-s.png"' class="l-img" />
+            <span class="l-txt">
+              <span v-if="userData.user_level == 1">普通会员</span>
+              <span v-else-if="userData.user_level == 2">VIP会员</span>
+              <span v-else-if="userData.user_level == 3">服务商</span>
+              <span v-else-if="userData.user_level == 4">金牌服务商</span>
+              <span v-else-if="userData.user_level == 5">分公司服务商</span>
+            </span>
           </div>
         </div>
-      </div>
-      <div class="t-m">
-        <div class>
-          <span>我的奖金：</span>
-          <span class="c-blue">
-            <span class="fs_16">{{ myInfo.balance || '0' }}</span>元
-          </span>
-        </div>
-        <div class="t-x" @click="doShowConfirm" :disabled="!balance">提现</div>
       </div>
     </div>
     <div class="share-btn" @click="doToggleShareMask">分享链接给更多人，领取丰厚奖金</div>
@@ -28,18 +26,17 @@
         <van-tab title="我的团队"></van-tab>
         <van-tab title="奖金明细"></van-tab>
       </van-tabs>
-      <div class="content">
+      <div>
         <inviteList v-show="action==0" :doShare="doToggleShareMask"></inviteList>
         <teamList v-show="action==1"></teamList>
         <fanyongList v-show="action==2"></fanyongList>
       </div>
     </div>
-    <!-- <div :class="['pad-guide-share', showShareMask && 'show']">
-      <div class="mask"></div>
+    <div class='mask' v-if="showShareMask">
       <div class="content" @click="doToggleShareMask">
         <span class="text">点击右上角“...”, 分享好友或朋友圈邀请好友购买车主卡，成为您的团队成员</span>
       </div>
-    </div>-->
+    </div>
   </div>
 </template>
 
@@ -47,6 +44,7 @@
 import inviteList from "@/view/mine/components/inviteList/index";
 import fanyongList from "@/view/mine/components/fanyongList/index";
 import teamList from "@/view/mine/components/teamList/index";
+import { getUserInfo } from "@/api/mine";
 export default {
   components: {
     inviteList,
@@ -56,55 +54,25 @@ export default {
   data() {
     return {
       action: 0,
+      userData: {},
       myInfo: {},
-      showUpgrade: false, // 是否升级
-      showShareMask: false,
-      channelAgentApis: null,
-      balance: "",
-      isLoadingFinance: false,
-      showWithdraw: false,
-      isWithdrawing: false,
-      isProcessing: false,
-      showRuleModal: false,
-      value: 2,
-      isSet: false // 是否设置好微信分享
+      showShareMask: false
     };
+  },
+  created() {
+    this.myInfo = JSON.parse(localStorage.getItem("userInfo"));
+    this.getUserInfo()
   },
   methods: {
     doToggleShareMask() {
       this.showShareMask = !this.showShareMask;
     },
-    onConfirm() {
-      this.showRuleModal = false;
+     //获取用户基本信息
+    async getUserInfo(){
+      let res = await getUserInfo({action:'get_userinfo',user_id:this.myInfo.user_id})
+      let data = res.data.data
+      this.userData = data
     },
-    doShowConfirm() {
-      this.getMyFinance();
-      this.showWithdraw = true;
-    },
-    async getMyFinance() {
-      this.isLoadingFinance = true;
-      let res = await this.channelAgentApis.finance();
-      this.isLoadingFinance = false;
-      if (res.code === 200) {
-        const { remain: balance } = res.data;
-        this.balance = balance ? balance / 100 : 0;
-      }
-    },
-    async doWithdraw() {
-      const money = this.balance * 100;
-      this.isWithdrawing = true;
-      let res = await this.channelAgentApis.withdraw({ money });
-      this.isWithdrawing = false;
-      if (res.code === 200) {
-        this.$hxui.toast.success(`已成功提现 ${money / 100}元`);
-        this.showWithdraw = false;
-        this.getMyFinance();
-      }
-    }
-  },
-  created() {
-    document.title = "我的推广";
-    this.myInfo = JSON.parse(localStorage.getItem("userInfo"));
   }
 };
 </script>
@@ -176,12 +144,25 @@ export default {
   color: #fff;
   font-size: 15px;
   font-weight: 500;
-  background: #ffbd3e;
+  background-image: linear-gradient(to right, #eacda3 , #d6ae7b);
   border-radius: 28px;
   margin: 15px auto;
 }
 .van-tabs{
   height: 48px;
+}
+.mask{
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+}
+.content{
+  color: #fff;
+  padding: 50px 30px;
+  line-height: 30px;
 }
 </style>
 

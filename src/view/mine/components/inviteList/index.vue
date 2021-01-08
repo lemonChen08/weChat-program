@@ -1,8 +1,6 @@
 <template>
   <div class="t-box">
-    <img src class="poster-img" />
-    <img src class="poster-img" />
-    <img src class="poster-img" />
+    <img :src='item.img_url' class="poster-img" v-for="item in inviteList" :key="item.id" />
   </div>
 </template>
 <script>
@@ -10,21 +8,16 @@ import { api } from "@/api/api";
 export default {
   data() {
     return {
-      payData: {},
-      inviteList: [],
-      userInfo: null
+      inviteList: []
     };
   },
   created() {
-    let userInfo = localStorage.getItem("userInfo");
-    this.userInfo = JSON.parse(userInfo);
     this.getInviteList();
   },
   methods: {
     async getInviteList() {
       let res = await api.getinvitelist({
-        action: "recommend_user",
-        user_id: this.userInfo.user_id
+        action: "get_poster"
       });
       if (res.data.code == 200) {
         this.inviteList = res.data.result;
@@ -39,11 +32,10 @@ export default {
 .t-box{
     display: flex;
     padding: 0 30px;
-    justify-content: space-between;
 }
 .poster-img {
   width: 94px;
   height: 166px;
-  margin: 16px 0;
+  margin: 16px 16px 0 0;
 }
 </style>

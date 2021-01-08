@@ -10,7 +10,7 @@ import App from '@/App'
 import store from '@/store'
 import router from '@/router'
 import wxAuth from '@/util/wxAuth'
-import {Swipe,Lazyload,SwipeItem,Icon,RadioGroup, Radio, Tab, Tabs } from 'vant'
+import {Swipe,Lazyload,SwipeItem,Icon,RadioGroup, Radio, Tab, Tabs,Toast} from 'vant'
 const qs = require('qs')
 Vue.use(ElementUI)
 Vue.use(Vuex)
@@ -22,19 +22,23 @@ Vue.use(RadioGroup)
 Vue.use(Radio)
 Vue.use(Tab)
 Vue.use(Tabs)
+Vue.use(Toast)
 
 Vue.config.productionTip = false
 Vue.prototype.$layer = layer(Vue);
 Vue.prototype.$wxShare = wxShare
 
 router.beforeEach((to, from, next) => {
-  // debugger
+  if(to.meta.title){
+    document.title = to.meta.title
+  }
   let token = localStorage.getItem('userInfo')
   console.log(token)
   if(token){
     wxShare().then(res=>{next()})
   }else{
     wxAuth().then(res => {
+      console.log(res)
       localStorage.setItem('userInfo',JSON.stringify(res))
       const url = window.location.href;
       const parseUrl = qs.parse(url.split('?')[1])

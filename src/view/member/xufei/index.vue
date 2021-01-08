@@ -4,16 +4,23 @@
       <div class="m-box">
         <div class="bg"></div>
         <div class="m-top f_row">
-          <img src class="h-img" />
+          <img :src="userData.headimgurl" class="h-img" v-if="userData.headimgurl" />
+          <img src="@/assets/images/headImg.jpg" class="h-img" v-else />
           <div class="m-info f_col">
             <div class="mb-7 m-t">
-              <span class="c-black">车主01</span>
-              <img src="@/assets/images/V4-s.png" class="m-img" />
-              <span class="c-normal">黑金会员</span>
+              <span class="c-black">{{userData.nickname}}</span>
+              <img :src='"@/assets/images/V" + userData.user_level + "-s.png"' class="m-img" />
+              <span class="c-normal">
+                <span v-if="userData.user_level == 1">普通会员</span>
+                <span v-else-if="userData.user_level == 2">VIP会员</span>
+                <span v-else-if="userData.user_level == 3">服务商</span>
+                <span v-else-if="userData.user_level == 4">金牌服务商</span>
+                <span v-else-if="userData.user_level == 5">分公司服务商</span>
+                </span>
             </div>
             <div>
               会员总时长：
-              <span class="c-blue">2021-01-30</span>到期
+              <span class="c-blue">{{userData.member_time}}</span>到期
             </div>
           </div>
         </div>
@@ -51,37 +58,15 @@
         <div class="sel-type">
           <div class="tit">选择类型</div>
           <div class="sel-box">
-            <div class="sel-item">
-              <div>会员包月</div>
+            <div class="sel-item" :class="{active : currentItem.id === item.id}" v-for="item in priceList" :key="item.id" @click="sectectItem(item)">
+              <div>{{item.name}}</div>
               <div class="n-p">
                 <span>￥</span>
-                <span class="n-price">38</span>
+                <span class="n-price">{{item.price}}</span>
               </div>
               <div class="o-p">
                 原价
-                <span class="o-price">￥58</span>
-              </div>
-            </div>
-            <div class="sel-item">
-              <div>会员包月</div>
-              <div class="n-p">
-                <span>￥</span>
-                <span class="n-price">38</span>
-              </div>
-              <div class="o-p">
-                原价
-                <span class="o-price">￥58</span>
-              </div>
-            </div>
-            <div class="sel-item">
-              <div>会员包月</div>
-              <div class="n-p">
-                <span>￥</span>
-                <span class="n-price">38</span>
-              </div>
-              <div class="o-p">
-                原价
-                <span class="o-price">￥58</span>
+                <span class="o-price">￥{{item.origin_price || 0}}</span>
               </div>
             </div>
           </div>
@@ -99,39 +84,70 @@
           <div class="l-b">
             <span class="n-p">
               ￥
-              <span class="f-bold">88</span>
+              <span class="f-bold">{{currentItem.price}}</span>
             </span>
             <span>
               原价
-              <span class="line-th">￥188</span>
+              <span class="line-th">￥{{currentItem.origin_price}}</span>
             </span>
           </div>
-          <div class="r-b">立即开通</div>
+          <div class="r-b" @click="joinMember">立即开通</div>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { api } from "@/api/api";
+import { getUserInfo,memberPay} from "@/api/mine";
 export default {
-  components: {},
   data() {
-    return {};
+    return {
+      userData:{},
+      priceList:[],
+      currentItem:{},
+      isJoin:false
+    }
   },
   created() {
     this.userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    this.inviteCode = this.userInfo.invite_code;
+    this.getUserInfo()
+    this.getMemberPrice()
   },
   methods: {
-    // 打开手机绑定
-    openPhone() {
-      this.phoneShow = true;
+     //获取用户基本信息
+    async getUserInfo(){
+      let res = await getUserInfo({action:'get_userinfo',user_id:this.userInfo.user_id})
+      let data = res.data.data
+      this.userData = data
     },
-    // 关闭手机绑定
-    closePhone() {
-      this.phoneShow = false;
+    // 获取用户价格
+    async getMemberPrice(){
+      let res = await getUserInfo({action:'get_price'})
+      this.priceList = res.data.result
+      this.currentItem = this.priceList[0]
+    },
+    // 选择类型
+    sectectItem(item){
+      this.currentItem = item
+    },
+    //开通
+    async joinMember(){
+      if(this.isJoin) return
+      this.isJoin = true
+      let res = await memberPay({user_id:this.userInfo.user_id,type:this.currentItem.type,price:this.currentItem.price})
+      this.isJoin = false
+      if (res.data.code === 200) {
+         this.$toast.success('开通成功');
+         setTimeout(()=>{
+           this.$router.replace({
+             path:'/mine'
+           })
+         },2000)
+      }else{
+         this.$toast.fail(res.data.message);
+      }
     }
+
   }
 };
 </script>
@@ -285,6 +301,9 @@ export default {
           font-size: 30px;
         }
       }
+    }
+    .active{
+      background: #F1FCFF;
     }
   }
 }

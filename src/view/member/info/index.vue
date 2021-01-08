@@ -1,11 +1,11 @@
 <template>
   <div class="container">
     <div class="t-box">
-      <img src="@/assets/images/v0.png" class="v-img" />
       <img src="@/assets/images/v1.png" class="v-img" />
       <img src="@/assets/images/v2.png" class="v-img" />
       <img src="@/assets/images/v3.png" class="v-img" />
       <img src="@/assets/images/v4.png" class="v-img" />
+      <img src="@/assets/images/v5.png" class="v-img" />
     </div>
     <div class="b-box">
       <p class="b-tit">我的福利信息</p>
@@ -55,7 +55,16 @@
   </div>
 </template>
 <script>
-export default {};
+export default {
+  data () {
+    return {
+      
+    }
+  },
+  methods: {
+    
+  }
+}
 </script>
 <style lang="less" scoped>
 .container {
