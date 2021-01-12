@@ -11,7 +11,7 @@
         <van-icon name="location-o" />
         <span>{{item.gas_address}}</span>
       </div>
-      <div class="l-distance">驾车全程约{{item.juli/100}}公里</div>
+      <div class="l-distance">驾车全程约{{item.juli/1000}}公里</div>
     </div>
     <div class="add-y">立即加油</div>
   </div>

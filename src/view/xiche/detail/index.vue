@@ -308,7 +308,7 @@ export default {
 }
 .dt_mid {
   padding: 0 15px;
-  margin-top: 15px;
+  margin: 15px auto 140px;
   .tit {
     height: 48px;
     color: #333;

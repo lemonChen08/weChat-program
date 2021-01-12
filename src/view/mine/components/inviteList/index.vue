@@ -1,6 +1,15 @@
 <template>
   <div class="t-box">
-    <img :src='item.img_url' class="poster-img" v-for="item in inviteList" :key="item.id" />
+    <img
+      :src="item.img_url"
+      class="poster-img"
+      v-for="item in inviteList"
+      :key="item.id"
+      @click="getSharePoster(item.id)"
+    />
+    <div class='poster-box'>
+      <img src="" />
+    </div>
   </div>
 </template>
 <script>
@@ -24,14 +33,20 @@ export default {
       } else {
         this.$layer.msg(res.data.msg);
       }
+    },
+  //生成分享海报
+  async  getSharePoster(id){
+      let userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      let res = await api.getinvitelist({action:'get_qrcode',id:id,inviteCode:userInfo.invite_code})
+      let data = res.data.data
     }
   }
 };
 </script>
 <style scoped>
-.t-box{
-    display: flex;
-    padding: 0 30px;
+.t-box {
+  display: flex;
+  padding: 0 30px;
 }
 .poster-img {
   width: 94px;

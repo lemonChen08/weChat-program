@@ -147,21 +147,6 @@ export default {
         return num + "m";
       }
     },
-    async getUserInfo() {
-      let res = await api.userinfo({ code: localStorage.getItem("code") });
-
-      if (res.data.code == 0) {
-        this.getLocationFn();
-        this.userinfo = res.data;
-        localStorage.setItem("oneToken", res.data.data.token);
-        localStorage.setItem("userInfo", JSON.stringify(res.data.data));
-        if (res.data.data.firstLogin) {
-          this.popShow = true;
-        } else {
-          this.popShow = false;
-        }
-      }
-    },
     async getxclist() {
       let latlon = JSON.parse(localStorage.getItem("latlon"));
       let res = await api.storesList({
@@ -228,10 +213,10 @@ export default {
       this.popShow = false;
     },
     toJylist() {
-      this.$router.replace("/jylist");
+      this.$router.push("/jylist");
     },
     toXclist() {
-      this.$router.replace("/xclist");
+      this.$router.push("/xclist");
     },
     getLocationFn() {
       getLocation().then(data => {
@@ -240,7 +225,7 @@ export default {
           this.getGaslist();
           this.getxclist();
         } else {
-          this.getLocationFn();
+          // this.getLocationFn();
         }
       });
     }

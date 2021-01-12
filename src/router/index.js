@@ -6,7 +6,6 @@ import jyorder from '@/components/jyorder.vue' //加油订单
 import xcorder from '@/components/xcorder.vue' //洗车订单
 import xcorder1 from '@/components/xcorder1.vue' //洗车订单
 import order_details from '@/components/order_details.vue' //订单详情
-import lacation from '@/components/lacation.vue'
 import jyorder1 from '@/components/jyorder1.vue'
 
 Vue.use(Router)
@@ -125,11 +124,6 @@ export default new Router({
 			path: '/order_details',
 			name: '订单详情',
 			component: order_details
-		},
-		{
-			path: '/lacation',
-			name: 'lacation',
-			component: lacation
 		},
 		{
 			path: '/jyorder1',

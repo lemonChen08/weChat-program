@@ -12,7 +12,7 @@ const wxShare = () => {
                 let userInfo = JSON.parse(localStorage.getItem('userInfo'))
                 wx.config({
                     debug: false,
-                    appId: 'wx2b58cb8bd7d7ceb1',
+                    appId: 'wxa912862c39071507',
                     timestamp: data.data.timestamp,
                     nonceStr: data.data.nonceStr,
                     signature: data.data.signature,

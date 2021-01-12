@@ -10,6 +10,7 @@ const wxUtils = (jsurl) => {
       if(data.data.code==0){
         localStorage.setItem('jsSdkConfig',data.data.data)
       }
+      console.log(data)
       await wx.config({
         debug: true, // TODO: 测试阶段使用
         appId: data.data.data.appId,

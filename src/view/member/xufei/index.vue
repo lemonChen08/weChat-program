@@ -18,7 +18,7 @@
                 <span v-else-if="userData.user_level == 5">分公司服务商</span>
                 </span>
             </div>
-            <div>
+            <div v-if="userData.user_level == 2">
               会员总时长：
               <span class="c-blue">{{userData.member_time}}</span>到期
             </div>

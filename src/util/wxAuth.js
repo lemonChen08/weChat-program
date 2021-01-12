@@ -1,5 +1,5 @@
 import { getOpenid } from '@/api/wx';
-const APPID = 'wx2b58cb8bd7d7ceb1';
+const APPID = 'wxa912862c39071507';
 // const APPID = 'wx584974b760e64957';
 const WX_AUTH_URL = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + APPID
     + '&redirect_uri=REDIRECT_URI&response_type=code&scope=snsapi_userinfo&state=0#wechat_redirect';

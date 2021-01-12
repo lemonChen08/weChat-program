@@ -38,9 +38,13 @@
             <div>余额 {{userData.balance}}</div>
             <div class="add-mem" @click="doShowConfirm" :disabled="!userData.balance">提现</div>
           </div>
-          <div class="i-mem" v-if='userData.user_level == 2'>
+          <div class="i-mem" v-if='userData.user_level == 2' @click='toXufei'>
             <div>会员卡有效期至 {{userData.member_time}}</div>
             <div class="add-mem">续费</div>
+          </div>
+          <div class="i-mem" v-else-if='userData.user_level == 1' @click='toXufei'>
+            <div>开通为会员</div>
+            <div class="add-mem">开通</div>
           </div>
         </div>
         <div class="i-mem">
@@ -173,6 +177,10 @@ export default {
         this.showWithdraw = false;
         this.getMyFinance();
       }
+    },
+    //跳转到续费页面
+    toXufei(){
+      this.$router.push('/xufei');
     }
   }
 };
@@ -190,7 +198,7 @@ export default {
   width: 100%;
 }
 .main {
-  margin-bottom: 60px;
+  margin-bottom: 120px;
 }
 .center_box {
   padding: 10px 15px;

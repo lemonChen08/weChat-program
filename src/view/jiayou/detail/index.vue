@@ -408,10 +408,9 @@ export default {
           };
           getPayConfig(configdata).then(result => {
             WXinvoke(result, response => {
-              debugger
               if (response.err_msg == "get_brand_wcpay_request:ok") {
                 this.isProcessing = false;
-                this.$layer.msg("支付成功");
+                this.$toast.success("支付成功");
                 this.isPay = true;
                 this.$router.push("jyorder1");
               } else {
@@ -423,7 +422,7 @@ export default {
             });
           });
         } else {
-          this.$layer.msg("下单失败");
+          this.$toast.fail(res.data.message);
         }
       });
     }
@@ -476,7 +475,7 @@ export default {
   }
 }
 .s-box {
-  margin: 0 15px 80px;
+  margin: 0 15px 140px;
   .l-tit {
     height: 48px;
     color: #333;

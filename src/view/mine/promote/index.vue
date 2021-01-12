@@ -73,6 +73,7 @@ export default {
       let data = res.data.data
       this.userData = data
     },
+  
   }
 };
 </script>

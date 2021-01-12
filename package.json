@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "export NODE_ENV=development && webpack serve",
     "build": "export NODE_ENV=production && webpack",
-    "--allowed-hosts": "api.welaipay.com"
+    "--allowed-hosts": "h5.welaipay.com"
   },
   "dependencies": {
     "element-ui": "^2.11.0",
