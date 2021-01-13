@@ -42,18 +42,18 @@
       <div class="s-box">
         <p class="tit">门店服务</p>
         <div class="s-list">
-          <span class="s-item">洗车</span>
-          <span class="s-item">保养</span>
+          <span class="s-item" :class="{active:selectType == 1}" @click="changeType(1)">洗车</span>
+          <span class="s-item" :class="{active:selectType == 2}" @click="changeType(2)">保养</span>
         </div>
       </div>
       <div class="t-box">
         <p class="tit">选择类型</p>
         <div
-          class="dt_item flexbox"
           v-for="(item,key) in services"
           @click="checkFuntion(item,key)"
           :key="key"
         >
+        <div class="dt_item flexbox" v-if="selectType == item.service_type">
           <div class="dt_check">
             <div class="no_chek" :class="{checked: key==n}"></div>
           </div>
@@ -64,6 +64,7 @@
             <del class="t_price">￥{{item.price}}</del>
             <div class="f_price">￥{{item.final_price}}</div>
           </div>
+        </div>
         </div>
       </div>
     </div>
@@ -104,6 +105,7 @@ export default {
       images: [],
       services: [],
       current: {},
+      selectType:1,
       n: null,
       phone: null
     };
@@ -122,6 +124,9 @@ export default {
       this.price = item.finalPrice;
       this.current = item;
       this.n = key;
+    },
+    changeType(e){
+      this.selectType = e
     },
     async getXcDetail() {
       let res = await api.storesDetail({
@@ -211,6 +216,11 @@ export default {
   font-size: 16px;
   font-weight: bold;
   color: #333;
+}
+.active{
+  background: #F1FCFF;
+  border-color:#46B2FF;
+  color: #46B2FF;
 }
 .p_cord {
   margin-top: 10px;
