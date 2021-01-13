@@ -32,6 +32,9 @@ router.beforeEach((to, from, next) => {
   if(to.meta.title){
     document.title = to.meta.title
   }
+  if(to.query.inviteCode){
+    sessionStorage.setItem('inviteCode',to.query.inviteCode)
+  }
   let token = localStorage.getItem('userInfo')
   console.log(token)
   if(token){

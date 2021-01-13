@@ -155,8 +155,8 @@ export default {
       let latlon = JSON.parse(localStorage.getItem("latlon"));
       let res = await api.get_gaslist({
         action: "get_gaslist",
-        latitude: 22.606497,
-        longitude: 114.052402,
+        latitude: latlon.latitude,
+        longitude: latlon.longitude,
         oilName: this.searchInfo.oil_numbers + "#",
         page: 1,
         pagesize: 100,

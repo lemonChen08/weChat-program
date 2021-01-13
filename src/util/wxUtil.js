@@ -20,7 +20,8 @@ const wxUtils = (jsurl) => {
         jsApiList: [
           'getLocation',
           'hideMenuItems',
-          'chooseWXPay'
+          'chooseWXPay',
+          'previewImage'
         ]
       }); 
       wxReady(resolve)

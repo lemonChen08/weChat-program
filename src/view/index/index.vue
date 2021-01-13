@@ -225,7 +225,7 @@ export default {
           this.getGaslist();
           this.getxclist();
         } else {
-          // this.getLocationFn();
+          this.getLocationFn();
         }
       });
     }

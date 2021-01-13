@@ -9,14 +9,16 @@
           <div class="m-info f_col">
             <div class="mb-7 m-t">
               <span class="c-black">{{userData.nickname}}</span>
-              <img :src='"@/assets/images/V" + userData.user_level + "-s.png"' class="m-img" />
-              <span class="c-normal">
+              <img :src="'@/assets/images/V' + userData.user_level + '-s.png'" class="m-img" />
+              <span
+                class="c-normal"
+              >
                 <span v-if="userData.user_level == 1">普通会员</span>
                 <span v-else-if="userData.user_level == 2">VIP会员</span>
                 <span v-else-if="userData.user_level == 3">服务商</span>
                 <span v-else-if="userData.user_level == 4">金牌服务商</span>
                 <span v-else-if="userData.user_level == 5">分公司服务商</span>
-                </span>
+              </span>
             </div>
             <div v-if="userData.user_level == 2">
               会员总时长：
@@ -58,7 +60,13 @@
         <div class="sel-type">
           <div class="tit">选择类型</div>
           <div class="sel-box">
-            <div class="sel-item" :class="{active : currentItem.id === item.id}" v-for="item in priceList" :key="item.id" @click="sectectItem(item)">
+            <div
+              class="sel-item"
+              :class="{active : currentItem.id === item.id}"
+              v-for="item in priceList"
+              :key="item.id"
+              @click="sectectItem(item)"
+            >
               <div>{{item.name}}</div>
               <div class="n-p">
                 <span>￥</span>
@@ -98,56 +106,66 @@
   </div>
 </template>
 <script>
-import { getUserInfo,memberPay} from "@/api/mine";
+import { getUserInfo, memberPay } from "@/api/mine";
+import { WXinvoke } from "@/util/wxUtil";
 export default {
   data() {
     return {
-      userData:{},
-      priceList:[],
-      currentItem:{},
-      isJoin:false
-    }
+      userData: {},
+      priceList: [],
+      currentItem: {},
+      isJoin: false
+    };
   },
   created() {
     this.userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    this.getUserInfo()
-    this.getMemberPrice()
+    this.getUserInfo();
+    this.getMemberPrice();
   },
   methods: {
-     //获取用户基本信息
-    async getUserInfo(){
-      let res = await getUserInfo({action:'get_userinfo',user_id:this.userInfo.user_id})
-      let data = res.data.data
-      this.userData = data
+    //获取用户基本信息
+    async getUserInfo() {
+      let res = await getUserInfo({
+        action: "get_userinfo",
+        user_id: this.userInfo.user_id
+      });
+      let data = res.data.data;
+      this.userData = data;
     },
     // 获取用户价格
-    async getMemberPrice(){
-      let res = await getUserInfo({action:'get_price'})
-      this.priceList = res.data.result
-      this.currentItem = this.priceList[0]
+    async getMemberPrice() {
+      let res = await getUserInfo({ action: "get_price" });
+      this.priceList = res.data.result;
+      this.currentItem = this.priceList[0];
     },
     // 选择类型
-    sectectItem(item){
-      this.currentItem = item
+    sectectItem(item) {
+      this.currentItem = item;
     },
     //开通
-    async joinMember(){
-      if(this.isJoin) return
-      this.isJoin = true
-      let res = await memberPay({user_id:this.userInfo.user_id,type:this.currentItem.type,price:this.currentItem.price})
-      this.isJoin = false
-      if (res.data.code === 200) {
-         this.$toast.success('开通成功');
-         setTimeout(()=>{
-           this.$router.replace({
-             path:'/mine'
-           })
-         },2000)
-      }else{
-         this.$toast.fail(res.data.message);
-      }
+    joinMember() {
+      if (this.isJoin) return;
+      this.isJoin = true;
+      memberPay({
+        user_id: this.userInfo.user_id,
+        type: this.currentItem.type,
+        price: this.currentItem.price
+      }).then(res => {
+        WXinvoke(res, response => {
+          if (response.err_msg == "get_brand_wcpay_request:ok") {
+            this.isJoin = false;
+            this.$toast.success("开通成功");
+            setTimeout(() => {
+              this.$router.replace({
+                path: "/mine"
+              });
+            }, 2000);
+          } else {
+            this.$toast.fail(res.data.message);
+          }
+        });
+      });
     }
-
   }
 };
 </script>
@@ -302,8 +320,8 @@ export default {
         }
       }
     }
-    .active{
-      background: #F1FCFF;
+    .active {
+      background: #f1fcff;
     }
   }
 }

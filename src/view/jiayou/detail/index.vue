@@ -379,7 +379,8 @@ export default {
           phone: this.myInfo.phone,
           gasId: this.$route.query.gasId,
           oilId: this.selectInfo.oil_id,
-          oilNo: this.selectInfo.gunNumber
+          oilNo: this.selectInfo.gunNumber,
+          discounts_price:this.selectInfo.discount_price
         };
       } else if (this.$route.query.platform_type == 3) {
         data = {
