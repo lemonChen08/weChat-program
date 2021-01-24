@@ -97,7 +97,8 @@ module.exports = {
         host: '127.0.0.1',
         compress: true,
         allowedHosts: [
-            ".welaipay.com"
+            ".welaipay.com",
+            ".chamiy.com"
         ],
         proxy: {
             '/api': {

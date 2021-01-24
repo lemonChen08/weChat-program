@@ -2,10 +2,19 @@
   <!-- 绑定手机号 -->
   <div class="phone_box">
     <div class="phone_centent">
+      <img src="@/assets/images/bg-phone.png" class="bg-img" />
       <div class="phone_list">
-        <div class="p-input">
-          <img src="@/assets/images/ico-phone.png" class="ico-phone" />
-          <input type="text" class="phone_input" v-model="phone" placeholder="请输入手机号码" />
+        <div class="p-box">
+          <div class="p-input">
+            <img src="@/assets/images/ico-phone.png" class="ico-phone" />
+            <input type="number" maxlength="11" class="phone_input" v-model="phone" placeholder="请输入手机号码" />
+          </div>
+          <div class="p-input">
+            <img src="@/assets/images/ico-phone.png" class="ico-phone" />
+            <input type="number" maxlength="6" class="phone_input w_100" v-model="code" placeholder="输入验证码" />
+            <span class="get_code c_gray" v-if="isSecond">{{isSecond}} s </span>
+            <button class="get_code" @click="getCode" v-else>获取验证码</button>
+          </div>
         </div>
         <p class="c-text">绑定手机号立即领取加油金</p>
         <button type="button" class="form_btn" @click="login">立即登录</button>
@@ -15,13 +24,15 @@
 </template>
 <script>
 import { api } from "@/api/api";
+let timeId = null
 export default {
   props: [],
   data() {
     return {
       phone: "",
-      inviteCode: "",
-      userInfo: null
+      code: "",
+      userInfo: null,
+      isSecond: ""
     };
   },
   created() {
@@ -29,20 +40,45 @@ export default {
     this.userInfo = JSON.parse(userInfo);
   },
   methods: {
+    // 获取验证码
+    async getCode() {
+      if (!this.phone) {
+        this.$layer.msg("请输入手机号码");
+        return;
+      }
+      this.isSecond = 60
+      timeId = setInterval(()=>{
+        this.isSecond --
+        if(this.isSecond <= 0){
+          clearInterval(timeId)
+          this.isSecond = ''
+        }
+      },1000)
+      let res = await api.bindPhone({
+        action: "sms_send",
+        phone: this.phone
+      });
+    },
     async login() {
       if (!this.phone) {
         this.$layer.msg("请输入手机号码");
         return;
       }
+      if (!this.code) {
+        this.$layer.msg("请输入验证码");
+        return;
+      }
       let res = await api.bindPhone({
         action: "wx_bind",
         phone: this.phone,
-        wx_id: this.userInfo.wx_id
+        wx_id: this.userInfo.wx_id,
+        code: this.code
       });
       if (res.data.code == 200) {
         this.$layer.msg("绑定成功");
         this.userInfo.phone = this.phone;
         this.userInfo.user_id = res.data.data.user_id;
+        this.userInfo.invite_code = res.data.data.invite_code;
         localStorage.setItem("userInfo", JSON.stringify(this.userInfo));
         this.closePhone();
         window.location.reload();
@@ -67,13 +103,27 @@ export default {
   left: 0;
   z-index: 999;
 }
-.ico-phone{
-  width: 14px;
-  height:19px;
-  margin:0 17px;
+.w_100{
+  width: 100px;
 }
-.phone_input{
+.get_code {
+  line-height: 35px;
+  height: 35px;
+  width: 85px;
+  background: transparent;
+  text-align: center;
+  display: inline-block;
+}
+.ico-phone {
+  width: 14px;
+  height: 19px;
+  margin: 0 17px;
+}
+.phone_input {
+  display: flex;
+  align-items: center;
   flex: 1;
+  box-sizing: border-box;
 }
 .phone_centent {
   position: relative;
@@ -85,44 +135,53 @@ export default {
   border-radius: 16px;
   top: 50%;
   left: 50%;
-  background:no-repeat center/100% url("@/assets/images/bg-phone.png");
   transform: translate(-50%, -50%);
 }
-.phone_list{
+.bg-img {
+  width: 287px;
+  height: 363px;
   position: absolute;
   left: 0;
-  top:222px;
-  width: 100%;
-  box-sizing: border-box;
+  top: 0;
+  border-radius: 16px;
 }
-.p-input{
-  width: 257px;
+.phone_list {
+  position: absolute;
+  left: 0;
+  top: 180px;
+  width: 100%;
+}
+.p-box {
+  background: #f1fcff;
+  border-radius: 5px;
+  margin: 0 15px;
+}
+.p-input {
   height: 48px;
   display: flex;
   align-items: center;
   line-height: 48px;
-  margin:0 auto;
-  background: #F1FCFF;
-  border-radius: 5px;
 }
-.phone_input::placeholder{
-  color: #4092C6;
+.phone_input::placeholder {
+  color: #4092c6;
 }
-.c-text{
-  text-align:center;
+.c-text {
+  text-align: center;
   color: #fff;
   font-size: 12px;
   margin: 10px 0;
 }
-
+.c_gray{
+  color: #999;
+}
 .form_btn {
-  width:265px;
+  width: 265px;
   height: 42px;
   border-radius: 28px;
   display: block;
   margin: 0 auto;
-  font-size:15px;
+  font-size: 15px;
   background: #f9ce80;
-  color: #AA1E06;
+  color: #aa1e06;
 }
 </style>
