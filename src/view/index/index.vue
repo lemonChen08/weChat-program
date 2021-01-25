@@ -109,9 +109,9 @@ export default {
   created() {
     let userInfo = localStorage.getItem("userInfo");
     userInfo = JSON.parse(userInfo);
-    if (userInfo.phone == "") {
+    // if (userInfo.phone == "") {
       this.popShow = true;
-    }
+    // }
   },
   methods: {
     routerTo(item) {

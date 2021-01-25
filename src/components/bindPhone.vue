@@ -46,18 +46,22 @@ export default {
         this.$layer.msg("请输入手机号码");
         return;
       }
-      this.isSecond = 60
-      timeId = setInterval(()=>{
+      let res = await api.bindPhone({
+        action: "sms_send",
+        phone: this.phone
+      });
+      if(res.data.code == 200){
+        this.isSecond = 60
+        timeId = setInterval(()=>{
         this.isSecond --
         if(this.isSecond <= 0){
           clearInterval(timeId)
           this.isSecond = ''
         }
       },1000)
-      let res = await api.bindPhone({
-        action: "sms_send",
-        phone: this.phone
-      });
+      }else{
+        this.$layer.msg(res.data.message);
+      }
     },
     async login() {
       if (!this.phone) {
@@ -83,7 +87,7 @@ export default {
         this.closePhone();
         window.location.reload();
       } else {
-        this.$layer.msg(res.data.msg);
+        this.$layer.msg(res.data.message);
       }
     },
     // 关闭手机绑定
