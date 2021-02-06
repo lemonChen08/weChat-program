@@ -13,15 +13,12 @@
             <span class="l-txt">
               <span v-if="userData.user_level == 1">普通会员</span>
               <span v-else-if="userData.user_level == 2">VIP会员</span>
-              <span v-else-if="userData.user_level == 3">服务商</span>
-              <span v-else-if="userData.user_level == 4">金牌服务商</span>
-              <span v-else-if="userData.user_level == 5">分公司服务商</span>
             </span>
           </div>
         </div>
         <!-- 会员基本信息 -->
         <div class="i-box">
-          <div class="i-data">
+          <!-- <div class="i-data">
             <div class="i-item">
               <div class="c-green">
                 <span class="fs-12">￥</span>
@@ -33,24 +30,24 @@
               <div class="c-yellow fs-18">{{userData.coupon_total}}</div>
               <div class="mt-6">优惠券(张)</div>
             </div>
-          </div>
+          </div> -->
           <div class="i-mem mt-10">
-            <div>余额 {{userData.balance}}</div>
-            <div class="add-mem" @click="doShowConfirm" :disabled="!userData.balance">提现</div>
+            <div>加油金 {{userData.balance || 0}}</div>
+            <div class="add-mem" @click="doShowConfirm" :disabled="!userData.balance">充值</div>
           </div>
-          <div class="i-mem" v-if='userData.user_level == 2' @click='toXufei'>
+          <!-- <div class="i-mem" v-if='userData.user_level == 2' @click='toXufei'>
             <div>会员卡有效期至 {{userData.member_time}}</div>
             <div class="add-mem">续费</div>
           </div>
           <div class="i-mem" v-else-if='userData.user_level == 1' @click='toXufei'>
             <div>开通为会员</div>
             <div class="add-mem">开通</div>
-          </div>
+          </div> -->
         </div>
-        <div class="i-mem">
+        <!-- <div class="i-mem">
           <div class="item_name">我的邀请码</div>
           <p class="c-code">{{inviteCode}}</p>
-        </div>
+        </div> -->
         <div class="m-list">
           <div class="m-item f_row">
             <div class="m-l">
@@ -70,13 +67,13 @@
             </div>
             <van-icon name="arrow" />
           </div>
-          <router-link to="promote" class="m-item f_row">
+          <!-- <router-link to="promote" class="m-item f_row">
             <div class="m-l">
               <img src="@/assets/images/mine-01.png" class="m-i2" />
               <span class="ml_20">我的推广</span>
             </div>
             <van-icon name="arrow" />
-          </router-link>
+          </router-link> -->
         </div>
         <div class="car_list">
           <div class="item_text">我的订单</div>

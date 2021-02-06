@@ -16,7 +16,6 @@
             <button class="get_code" @click="getCode" v-else>获取验证码</button>
           </div>
         </div>
-        <p class="c-text">绑定手机号立即领取加油金</p>
         <button type="button" class="form_btn" @click="login">立即登录</button>
       </div>
     </div>

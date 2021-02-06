@@ -101,6 +101,14 @@ export default new Router({
 			}
 		},
 		{
+			path: '/recharge',
+			name: 'recharge',
+			component: () => import('@/view/mine/recharge/index.vue'),
+			meta:{
+				title:'充值'
+			}
+		},
+		{
 			path: '/publish',
 			name: 'publish',
 			component: publish

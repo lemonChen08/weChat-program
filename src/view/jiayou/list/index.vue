@@ -7,10 +7,10 @@
         <van-icon name="play" :class="['icon-arrow',showOilNumber && 'revert']" />
       </button>
       <button :class="['btn-item',showBrand && 'selected']" @click="doToggleBrand">
-        <span class="mr_10">品牌</span>
-       <van-icon name="play" :class="['icon-arrow',showBrand && 'revert']" />
+        <span class="mr_10">{{gasStationBrandArray[searchInfo.orderBy - 1].key}}</span>
+        <van-icon name="play" :class="['icon-arrow',showBrand && 'revert']" />
       </button>
-      <div class='pad-option' v-if="showOilNumber">
+      <div class="pad-option" v-if="showOilNumber">
         <div class="section">
           <div class="tit">汽油</div>
           <div class="zone-options">
@@ -45,20 +45,15 @@
           </div>
         </div>
       </div>
-      <div class='pad-option' v-if="showBrand">
+      <div class="pad-option" v-if="showBrand">
         <div class="section">
-          <div class="zone-options">
-            <div
-              v-for="(item, idx) in gasStationBrandArray"
-              :key="idx"
-              @click="doSelectBrand(item.value)"
-              class="btn-option"
-              :class="searchInfo.gasType==item.value?'selected':''"
-            >{{ item.key }}</div>
-          </div>
-        </div>
-        <div class="footer">
-          <button class="btn-search" @click="doConfirmBrand">确定</button>
+          <div
+            v-for="(item, idx) in gasStationBrandArray"
+            :key="idx"
+            @click="doConfirmBrand(item.value)"
+            class="a-option"
+            :class="searchInfo.orderBy==item.value?'selected':''"
+          >{{ item.key }}</div>
         </div>
       </div>
     </div>
@@ -80,8 +75,7 @@ import {
   GhyyOrderStatuses,
   oilTypeArray,
   gasolineNumbers,
-  dieselNumbers,
-  gasStationBrandArray
+  dieselNumbers
 } from "@/util/const";
 import { api } from "@/api/api";
 import jyModel from "@/components/jyModel";
@@ -104,13 +98,22 @@ export default {
         per_page: 10,
         page: 1,
         address: "",
-        gasType: ""
+        orderBy: 1
       },
       OilTypes,
       gasolineNumbers,
       dieselNumbers,
       gasNumbers,
-      gasStationBrandArray,
+      gasStationBrandArray: [
+        {
+          key: "距离",
+          value: 1
+        },
+        {
+          key: "优惠力度",
+          value: 2
+        }
+      ],
       jyzlist: []
     };
   },
@@ -147,7 +150,8 @@ export default {
     doSelectBrand(item) {
       this.searchInfo.gasType = item;
     },
-    doConfirmBrand() {
+    doConfirmBrand(e) {
+      this.searchInfo.orderBy = parseInt(e)
       this.doToggleBrand();
       this.getGaslist();
     },
@@ -160,7 +164,7 @@ export default {
         oilName: this.searchInfo.oil_numbers + "#",
         page: 1,
         pagesize: 100,
-        gasType: this.searchInfo.gasType || ""
+        orderBy: this.searchInfo.orderBy
       });
       if (res.data.code == 200) {
         this.jyzlist = res.data.result;
@@ -208,29 +212,29 @@ export default {
 <style lang="less" scope>
 .btn-item {
   position: relative;
-  flex:1;
+  flex: 1;
   height: 33px;
   margin-left: 15px;
-  background: #FAFBFD;
+  background: #fafbfd;
   border-radius: 2.5px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.mr_10{
+.mr_10 {
   margin-right: 10px;
 }
-.icon-arrow{
+.icon-arrow {
   transform: rotate(90deg);
 }
-.icon-arrow.revert{
+.icon-arrow.revert {
   transform: rotate(-90deg);
 }
-.btn-item.selected{
-  color:#fff;
-  background: #46B2FF;
+.btn-item.selected {
+  color: #fff;
+  background: #46b2ff;
 }
-.btn-item:nth-child(2){
+.btn-item:nth-child(2) {
   margin-right: 15px;
 }
 .bg-index {
@@ -243,59 +247,59 @@ export default {
   height: 48px;
   display: flex;
   position: relative;
-  color:#999;
+  color: #999;
   align-items: center;
-  font-size:14px;
+  font-size: 14px;
 }
 .pad-option {
   position: absolute;
-  top:48px;
+  top: 48px;
   width: 100%;
-  padding:15px;
+  padding: 15px;
   box-sizing: border-box;
   background: #fff;
-  z-index:10;
+  z-index: 10;
   transition: all 0.4s;
-  font-size:14px;
+  font-size: 14px;
 }
-.section{
+.section {
   display: flex;
   flex-direction: column;
   margin-bottom: 10px;
 }
-.zone-options{
+.zone-options {
   display: flex;
   flex-wrap: wrap;
 }
-.tit{
+.tit {
   color: #333;
   font-weight: bold;
   margin-bottom: 10px;
 }
 .btn-option {
-  height:22.5px;
+  height: 22.5px;
   margin: 0 15px 10px 0;
   border: 0.5px solid #aaaaaa;
-  border-radius:2.5px;
-  color:#666;
+  border-radius: 2.5px;
+  color: #666;
+  line-height: 22.5px;
+  font-size: 13px;
+  padding: 0 15px;
+}
+.a-option{
+  height: 22.5px;
+  margin: 0 15px 10px 0;
+  color: #666;
   line-height: 22.5px;
   font-size: 13px;
   padding: 0 15px;
 }
 .btn-option.selected {
-  border-color:#46B2FF;
-  color:#46B2FF
+  border-color: #46b2ff;
+  color: #46b2ff;
 }
-.footer {
-  margin-top: 4vw;
-  text-align: center;
-}
-.btn-search {
-  height: 8vw;
-  background-color: #46b2ff;
-  color: white;
-  padding: 0 7vw;
-  border-radius: 1vw;
+.a-option.selected {
+  color: #46b2ff;
 }
 .pad-list {
   font-size: 24px;

@@ -380,7 +380,7 @@ export default {
           gasId: this.$route.query.gasId,
           oilId: this.selectInfo.oil_id,
           oilNo: this.selectInfo.gunNumber,
-          discounts_price:this.selectInfo.discount_price
+          discounts_price: this.selectInfo.discount_price
         };
       } else if (this.$route.query.platform_type == 3) {
         data = {
@@ -552,7 +552,7 @@ export default {
   background: #fff;
   z-index: 10;
   justify-content: space-between;
-  padding:0 24px;
+  padding: 0 24px;
   box-sizing: border-box;
 }
 .g-button {
