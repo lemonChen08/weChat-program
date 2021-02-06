@@ -12,7 +12,7 @@ const wxShare = () => {
                 let userInfo = JSON.parse(localStorage.getItem('userInfo'))
                 wx.config({
                     debug: false,
-                    appId: 'wx750dfbee1a08b602',
+                    appId: 'wxa912862c39071507',
                     timestamp: data.data.timestamp,
                     nonceStr: data.data.nonceStr,
                     signature: data.data.signature,
@@ -26,14 +26,14 @@ const wxShare = () => {
                     ]
                 });
                 wx.onMenuShareTimeline({
-                    link: 'http://h5.chamiy.com/#/?inviteCode=' + userInfo.invite_code,
+                    link: 'http://h5.welaipay.com/#/?inviteCode=' + userInfo.invite_code,
                     title: '刚发现一个神器，用它去加油能打9折，不需要充值',
                     desc: '直接去加油站支付油费就可以，我刚加一次油便宜了几十',
                     imgUrl: 'https://shengxin-static.oss-cn-shenzhen.aliyuncs.com/images/vehicle/life/img-share-thumb.png',
                     success: function () {}
                 })
                 wx.onMenuShareAppMessage({
-                    link: 'http://h5.chamiy.com/#/?inviteCode=' + userInfo.invite_code,
+                    link: 'http://h5.welaipay.com/#/?inviteCode=' + userInfo.invite_code,
                     title: '刚发现一个神器，用它去加油能打9折，不需要充值',
                     desc: '直接去加油站支付油费就可以，我刚加一次油便宜了几十',
                     imgUrl: 'https://shengxin-static.oss-cn-shenzhen.aliyuncs.com/images/vehicle/life/img-share-thumb.png',

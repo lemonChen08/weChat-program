@@ -5,6 +5,7 @@ import Vuex from 'vuex';
 import layer from 'vue-layer';
 import ElementUI from 'element-ui';
 import wxShare from '@/util/wxShare'
+import { api } from '@/api/api'
 
 import App from '@/App'
 import store from '@/store'
@@ -28,20 +29,23 @@ Vue.config.productionTip = false
 Vue.prototype.$layer = layer(Vue);
 Vue.prototype.$wxShare = wxShare
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   if(to.meta.title){
     document.title = to.meta.title
   }
   if(to.query.inviteCode){
     sessionStorage.setItem('inviteCode',to.query.inviteCode)
   }
-  let token = localStorage.getItem('userInfo')
-  console.log(token)
-  if(token){
+  let userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  let result = await api.bindPhone({
+    action: 'wx_info',
+    wx_id: userInfo ? userInfo.wx_id : ''
+  })
+  console.log(result)
+  if(result.data.code == '200'){
     wxShare().then(res=>{next()})
   }else{
     wxAuth().then(res => {
-      console.log(res)
       localStorage.setItem('userInfo',JSON.stringify(res))
       const url = window.location.href;
       const parseUrl = qs.parse(url.split('?')[1])
@@ -49,7 +53,6 @@ router.beforeEach((to, from, next) => {
       const newUrl = `${url.split('?')[0]}${ hasParse ? `?${qs.stringify(parseUrl)}` : '' }`
       location.assign(newUrl)
     })
-    
   }
 })
 new Vue({

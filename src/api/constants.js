@@ -1,8 +1,8 @@
 import axios from 'axios'
 const qs = require('qs')
 const server = {
-  development: 'http://wufu.welaipay.com/',
-  production: 'http://wufu.welaipay.com/'
+  development: 'http://car.welaipay.com/',
+  production: 'http://car.welaipay.com/'
 }
 
 const jsonUrl = (json) => {
