@@ -32,7 +32,7 @@
             </div>
           </div> -->
           <div class="i-mem mt-10">
-            <div>加油金 {{userData.balance || 0}}</div>
+            <div>加油金 {{userData.oil_money || 0}}</div>
             <div class="add-mem" @click="toRecharge">充值</div>
           </div>
           <!-- <div class="i-mem" v-if='userData.user_level == 2' @click='toXufei'>
