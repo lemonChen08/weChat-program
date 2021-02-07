@@ -81,8 +81,8 @@
       </section>
     </div>
     <div class="fix-btn" v-if="selectInfo.gunNumber">
-      <div class="l-box">
-        <span>￥{{price}}</span>
+       <div class="l-box" v-if="price">
+        <span>￥{{price}}<span class='ser-price' v-if="item.platform_type == 3">服务费:{{service_price}}</span></span>
         <span v-if="benefit" class="b-txt">按油价已优惠{{benefit}}元</span>
       </div>
       <div class="r-box">
@@ -206,6 +206,9 @@ export default {
       if (this.discountBundle && this.discountBundle.threshold <= this.price) {
         result = result - this.discountBundle.money;
       }
+      if(this.item.platform_type == 3){
+        result = result + this.service_price
+      }
       return result.toFixed(2);
     },
     benefit() {
@@ -213,6 +216,9 @@ export default {
       const pointPrice = 0;
       let result = this.truePrice - pointPrice;
       return Math.round((this.price - parseFloat(result)) * 100) / 100;
+    },
+    service_price() {
+      return Math.round(this.price * this.item.gas_service / 100) || 0
     },
     amount() {
       // 加油升数
@@ -554,6 +560,11 @@ export default {
   justify-content: space-between;
   padding:0 24px;
   box-sizing: border-box;
+}
+.ser-price{
+  font-size: 11px;
+  margin-left:5px;
+  color:#666;
 }
 .g-button {
   width: 220px;
