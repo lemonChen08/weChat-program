@@ -33,7 +33,7 @@
           </div> -->
           <div class="i-mem mt-10">
             <div>加油金 {{userData.balance || 0}}</div>
-            <div class="add-mem" @click="doShowConfirm" :disabled="!userData.balance">充值</div>
+            <div class="add-mem" @click="toRecharge">充值</div>
           </div>
           <!-- <div class="i-mem" v-if='userData.user_level == 2' @click='toXufei'>
             <div>会员卡有效期至 {{userData.member_time}}</div>
@@ -154,6 +154,11 @@ export default {
      doShowConfirm() {
       this.getMyFinance();
       this.showWithdraw = true;
+    },
+    toRecharge(){
+      this.$router.push({
+        path:'/recharge'
+      })
     },
     async getMyFinance() {
       this.isLoadingFinance = true;
