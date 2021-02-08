@@ -33,7 +33,7 @@
           </div> -->
           <div class="i-mem mt-10">
             <div>加油金 {{userData.oil_money || 0}}</div>
-            <div class="add-mem" @click="toRecharge">充值</div>
+            <div class="add-mem" @click="toRecharge">vip充值</div>
           </div>
           <!-- <div class="i-mem" v-if='userData.user_level == 2' @click='toXufei'>
             <div>会员卡有效期至 {{userData.member_time}}</div>
@@ -252,7 +252,7 @@ export default {
 }
 
 .add-mem {
-  width: 49px;
+  width: 60px;
   height: 22.5px;
   background: #46b2ff;
   border-radius: 11.5px;

@@ -4,8 +4,8 @@
     <div class="ls-r">
       <div class="l-name">{{item.gas_name}}</div>
       <div class="l-price f_row">
-        <span class="o-price">￥{{item.official_price}}</span>
-        <span class="n-price">￥{{item.discount_price || 0}}/L</span>
+        <span class="o-price">油站价:￥{{item.official_price}}</span>
+        <span class="n-price">会员价:￥{{item.discount_price || 0}}/L</span>
       </div>
       <div class="l-add">
         <van-icon name="location-o" />

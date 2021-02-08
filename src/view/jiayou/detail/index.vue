@@ -83,7 +83,7 @@
     <div class="fix-btn" v-if="selectInfo.gunNumber">
       <div class="l-box" v-if="price">
         <span>￥{{price}}<span class='ser-price' v-if="item.platform_type == 3">服务费:{{service_price}}</span></span>
-        <span v-if="benefit" class="b-txt">按油价已优惠{{benefit}}元</span>
+        <span v-if="benefit" class="b-txt">加油金抵扣{{benefit}}元</span>
       </div>
       <div class="r-box">
         <div class="g-button" :disabled="!price || isProcessing">
@@ -309,6 +309,13 @@ export default {
       } else if (res.data.code == 100) {
         localStorage.clear();
         window.location.reload();
+      }else if( res.data.code == 10012){
+        this.$layer.msg(res.data.message);
+        setTimeout(()=>{
+          this.$router.push({
+            path: '/recharge'
+          })
+        },2000)
       } else {
         this.$layer.msg(res.data.message);
       }
@@ -401,7 +408,8 @@ export default {
           discount_price: this.selectInfo.station_price,
           station_price: this.selectInfo.discount_price,
           oil_type: this.selectInfo.oilType,
-          units: parseFloat(this.amount)
+          units: parseFloat(this.amount),
+          service_price: this.service_price || 0
         };
       }
       payorders(data).then(res => {
@@ -428,7 +436,14 @@ export default {
               }
             });
           });
-        } else {
+        } else if( res.data.code == 10012){
+        this.$toast.fail(res.data.message);
+        setTimeout(()=>{
+          this.$router.push({
+            path: '/recharge'
+          })
+        },2000)
+      }else {
           this.$toast.fail(res.data.message);
         }
       });
