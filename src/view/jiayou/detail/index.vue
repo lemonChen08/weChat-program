@@ -401,7 +401,8 @@ export default {
           discount_price: this.selectInfo.station_price,
           station_price: this.selectInfo.discount_price,
           oil_type: this.selectInfo.oilType,
-          units: parseFloat(this.amount)
+          units: parseFloat(this.amount),
+          service_price: this.service_price
         };
       }
       payorders(data).then(res => {
