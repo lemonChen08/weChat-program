@@ -36,12 +36,11 @@ router.beforeEach((to, from, next) => {
     sessionStorage.setItem('inviteCode',to.query.inviteCode)
   }
   let token = localStorage.getItem('userInfo')
-  console.log(token)
-  if(token){
+  token = JSON.parse(token)
+  if(token && token.wx_id){
     wxShare().then(res=>{next()})
   }else{
     wxAuth().then(res => {
-      console.log(res)
       localStorage.setItem('userInfo',JSON.stringify(res))
       const url = window.location.href;
       const parseUrl = qs.parse(url.split('?')[1])

@@ -165,7 +165,7 @@ export default {
         sessionStorage.clear();
         window.location.reload();
       } else {
-        alert(res.data.msg);
+        alert(res.data.msg || "网络错误");
       }
     },
     async getGaslist() {
