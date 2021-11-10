@@ -17,7 +17,7 @@ export default new Router({
 			name: 'index',
 			component: () => import('@/view/index/index.vue'),
 			meta:{
-				title:'吾福车生活'
+				title:'悦车会'
 			}
 		},
 		{

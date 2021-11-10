@@ -1,27 +1,54 @@
 <template>
   <div class="pro-box">
     <div class="main">
+      <img src="@/assets/images/logo.png" class="c-logo" />
       <!-- 轮播图 -->
       <van-swipe :autoplay="3000" class="my-swipe">
         <van-swipe-item v-for="(item, key) in bannerList" :key="key">
-          <img v-lazy="item.url" class='swipe-img' />
+          <img v-lazy="item.url" class="swipe-img" />
         </van-swipe-item>
       </van-swipe>
       <!-- 首页两个项目 加油和洗车 -->
       <div class="index-box flexbox">
-        <div class="f-item flexbox" @click="toXclist">
-          <div class="f_col">
-            <div class="f-bold">汽车养护</div>
-            <div>折扣低至8折</div>
-          </div>
-          <img src="@/assets/images/xiche.png" class="icon" />
+        <div class="f-item" @click="toJylist">
+          <img src="@/assets/images/index1.png" class="icon" />
+          <span>优惠加油</span>
         </div>
-        <div class="f-item flexbox" @click="toJylist">
-          <div class="f_col">
-            <div class="f-bold">加油</div>
-            <div>折扣低至9折</div>
-          </div>
-          <img src="@/assets/images/jiayou.png" class="icon" />
+        <div class="f-item" @click="toXclist">
+          <img src="@/assets/images/index2.png" class="icon" />
+          <span>洗车保养</span>
+        </div>
+        <div class="f-item" @click="toWait">
+          <img src="@/assets/images/index3.png" class="icon" />
+          <span>违章查询</span>
+        </div>
+        <div class="f-item" @click="toWait">
+          <img src="@/assets/images/index4.png" class="icon" />
+          <span>汽车保险</span>
+        </div>
+        <div class="f-item" @click="toWait">
+          <img src="@/assets/images/index5.png" class="icon" />
+          <span>代驾</span>
+        </div>
+        <div class="f-item" @click="toWait">
+          <img src="@/assets/images/index6.png" class="icon" />
+          <span>充油卡</span>
+        </div>
+        <div class="f-item" @click="toWait">
+          <img src="@/assets/images/index7.png" class="icon" />
+          <span>加油券</span>
+        </div>
+        <div class="f-item" @click="toWait">
+          <img src="@/assets/images/index8.png" class="icon" />
+          <span>充电桩</span>
+        </div>
+        <div class="f-item" @click="toWait">
+          <img src="@/assets/images/index9.png" class="icon" />
+          <span>挪车码</span>
+        </div>
+        <div class="f-item" @click="toWait">
+          <img src="@/assets/images/index10.png" class="icon" />
+          <span>全部</span>
         </div>
       </div>
       <!-- 列表 -->
@@ -99,11 +126,11 @@ export default {
       popShow: false,
       bannerList: [
         {
-          url: require("@/assets/images/home_banner.png")
+          url: require("@/assets/images/bar.jpg")
         }
       ],
       xclist: [],
-      jyzlist: [],
+      jyzlist: []
     };
   },
   created() {
@@ -228,6 +255,9 @@ export default {
           this.getLocationFn();
         }
       });
+    },
+    toWait(){
+      this.$layer.msg("正在开发中");
     }
   },
   mounted() {
@@ -236,13 +266,19 @@ export default {
 };
 </script>
 <style scoped>
+
+.c-logo{
+  height: 20px;
+  margin-bottom: 6px;
+}
+
 .pro-box {
   padding: 0 15px;
   font-size: 13px;
   margin-bottom: 60px;
 }
 
-.swipe-img{
+.swipe-img {
   max-width: 100%;
 }
 
@@ -279,30 +315,24 @@ export default {
 }
 
 .index-box {
-  margin: 16px 0;
+  margin: 16px 0 0;
+  flex-wrap: wrap;
   justify-content: space-between;
+  box-shadow: 0 1.5px 4.5px 0 rgba(107, 215, 241, 0.19);
 }
 
 .f-item {
-  width: 165px;
   color: #666;
-  height: 86px;
-  border-radius: 10px;
-  box-shadow: 0 1.5px 4.5px 0 rgba(107, 215, 241, 0.19);
+  width: 20%;
+  padding: 12px 0;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
-
-.f-bold {
-  color: #333;
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
 .icon {
-  height: 46px;
-  width: 46px;
-  margin-left: 20px;
+  height: 32px;
+  margin-bottom: 6px;
 }
 .flexbox {
   display: flex;
@@ -346,7 +376,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
 }
 
 .title {

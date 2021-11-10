@@ -182,7 +182,7 @@ export default {
   height: 42px;
   border-radius: 28px;
   display: block;
-  margin: 0 auto;
+  margin: 10px auto 0;
   font-size: 15px;
   background: #f9ce80;
   color: #aa1e06;

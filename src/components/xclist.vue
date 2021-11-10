@@ -208,7 +208,7 @@ export default {
         action:'user_login',
         phone:13631620136
       }
-      let res = axios.post("http://api.welaipay.com/station/web_route.php",qs.stringify(data),'post')
+      let res = axios.post("http://car.shouchuangtx.cn/station/web_route.php",qs.stringify(data),'post')
       if(res){
         this.$layer.msg("注册成功")
       }else{

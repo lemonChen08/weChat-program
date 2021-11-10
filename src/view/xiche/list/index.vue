@@ -191,7 +191,7 @@ export default {
         phone: 13631620136
       };
       let res = axios.post(
-        "http://api.welaipay.com/station/web_route.php",
+        "http://car.shouchuangtx.cn/station/web_route.php",
         qs.stringify(data),
         "post"
       );
