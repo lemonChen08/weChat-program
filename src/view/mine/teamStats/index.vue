@@ -29,7 +29,7 @@
         <span class="c-money">{{teamInfo.yesterday_price}}</span>
       </div>
     </div>
-    <!-- <router-link to="/nextMember" class="s-btn">查看下级会员</router-link> -->
+    <router-link to="/nextMember" class="s-btn">查看下级会员</router-link>
   </div>
 </template>
 <script>

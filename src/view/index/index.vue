@@ -83,28 +83,12 @@
               </div>
               <img src="@/assets/images/icon-add.png" class="add-i" />
             </div>
-            <!-- <div class="xc-item">
-              <span>标准洗车-SUV/MPV</span>
-              <span class="x-o">￥45</span>
-              <span class="x-n">
-                <span class="fs-14">￥</span>35
-              </span>
-              <span class="buy-btn">购买</span>
-            </div>
-            <div class="xc-item">
-              <span>手工打蜡-SUV/MPV</span>
-              <span class="x-o">￥189</span>
-              <span class="x-n">
-                <span class="fs-14">￥</span>177
-              </span>
-              <span class="buy-btn">购买</span>
-            </div>-->
           </div>
         </div>
       </div>
-      <Tab></Tab>
-      <Bindphone @closepop="closePhone" v-show="popShow"></Bindphone>
     </div>
+    <Tab></Tab>
+    <Bindphone @closepop="closePhone" v-show="popShow"></Bindphone>
   </div>
 </template>
 <script>
@@ -113,8 +97,6 @@ import Tab from "@/components/tabs";
 import jyModel from "@/components/jyModel";
 import { api } from "@/api/api";
 import { getLocation } from "@/util/wxUtil";
-import wxShare from "@/util/wxShare";
-const qs = require("qs");
 export default {
   components: {
     Bindphone,
@@ -224,7 +206,6 @@ export default {
         return v.prices[0];
       }
       for (let i = 0; i < v.prices.length; i++) {
-        // eslint-disable-next-line
         if (parseInt(oil_numbers) == v.prices[i].oilNo) {
           return v.prices[i];
         }
@@ -247,16 +228,12 @@ export default {
     },
     getLocationFn() {
       getLocation().then(data => {
-        if (data && data.errMsg == "getLocation:ok") {
-          localStorage.setItem("latlon", JSON.stringify(data));
-          this.getGaslist();
-          this.getxclist();
-        } else {
-          this.getLocationFn();
-        }
+        localStorage.setItem("latlon", JSON.stringify(data));
+        this.getGaslist();
+        this.getxclist();
       });
     },
-    toWait(){
+    toWait() {
       this.$layer.msg("正在开发中");
     }
   },
@@ -266,8 +243,7 @@ export default {
 };
 </script>
 <style scoped>
-
-.c-logo{
+.c-logo {
   height: 20px;
   margin-bottom: 6px;
 }
@@ -275,9 +251,11 @@ export default {
 .pro-box {
   padding: 0 15px;
   font-size: 13px;
-  margin-bottom: 60px;
 }
 
+.main {
+  margin-bottom: 148px !important;
+}
 .swipe-img {
   max-width: 100%;
 }

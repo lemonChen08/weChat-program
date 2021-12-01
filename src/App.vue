@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import Tab from "@/components/tabs";
 export default {
   name: "App"
 };

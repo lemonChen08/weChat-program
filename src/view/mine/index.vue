@@ -4,12 +4,12 @@
       <div class="bg-blue"></div>
       <div class="center_box">
         <div class="car_box">
-          <img :src='"@/assets/images/bg_" + userData.user_level + ".png"' alt class="car_img" />
+          <img :src='"@/assets/images/bg_" + (userData.user_level || 1) + ".png"' alt class="car_img" />
           <div class="user-box">
             <img :src="userData.headimgurl" class="car_header" v-if="userData.headimgurl" />
             <img src="@/assets/images/headImg.jpg" class="car_header" v-else />
             <span class="c-name">{{userData.nickname}}</span>
-            <img :src='"@/assets/images/V" + userData.user_level + "-s.png"' class="l-img" />
+            <img :src='"@/assets/images/V" + (userData.user_level || 1) + "-s.png"' class="l-img" />
             <span class="l-txt">
               <span v-if="userData.user_level == 1">普通会员</span>
               <span v-else-if="userData.user_level == 2">VIP会员</span>
@@ -18,7 +18,7 @@
         </div>
         <!-- 会员基本信息 -->
         <div class="i-box">
-          <!-- <div class="i-data">
+          <div class="i-data">
             <div class="i-item">
               <div class="c-green">
                 <span class="fs-12">￥</span>
@@ -30,24 +30,24 @@
               <div class="c-yellow fs-18">{{userData.coupon_total}}</div>
               <div class="mt-6">优惠券(张)</div>
             </div>
-          </div> -->
+          </div>
           <div class="i-mem mt-10">
             <div>加油金 {{userData.oil_money || 0}}</div>
             <div class="add-mem" @click="toRecharge">vip充值</div>
           </div>
-          <!-- <div class="i-mem" v-if='userData.user_level == 2' @click='toXufei'>
+          <div class="i-mem" v-if='userData.user_level == 2' @click='toXufei'>
             <div>会员卡有效期至 {{userData.member_time}}</div>
             <div class="add-mem">续费</div>
           </div>
           <div class="i-mem" v-else-if='userData.user_level == 1' @click='toXufei'>
             <div>开通为会员</div>
             <div class="add-mem">开通</div>
-          </div> -->
+          </div>
         </div>
-        <!-- <div class="i-mem">
+        <div class="i-mem">
           <div class="item_name">我的邀请码</div>
           <p class="c-code">{{inviteCode}}</p>
-        </div> -->
+        </div>
         <div class="m-list">
           <div class="m-item f_row">
             <div class="m-l">
@@ -67,13 +67,13 @@
             </div>
             <van-icon name="arrow" />
           </div>
-          <!-- <router-link to="promote" class="m-item f_row">
+          <router-link to="promote" class="m-item f_row">
             <div class="m-l">
               <img src="@/assets/images/mine-01.png" class="m-i2" />
               <span class="ml_20">我的推广</span>
             </div>
             <van-icon name="arrow" />
-          </router-link> -->
+          </router-link>
         </div>
         <div class="car_list">
           <div class="item_text">我的订单</div>
@@ -133,7 +133,7 @@ export default {
   },
   created() {
     this.userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    this.inviteCode = this.userInfo.invite_code;
+    this.inviteCode = this.userInfo && this.userInfo.invite_code ?  this.userInfo.invite_code : "";
     this.getUserInfo()
   },
   methods: {
@@ -143,7 +143,7 @@ export default {
     },
     //获取用户基本信息
     async getUserInfo(){
-      let res = await getUserInfo({action:'get_userinfo',user_id:this.userInfo.user_id})
+      let res = await getUserInfo({action:'get_userinfo',user_id:this.userInfo.user_id ? this.userInfo.user_id : ''})
       let data = res.data.data
       this.userData = data
     },
@@ -200,7 +200,7 @@ export default {
   width: 100%;
 }
 .main {
-  margin-bottom: 120px;
+  margin-bottom: 240px;
 }
 .center_box {
   padding: 10px 15px;
@@ -319,8 +319,7 @@ export default {
 }
 
 .car_img {
-  width: 345px;
-  height: 190px;
+  width: 100%;
   border-radius: 10px;
 }
 .user-box{

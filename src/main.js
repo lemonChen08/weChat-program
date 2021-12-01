@@ -26,7 +26,6 @@ Vue.use(Toast)
 
 Vue.config.productionTip = false
 Vue.prototype.$layer = layer(Vue);
-Vue.prototype.$wxShare = wxShare
 
 router.beforeEach((to, from, next) => {
   if(to.meta.title){

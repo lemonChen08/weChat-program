@@ -7,7 +7,7 @@
         <div class="t-r">
           <div class="c-name">{{userData.nickname}}</div>
           <div class="o-info">
-            <img :src='"@/assets/images/V" + userData.user_level + "-s.png"' class="l-img" />
+            <img :src='"@/assets/images/V" + (userData.user_level || 1) + "-s.png"' class="l-img" />
             <span class="l-txt">
               <span v-if="userData.user_level == 1">普通会员</span>
               <span v-else-if="userData.user_level == 2">VIP会员</span>
@@ -32,8 +32,8 @@
         <fanyongList v-show="action==2"></fanyongList>
       </div>
     </div>
-    <div class='mask' v-if="showShareMask">
-      <div class="content" @click="doToggleShareMask">
+    <div class='mask' v-if="showShareMask" @click="doToggleShareMask">
+      <div class="content">
         <span class="text">点击右上角“...”, 分享好友或朋友圈邀请好友购买车主卡，成为您的团队成员</span>
       </div>
     </div>

@@ -1,14 +1,12 @@
 <template>
-  <div class="pad-tabbar">
-    <div class="main-tabbar">
-      <div class="item" @click="toHome">
-        <img class="icon" src="../assets/images/icon-home.png" />
-        <span class="text">首页</span>
-      </div>
-      <div class="item" @click="toMe">
-        <img class="icon" src="../assets/images/icon-my.png" />
-        <span class="text">我的</span>
-      </div>
+  <div class="main-tabbar">
+    <div class="item" @click="toHome">
+      <img class="icon" src="../assets/images/icon-home.png" />
+      <span class="text">首页</span>
+    </div>
+    <div class="item" @click="toMe">
+      <img class="icon" src="../assets/images/icon-my.png" />
+      <span class="text">我的</span>
     </div>
   </div>
 </template>
@@ -26,30 +24,19 @@ export default {
 };
 </script>
 <style lang="less">
-.pad-tabbar {
-  height: 50px;
+.main-tabbar {
   border-top: 1px solid #f6f6f6;
-  z-index: 99;
+  height: 60px;
   width: 100%;
-  bottom: 0;
   left: 0;
+  bottom: 0 !important;
   position: fixed;
   background: #fff;
-}
-.main-tabbar {
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  position: relative;
   display: flex;
+  z-index: 99;
 }
 .main-tabbar .item {
-  display: inline-flex;
+  display:flex;
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -60,11 +47,11 @@ export default {
   color: #747474;
 }
 .main-tabbar .item .icon {
-  height: 7.5vw;
-  width: 7.5vw;
+  height: 32px;
+  width: 32px;
 }
 .main-tabbar .item .text {
-  font-size: 3.2vw;
-  margin-top: 0.5vw;
+  font-size: 14px;
+  margin-top:6px;
 }
 </style>

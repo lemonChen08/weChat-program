@@ -1,16 +1,14 @@
 // import wx from "weixin-jsapi";
 const wx = window.wx
- 
-import { getJSSDK,payorders,xcpayorders,wxPayConfig } from '@/api/wx';//获取appid信息的接口,以后台人员接口为准
-// import { payorders } from "@/api/appointment";//一个更具订单id获取appid的接口
+
+import { getJSSDK, payorders, xcpayorders, wxPayConfig } from '@/api/wx';//获取appid信息的接口,以后台人员接口为准
 
 const wxUtils = (jsurl) => {
   return new Promise((resolve, reject) => {
     getJSSDK(jsurl).then(async data => {
-      if(data.data.code==0){
-        localStorage.setItem('jsSdkConfig',data.data.data)
+      if (data.data.code == 0) {
+        localStorage.setItem('jsSdkConfig', data.data.data)
       }
-      console.log(data)
       await wx.config({
         debug: true, // TODO: 测试阶段使用
         appId: data.data.data.appId,
@@ -23,7 +21,7 @@ const wxUtils = (jsurl) => {
           'chooseWXPay',
           'previewImage'
         ]
-      }); 
+      });
       wxReady(resolve)
     })
   })
@@ -46,43 +44,45 @@ const wxReady = resolve => {  //不让分享
         'menuItem:originPage' // 原网页
       ] // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
     });
-    
+
     resolve();
   });
 };
 // 微信支付
 const WXinvoke = (data, resolve) => {  //orderId 订单ID
-      let payData = {
-        "appId": data.data.data.appId, // 公众号名称，由商户传入
-        "timeStamp": data.data.data.timeStamp, // 时间戳，自1970年以来的秒数
-        "nonceStr": data.data.data.nonceStr, // 随机串
-        "package": data.data.data.package,
-        "signType": 'HMAC-SHA256', // 微信签名方式：
-        "paySign":data.data.data.paySign
-      }
-      wx.invoke(
-        'getBrandWCPayRequest',payData ,
-        function (res) {
-          console.log(res)
-          resolve(res)
-        }
-      )
+  let payData = {
+    "appId": data.data.data.appId, // 公众号名称，由商户传入
+    "timeStamp": data.data.data.timeStamp, // 时间戳，自1970年以来的秒数
+    "nonceStr": data.data.data.nonceStr, // 随机串
+    "package": data.data.data.package,
+    "signType": 'HMAC-SHA256', // 微信签名方式：
+    "paySign": data.data.data.paySign
+  }
+  wx.invoke(
+    'getBrandWCPayRequest', payData,
+    function (res) {
+      console.log(res)
+      resolve(res)
+    }
+  )
 }
 const getLocation = () => {
   return new Promise((resolve, reject) => {
-    wx.getLocation({
-      type: 'wgs84',
-      success: response => {
-        resolve(response);
-      },
-      fail: err => {
-        resolve(err);
-      },
-      cancel: err => {
-        alert('用户拒绝授权获取地理位置', err)
-      }
-    });
+    wx.ready(function() {
+      wx.getLocation({
+        type: 'wgs84',
+        success: response => {
+          resolve(response);
+        },
+        fail: err => {
+          resolve(err);
+        },
+        cancel: err => {
+          alert('用户拒绝授权获取地理位置', err)
+        }
+      });
+    })
   });
 };
-export { getLocation,WXinvoke};
+export { getLocation, WXinvoke };
 export default wxUtils;

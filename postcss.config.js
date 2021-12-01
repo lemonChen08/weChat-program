@@ -3,7 +3,7 @@ module.exports = {
     autoprefixer: {},
     'postcss-px-to-viewport': {
       // 视窗的宽度，对应的是我们设计稿的宽度
-      viewportWidth: 375,
+      viewportWidth: 414,
       // 指定`px`转换为视窗单位值的小数位数
       unitPrecision: 3,
       // 指定需要转换成的视窗单位，建议使用vw

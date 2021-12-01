@@ -9,10 +9,8 @@
           <div class="m-info f_col">
             <div class="mb-7 m-t">
               <span class="c-black">{{userData.nickname}}</span>
-              <img :src="'@/assets/images/V' + userData.user_level + '-s.png'" class="m-img" />
-              <span
-                class="c-normal"
-              >
+              <img :src='"@/assets/images/V" + (userData.user_level || 1) + "-s.png"' class="m-img" />
+              <span class="c-normal">
                 <span v-if="userData.user_level == 1">普通会员</span>
                 <span v-else-if="userData.user_level == 2">VIP会员</span>
                 <span v-else-if="userData.user_level == 3">服务商</span>
@@ -186,6 +184,7 @@ export default {
 }
 .m-top {
   padding: 15px;
+  align-items: center;
   position: relative;
   .m-t {
     display: flex;
@@ -222,11 +221,10 @@ export default {
 
 .info-box {
   position: relative;
-  width: 345px;
   height: 200px;
   background: #737c91;
   border-radius: 10px;
-  margin: 12.5px 15px;
+  margin:0 15px 12px;
   .lever-info {
     display: flex;
     padding: 15px;
