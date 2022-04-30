@@ -210,9 +210,9 @@ export default {
       }
       let res = axios.post("http://car.shouchuangtx.cn/station/web_route.php",qs.stringify(data),'post')
       if(res){
-        this.$layer.msg("注册成功")
+        this.$message.warning("注册成功")
       }else{
-        this.$layer.msg(res.data.msg)
+        this.$message.warning(res.data.msg)
       }
     },
   },

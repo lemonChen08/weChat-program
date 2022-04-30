@@ -40,7 +40,7 @@ export default {
       if (res.data.code == 200) {
         this.teamList = res.data.result;
       } else {
-        this.$layer.msg(res.data.msg);
+        this.$message.warning(res.data.msg);
       }
     },
     //查看团队统计

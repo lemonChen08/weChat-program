@@ -54,7 +54,7 @@ export default {
       if (res.data.code == 200) {
         this.teamInfo = res.data.result;
       } else {
-        this.$layer.msg(res.data.msg);
+        this.$message.warning(res.data.msg);
       }
     }
   }

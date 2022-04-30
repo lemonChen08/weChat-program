@@ -59,7 +59,7 @@ export default {
           getxcPayConfig(configdata).then((result)=>{
             WXinvoke(result,response=>{
                 if (response.err_msg == "get_brand_wcpay_request:ok") {
-                  that.$layer.msg('支付成功')  
+                  that.$message.warning('支付成功')  
                   that.getorders()  
                 }else{
                   that.$router.push({ path: '/xcorder', query: {payData:JSON.stringify(data)}});
@@ -67,7 +67,7 @@ export default {
             })
           })
         }else{
-          that.$layer.msg('下单失败')
+          that.$message.warning('下单失败')
         }
       }) 
     },

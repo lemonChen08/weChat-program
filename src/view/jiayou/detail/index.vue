@@ -280,7 +280,7 @@ export default {
     },
     onInput() {
       if (this.price && isNaN(this.price)) {
-        this.$layer.msg("请输入数字");
+        this.$message.warning("请输入数字");
         this.price = "";
         return;
       }
@@ -289,7 +289,7 @@ export default {
         !isNaN(this.price) &&
         (this.price > 1800 || this.price <= 0)
       ) {
-        this.$layer.msg("单次充值金额在1800元内");
+        this.$message.warning("单次充值金额在1800元内");
         this.price = this.price <= 0 ? "" : 1800;
       }
     },
@@ -310,14 +310,14 @@ export default {
         localStorage.clear();
         window.location.reload();
       }else if( res.data.code == 10012){
-        this.$layer.msg(res.data.message);
+        this.$message.warning(res.data.message);
         setTimeout(()=>{
           this.$router.push({
             path: '/recharge'
           })
         },2000)
       } else {
-        this.$layer.msg(res.data.message);
+        this.$message.warning(res.data.message);
       }
     },
     async userLogin() {

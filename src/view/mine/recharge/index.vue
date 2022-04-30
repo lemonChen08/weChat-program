@@ -52,15 +52,15 @@ export default {
     //确认充值
     async goRecharge() {
       if (!this.phone) {
-        this.$layer.msg("请输入手机号码");
+        this.$message.warning("请输入手机号码");
         return;
       }
       if (!this.card_num) {
-        this.$layer.msg("请输入卡号");
+        this.$message.warning("请输入卡号");
         return;
       }
       if (!this.card_pw) {
-        this.$layer.msg("请输入卡密");
+        this.$message.warning("请输入卡密");
         return;
       }
       let res = await api.bindPhone({
@@ -70,10 +70,10 @@ export default {
         card_pw: this.card_pw
       });
       if (res.data.code == 200) {
-        this.$layer.msg("充值成功");
+        this.$message.warning("充值成功");
         this.$router.go(-1);
       } else {
-        this.$layer.msg(res.data.message);
+        this.$message.warning(res.data.message);
       }
     }
   }

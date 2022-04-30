@@ -51,7 +51,7 @@ export default {
           getPayConfig(configdata).then((result)=>{
             WXinvoke(result,response=>{
                 if (response.err_msg == "get_brand_wcpay_request:ok") {
-                  this.$layer.msg('支付成功')    
+                  this.$message.warning('支付成功')    
                   this.$router.push('home')
                 }else{
                   this.$router.push({ path: '/jyorder', query: {payData:JSON.stringify(data)}});
@@ -59,7 +59,7 @@ export default {
             })
           })
         }else{
-          that.$layer.msg('下单失败')
+          that.$message.warning('下单失败')
         }
       }) 
     }

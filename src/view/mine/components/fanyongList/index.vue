@@ -35,7 +35,7 @@ export default {
           item.ctime = moment(parseInt(item.ctime) * 1000).format("YYYY-MM-DD");
         });
       } else {
-        this.$layer.msg(res.data.msg);
+        this.$message.warning(res.data.msg);
       }
     }
   }

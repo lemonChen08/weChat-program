@@ -37,7 +37,7 @@ export default {
       if (res.data.code == 200) {
         this.inviteList = res.data.result;
       } else {
-        this.$layer.msg(res.data.msg);
+        this.$message.warning(res.data.msg);
       }
     },
     //生成分享海报

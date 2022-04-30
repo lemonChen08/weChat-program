@@ -234,7 +234,7 @@ export default {
       });
     },
     toWait() {
-      this.$layer.msg("正在开发中");
+      this.$message.warning("正在开发中");
     }
   },
   mounted() {

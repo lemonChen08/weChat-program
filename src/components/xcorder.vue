@@ -50,14 +50,14 @@ export default {
             WXinvoke(result,response=>{
                 if (response.err_msg == "get_brand_wcpay_request:ok") {
                   this.isProcessing = false
-                  this.$layer.msg('支付成功')    
+                  this.$message.warning('支付成功')    
                   this.isPay = true
                   this.$router.push({ path: '/xcorder1', query: {}});
                 }
             })
           })
         }else{
-          that.$layer.msg('下单失败')
+          that.$message.warning('下单失败')
         }
       }) 
     }

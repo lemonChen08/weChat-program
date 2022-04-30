@@ -42,7 +42,7 @@ export default {
     // 获取验证码
     async getCode() {
       if (!this.phone) {
-        this.$layer.msg("请输入手机号码");
+        this.$message.warning("请输入手机号码");
         return;
       }
       let res = await api.bindPhone({
@@ -59,16 +59,16 @@ export default {
         }
       },1000)
       }else{
-        this.$layer.msg(res.data.message);
+        this.$message.warning(res.data.message);
       }
     },
     async login() {
       if (!this.phone) {
-        this.$layer.msg("请输入手机号码");
+        this.$message.warning("请输入手机号码");
         return;
       }
       if (!this.code) {
-        this.$layer.msg("请输入验证码");
+        this.$message.warning("请输入验证码");
         return;
       }
       let res = await api.bindPhone({
@@ -78,7 +78,7 @@ export default {
         code: this.code
       });
       if (res.data.code == 200) {
-        this.$layer.msg("绑定成功");
+        this.$message.warning("绑定成功");
         this.userInfo.phone = this.phone;
         this.userInfo.user_id = res.data.data.user_id;
         this.userInfo.invite_code = res.data.data.invite_code;
@@ -86,7 +86,7 @@ export default {
         this.closePhone();
         window.location.reload();
       } else {
-        this.$layer.msg(res.data.message);
+        this.$message.warning(res.data.message);
       }
     },
     // 关闭手机绑定
